@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tele/views/auth/login_screen.dart';
+import 'package:tele/views/components/reusable.card.dart';
 import 'package:tele/views/screens/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/user_profile.dart';
 
@@ -18,13 +19,13 @@ class _HomeScreenState extends State<HomeScreen> {
       'route': VideoConsultationScreen()
     },
     {
-      "icon": Icons.calendar_today,
+      "icon": Icons.event_available,
       // "text": "Book on Appointment",
       "text": "Appointment",
       'route': null
     },
-    {"icon": Icons.manage_accounts, "text": "self manage", 'route': null},
-    {"icon": Icons.favorite, "text": "My Treatment", 'route': null},
+    {"icon": Icons.person_pin, "text": "self manage", 'route': null},
+    {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
   ];
   @override
   Widget build(BuildContext context) {
@@ -334,63 +335,6 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Reusable Card Widget
-class ReusableCard extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final Color iconColor;
-  final VoidCallback onTap;
-
-  const ReusableCard({
-    super.key,
-    required this.icon,
-    required this.text,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 55,
-            height: 55,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 3,
-                  spreadRadius: 1,
-                  offset: const Offset(1, 1),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Icon(icon, size: 30, color: iconColor),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
-          ),
-        ],
       ),
     );
   }

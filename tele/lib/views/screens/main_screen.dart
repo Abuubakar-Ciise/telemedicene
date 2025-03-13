@@ -23,56 +23,40 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     TransactionHistoryScreen(),
     ContactUsScreen(),
-    // Center(child: Text("Screen 3")),
-    Center(child: Text("Screen 4")),
+    Center(child: Text("Settings Screen")),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[_selectedItem],
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(Icons.home, "Home", 0),
-            _buildNavItem(Icons.loop, "Transaction", 1),
-            _buildNavItem(Icons.call, "Contact", 2),
-            _buildNavItem(Icons.settings, "Settings", 3),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, int index) {
-    bool isSelected = _selectedItem == index;
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: isSelected ? 16 : 0, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Color.fromARGB(255, 9, 130, 13).withOpacity(0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
-            if (isSelected) ...[
-              SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(color: Colors.grey[900], fontWeight: FontWeight.bold),
-              ),
-            ]
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        
+        currentIndex: _selectedItem,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        // showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.loop),
+            label: "Transaction",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call),
+            label: "Contact",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
+          ),
+        ],
       ),
     );
   }
