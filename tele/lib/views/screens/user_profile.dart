@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
+import 'package:tele/services/StorageService.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  void handleLogout() async {
+    await StorageService.clearUserData(); // Clear saved user data
+    Get.offAllNamed(
+        '/login'); // Navigate to login screen & remove all previous screens
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +31,6 @@ class ProfileScreen extends StatelessWidget {
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
-            
-            
             // This Column holds the white container and leaves space at the top
             Column(
               children: [
@@ -31,9 +42,11 @@ class ProfileScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 90),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 90),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -63,40 +76,38 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             _buildInfoRow(
-                              Icons.person, 
-                              'Name:', 
+                              Icons.person,
+                              'Name:',
                               'Abuubakar Ciise',
                             ),
                             _buildInfoRow(
-                              Icons.public, 
-                              'Country:', 
+                              Icons.public,
+                              'Country:',
                               'Somalia',
                             ),
                             _buildInfoRow(
-                              Icons.phone, 
-                              'Phone:', 
+                              Icons.phone,
+                              'Phone:',
                               '+252617092491',
                             ),
                             _buildInfoRow(
-                              Icons.email, 
-                              'Email:', 
+                              Icons.email,
+                              'Email:',
                               'abuubakarciise@gmail.com',
                             ),
                             _buildInfoRow(
-                              Icons.person_outline, 
-                              'User Name:', 
+                              Icons.person_outline,
+                              'User Name:',
                               'abubakar',
                             ),
                             _buildInfoRow(
-                              Icons.location_on, 
-                              'Address:', 
+                              Icons.location_on,
+                              'Address:',
                               'Karaan',
                             ),
-                            
                           ],
                         ),
                       ),
-                      
 
                       const SizedBox(height: 20),
 
@@ -127,11 +138,14 @@ class ProfileScreen extends StatelessWidget {
                             const SizedBox(height: 10),
                             _buildSettingsRow(Icons.lock, 'Change Password'),
                             _buildSettingsRow(Icons.pin, 'Change Pin'),
-                            _buildSettingsRow(Icons.language, 'Change Language'),
+                            _buildSettingsRow(
+                                Icons.language, 'Change Language'),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20,),
+                      SizedBox(
+                        height: 20,
+                      ),
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -158,23 +172,20 @@ class ProfileScreen extends StatelessWidget {
                             const SizedBox(height: 10),
                             _buildSettingsRow(Icons.qr_code, 'Share QR code'),
                             _buildSettingsRow(Icons.share, 'Share Apk'),
-                            _buildSettingsRow(Icons.logout, 'Log Out'),
+                            _buildSettingsRow(Icons.logout, 'Log Out',onTap: handleLogout),
                           ],
                         ),
                       ),
-                      
                     ],
                   ),
                 ),
               ],
             ),
-            
 
             // Circle Avatar + Pending status (overlapping the white container)
             Column(
               children: [
                 const CircleAvatar(
-                  
                   radius: 50,
                   backgroundColor: Colors.white, // White border effect
                   child: CircleAvatar(
@@ -186,8 +197,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Container(
-                  
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(15),
@@ -200,13 +211,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                
               ],
             ),
-            
-
-            
-            
           ],
         ),
       ),
@@ -239,15 +245,18 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // Helper widget to build each row in the Settings section
-  Widget _buildSettingsRow(IconData icon, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.green, size: 20),
-          const SizedBox(width: 10),
-          Text(title),
-        ],
+  Widget _buildSettingsRow(IconData icon, String title,{VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.green, size: 20),
+            const SizedBox(width: 10),
+            Text(title),
+          ],
+        ),
       ),
     );
   }

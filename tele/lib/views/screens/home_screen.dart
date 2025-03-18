@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/auth/login_screen.dart';
 import 'package:tele/views/components/reusable.card.dart';
 import 'package:tele/views/screens/Video_Consultation_Screen.dart';
@@ -11,6 +12,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String username = "Loading...";
+  String userId = "Loading...";
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    Map<String, String?> userData = await StorageService.getUserData();
+    String fullName = userData["username"] ?? "Unknown";
+    String firstName = fullName.split(" ").first; // Extract first name
+    setState(() {
+      username = firstName;
+      userId = userData["userId"] ?? "Unknown";
+    });
+  }
+
   final List<Map<String, dynamic>> services = [
     {
       "icon": Icons.video_call,
@@ -21,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       "icon": Icons.event_available,
       // "text": "Book on Appointment",
-      "text": "Appointment",
+      "text": "Hospital",
       'route': null
     },
     {"icon": Icons.person_pin, "text": "self manage", 'route': null},
@@ -53,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      "John Doe",
+                      username,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -64,8 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => ProfileScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen()));
                   },
                   child: Container(
                     padding: const EdgeInsets.all(4),

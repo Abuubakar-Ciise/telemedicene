@@ -55,7 +55,7 @@ class ContactUsScreen extends StatelessWidget {
 
                 /// Title
                 Text(
-                  "Nala soo Xiriir",
+                  "Contact Us",
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -67,7 +67,7 @@ class ContactUsScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    "Ha ka labalabeyn inaad nala soo xiriirto. Haddii aad qabto su'aal, cabasho ama caawimaad u baahan tahay, waan kuu diyaar nahay!",
+                    "Don't hesitate to contact us. If you have any questions, complaints, or need assistance, we are here for you!",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(fontSize: 14, color: Colors.black54),
                   ),
@@ -75,8 +75,8 @@ class ContactUsScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 /// Contact Items
-                contactItem(Icons.chat, "WhatsApp", "Sabdi-Khamiis • 9-17", () {
-                  _launchURL("https://wa.me/+252610736551?text=Salaan!%20Waxaan%20u%20baahanahay%20caawimaad.", false);
+                contactItem(Icons.chat, "WhatsApp", "Saturday-Thursday • 9-17", () {
+                  _launchURL("https://wa.me/+252610736551?text=Hello!%20I%20need%20assistance.", false);
                 }),
                 const SizedBox(height: 15),
 
@@ -86,8 +86,18 @@ class ContactUsScreen extends StatelessWidget {
                 const SizedBox(height: 15),
 
                 contactItem(Icons.email, "Email", "info@tayocare.com", () {
-                  _launchURL("mailto:abuubakarciise4@gmail.com?subject=Codsi%20Taageero&body=Salaan,%20waxaan%20rabaa%20caawimaad.", false);
+                  _launchURL("mailto:abuubakarciise4@gmail.com?subject=Support%20Request&body=Hello,%20I%20need%20assistance.", false);
                 }),
+                const SizedBox(height: 15),
+
+                contactItem(Icons.facebook, "Facebook", "Follow us for updates", () {
+                  _launchURL("https://www.facebook.com/abuubakar.ciise.14?mibextid=ZbWKwL", false);
+                }),
+                const SizedBox(height: 15),
+
+                // contactItem(Icons.video_call, "Teleconsultation", "Schedule a virtual doctor visit", () {
+                //   _launchURL("https://www.tayocare.com/teleconsultation", false);
+                // }),
                 const SizedBox(height: 20),
 
                 /// Footer

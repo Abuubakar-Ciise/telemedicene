@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/instance_manager.dart';
+import 'package:tele/controllers/auth_controller.dart';
 import 'package:tele/views/auth/login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+  RegisterScreen({super.key});
+  final authController = Get.put(AuthController());
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // Green background
+          // Green Background
           Container(
             height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
-            decoration:
-                const BoxDecoration(color: Color.fromARGB(255, 9, 130, 13)),
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 9, 130, 13),
+            ),
           ),
 
           Column(
@@ -32,30 +47,15 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      // boxShadow: const [
-                      //   BoxShadow(
-                      //     color: Colors.black26,
-                      //     blurRadius: 10,
-                      //     spreadRadius: 2,
-                      //   )
-                      // ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 26, // Slightly reduced to create a gap
-                      backgroundColor: Colors
-                          .white, // Matches the container to create a gap effect
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo.jpg',
-                          width: 52, // Adjust according to the avatar size
-                          height: 52,
-                          fit: BoxFit.cover,
-                        ),
+                  CircleAvatar(
+                    radius: 26,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.jpg',
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -64,15 +64,13 @@ class RegisterScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // White Container for the Form
+              // White Container for Form
               Expanded(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
@@ -82,56 +80,113 @@ class RegisterScreen extends StatelessWidget {
                     ],
                   ),
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        buildTextField(Icons.person, "First Name"),
-                        buildTextField(Icons.person, "Middle Name"),
-                        buildTextField(Icons.person, "Last Name"),
-                        buildPhoneField(),
-                        buildTextField(Icons.account_circle, "Username"),
-                        buildTextField(Icons.email, "Email"),
-                        buildTextField(Icons.person_add, "Referral Code"),
-                        buildPasswordField("Password"),
-                        buildPasswordField("Confirm PIN"),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 9, 130, 13),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 130, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "REGISTER",
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Already have an account?"),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
-                                );
-                              },
-                              child: const Text(
-                                "Sign in",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color.fromARGB(255, 9, 130, 13)),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          // Full Name
+                          buildTextField(Icons.person, "Full Name", _fullNameController),
+                          
+                          // Gender Dropdown
+                          Padding(
+                            
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: DropdownButtonFormField<String>(
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person, color: Color.fromARGB(255, 9, 130, 13)),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                               ),
+                              value: _genderController.text.isEmpty ? null : _genderController.text,
+                              hint: const Text('Select Gender'),
+                              dropdownColor: Colors.white,
+                              items: ['Male', 'Female'].map((String gender) {
+                                return DropdownMenuItem<String>(
+                                  value: gender,
+                                  child: Text(gender),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                _genderController.text = value!;
+                              },
+                              validator: (value) => value == null ? "Please select a gender" : null,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          
+                          // Other Fields
+                          buildTextField(Icons.cake, "Age", _ageController),
+                          buildPhoneField(_phoneController),
+                          buildTextField(Icons.account_circle, "Username", _usernameController),
+                          buildEmailField(_emailController),
+                          buildTextField(Icons.location_on_outlined, "Address", _addressController),
+                          buildPasswordField("Password", _passwordController),
+                          buildConfirmPasswordField("Confirm Password", _confirmPasswordController),
+                          
+                          const SizedBox(height: 20),
+
+                          // Register Button
+                          Obx(
+                            () => authController.isLoading.value
+                                ? Center(child: CircularProgressIndicator())
+                                : ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(255, 9, 130, 13),
+                                      padding: const EdgeInsets.symmetric(horizontal: 130, vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      int age = int.tryParse(_ageController.text) ?? 0;
+                                       String fullPhoneNumber = "+252${_phoneController.text.trim()}";
+                                      if (_formKey.currentState!.validate()) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text("Registration Successful!")),
+                                        );
+                                        await authController.registerPatient(
+                                          _fullNameController.text.trim(),
+                                          _emailController.text.trim(),
+                                          _addressController.text.trim(),
+                                          _genderController.text.trim(),
+                                          age,
+                                          fullPhoneNumber,
+                                          _usernameController.text.trim(),
+                                          _passwordController.text.trim(),
+                                        );
+                                      }
+                                    },
+                                    child: const Text(
+                                      "REGISTER",
+                                      style: TextStyle(fontSize: 18, color: Colors.white),
+                                    ),
+                                  ),
+                          ),
+
+                          const SizedBox(height: 15),
+
+                          // Login Link
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Already have an account?"),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                                  );
+                                },
+                                child: const Text(
+                                  "Sign in",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 9, 130, 13),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -143,64 +198,108 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  Widget buildTextField(IconData icon, String hint) {
+  // Text Field with Validation
+  Widget buildTextField(IconData icon, String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
-          // prefixIcon: Icon(icon, color: Colors.green.shade700),
-          prefixIcon: Icon(icon, color: Color.fromARGB(255, 9, 130, 13)),
+          // prefixIcon: Icon(icon, color: const Color.fromARGB(255, 9, 130, 13)),
+          prefixIcon: Icon(icon, color:  Colors.black),
           hintText: hint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.green, width: 2),
-          ),
         ),
+        validator: (value) => value!.isEmpty ? "Please enter $hint" : null,
       ),
     );
   }
 
-  Widget buildPhoneField() {
+  // Email Field with Validation
+  Widget buildEmailField(TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          // prefixIcon: const Icon(Icons.email, color: Color.fromARGB(255, 9, 130, 13)),
+          prefixIcon: const Icon(Icons.email, color: Colors.black),
+          hintText: "Email",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Please enter your email";
+          } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+            return "Enter a valid email address";
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
+  // Phone Field with Validation
+  Widget buildPhoneField(TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.phone, color: Color.fromARGB(255, 9, 130, 13)),
+          // prefixIcon: const Icon(Icons.phone, color: Color.fromARGB(255, 9, 130, 13)),
+          prefixIcon: const Icon(Icons.phone, color: Colors.black),
           prefixText: "+252  ",
           hintText: "Phone",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color.fromARGB(255, 9, 130, 13), width: 2),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Please enter your phone number";
+          } else if (value.length < 9 || value.length > 12) {
+            return "Enter a valid phone number";
+          }
+          return null;
+        },
       ),
     );
   }
 
-  Widget buildPasswordField(String hint) {
+  // Password Field with Validation
+  Widget buildPasswordField(String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
+      child: TextFormField(
+        controller: controller,
         obscureText: true,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
-          suffixIcon: Icon(Icons.visibility, color: Color.fromARGB(255, 9, 130, 13)),
+          // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
+          prefixIcon: const Icon(Icons.lock, color: Colors.black),
           hintText: hint,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.black, width: 2),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
+        validator: (value) => value!.length < 6 ? "Password must be at least 6 characters" : null,
+      ),
+    );
+  }
+
+  // Confirm Password Field with Matching Validation
+  Widget buildConfirmPasswordField(String hint, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.lock, color: Colors.black),
+          // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
+          hintText: hint,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        validator: (value) => value != _passwordController.text ? "Passwords do not match" : null,
       ),
     );
   }
