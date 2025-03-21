@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/services/StorageService.dart';
 
 class AuthServices {
@@ -87,8 +88,11 @@ class AuthServices {
         });
         String token = jwt.sign(SecretKey('my_secret_key'));
 
-        await StorageService.saveUserData(token, record['_id'], record['name'],record['type']);
-        print("current user etails  $token ----- ${record['_id']} ---- ${record['name']}--- ${record['type']}");
+        await StorageService.saveUserData(
+          token, record['_id'], record['name'],record['type'],
+          record['email'],record['address'],record['gender'],record['age'],record['phone'],record['picture'],record['user_name']
+          );
+        print("current user etails  $token ----- ${record['_id']} ---- ${record['name']}--- ${record['type']} --- ${record['email']} -- ${record['address']} -- ${record['gender']} --${record['age']} -- ${record['phone']} --${record['picture']} --- ${record['user_name']}");
         return {
           "success": true,
           "message": responseBody['message'] ?? "Login successful",
@@ -108,4 +112,26 @@ class AuthServices {
     }
   }
 
+  static Future<List<Hospital>> fetchHospitals() async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/getAll_Hospitals'));
+      print("Fetching data from: $baseUrl/getAll_Hospitals");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((hospital) => Hospital.fromJson(hospital))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Fetch Error: $e");
+      return [];
+    }
+  }
 }

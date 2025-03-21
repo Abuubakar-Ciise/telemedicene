@@ -21,9 +21,10 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> screens = [
     HomeScreen(),
+    Center(child: Text("Notification Screen")),
     TransactionHistoryScreen(),
     ContactUsScreen(),
-    Center(child: Text("Settings Screen")),
+    
   ];
 
   @override
@@ -45,6 +46,10 @@ class _MainScreenState extends State<MainScreen> {
             label: "Home",
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: "Notification",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.loop),
             label: "Transaction",
           ),
@@ -52,10 +57,7 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.call),
             label: "Contact",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Settings",
-          ),
+          
         ],
       ),
     );

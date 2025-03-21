@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/Hospitals/HospitalListScreen.dart';
 import 'package:tele/views/auth/login_screen.dart';
 import 'package:tele/views/components/reusable.card.dart';
 import 'package:tele/views/screens/Video_Consultation_Screen.dart';
@@ -12,8 +14,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
   String username = "Loading...";
   String userId = "Loading...";
+  String? picture;
   @override
   void initState() {
     super.initState();
@@ -27,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       username = firstName;
       userId = userData["userId"] ?? "Unknown";
+       picture = userData['picture'] ?? "N/A";
     });
   }
 
@@ -38,10 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
       'route': VideoConsultationScreen()
     },
     {
-      "icon": Icons.event_available,
+      "icon": Icons.apartment,
       // "text": "Book on Appointment",
       "text": "Hospital",
-      'route': null
+      'route': HospitalListScreen()
     },
     {"icon": Icons.person_pin, "text": "self manage", 'route': null},
     {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
@@ -101,10 +107,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       ],
                     ),
-                    child: const CircleAvatar(
+                    child:  CircleAvatar(
                       radius: 28,
-                      backgroundImage: NetworkImage(
-                          'https://avatars.githubusercontent.com/u/138715168?v=4'),
+                      backgroundImage: (picture?.isNotEmpty ?? false) && picture != "N/A"
+                            ? NetworkImage('$baseUrl/$picture')
+                            : AssetImage('assets/default_image.png')
+                                as ImageProvider,
                       backgroundColor: Colors.white,
                     ),
                   ),
@@ -112,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 20),
-
             // Main Card with Title Centered
             Card(
               shape: RoundedRectangleBorder(

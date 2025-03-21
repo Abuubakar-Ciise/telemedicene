@@ -16,7 +16,8 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +68,12 @@ class RegisterScreen extends StatelessWidget {
               // White Container for Form
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(30)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black12,
@@ -85,18 +88,26 @@ class RegisterScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           // Full Name
-                          buildTextField(Icons.person, "Full Name", _fullNameController),
-                          
+                          buildTextField(
+                              Icons.person, "Full Name", _fullNameController),
+                          buildPhoneField(_phoneController),
+                          buildEmailField(_emailController),
+                          buildTextField(Icons.location_on_outlined, "Address",
+                              _addressController),
+
                           // Gender Dropdown
                           Padding(
-                            
                             padding: const EdgeInsets.only(bottom: 12),
                             child: DropdownButtonFormField<String>(
                               decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.person, color: Color.fromARGB(255, 9, 130, 13)),
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                prefixIcon: const Icon(Icons.person,
+                                    color: Colors.black),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12)),
                               ),
-                              value: _genderController.text.isEmpty ? null : _genderController.text,
+                              value: _genderController.text.isEmpty
+                                  ? null
+                                  : _genderController.text,
                               hint: const Text('Select Gender'),
                               dropdownColor: Colors.white,
                               items: ['Male', 'Female'].map((String gender) {
@@ -108,39 +119,60 @@ class RegisterScreen extends StatelessWidget {
                               onChanged: (value) {
                                 _genderController.text = value!;
                               },
-                              validator: (value) => value == null ? "Please select a gender" : null,
+                              validator: (value) => value == null
+                                  ? "Please select a gender"
+                                  : null,
                             ),
                           ),
-                          
                           // Other Fields
-                          buildTextField(Icons.cake, "Age", _ageController),
-                          buildPhoneField(_phoneController),
-                          buildTextField(Icons.account_circle, "Username", _usernameController),
-                          buildEmailField(_emailController),
-                          buildTextField(Icons.location_on_outlined, "Address", _addressController),
-                          buildPasswordField("Password", _passwordController),
-                          buildConfirmPasswordField("Confirm Password", _confirmPasswordController),
-                          
+                          buildAgeField(Icons.cake, "Age", _ageController),
+
+                          buildTextField(Icons.account_circle, "Username",
+                              _usernameController),
+
+                          // buildPasswordField("Password", _passwordController),
+                          // buildConfirmPasswordField("Confirm Password", _confirmPasswordController),
+                          PasswordField(
+                              hint: "Password",
+                              controller: _passwordController),
+                          ConfirmPasswordField(
+                              hint: "Confirm Password",
+                              controller: _confirmPasswordController,
+                              passwordController: _passwordController),
+
                           const SizedBox(height: 20),
 
                           // Register Button
                           Obx(
                             () => authController.isLoading.value
-                                ? Center(child: CircularProgressIndicator())
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color.fromARGB(255, 9, 130, 13)),
+                                    ),
+                                  )
                                 : ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(255, 9, 130, 13),
-                                      padding: const EdgeInsets.symmetric(horizontal: 130, vertical: 15),
+                                      backgroundColor:
+                                          const Color.fromARGB(255, 9, 130, 13),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 130, vertical: 15),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                     onPressed: () async {
-                                      int age = int.tryParse(_ageController.text) ?? 0;
-                                       String fullPhoneNumber = "+252${_phoneController.text.trim()}";
+                                      int age =
+                                          int.tryParse(_ageController.text) ??
+                                              0;
+                                      String fullPhoneNumber =
+                                          "+252${_phoneController.text.trim()}";
                                       if (_formKey.currentState!.validate()) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text("Registration Successful!")),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  "Registration Successful!")),
                                         );
                                         await authController.registerPatient(
                                           _fullNameController.text.trim(),
@@ -155,8 +187,9 @@ class RegisterScreen extends StatelessWidget {
                                       }
                                     },
                                     child: const Text(
-                                      "REGISTER",
-                                      style: TextStyle(fontSize: 18, color: Colors.white),
+                                      "Sign Up",
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
                                     ),
                                   ),
                           ),
@@ -172,7 +205,8 @@ class RegisterScreen extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.pushReplacement(
                                     context,
-                                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()),
                                   );
                                 },
                                 child: const Text(
@@ -199,17 +233,47 @@ class RegisterScreen extends StatelessWidget {
   }
 
   // Text Field with Validation
-  Widget buildTextField(IconData icon, String hint, TextEditingController controller) {
+  Widget buildTextField(
+      IconData icon, String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           // prefixIcon: Icon(icon, color: const Color.fromARGB(255, 9, 130, 13)),
-          prefixIcon: Icon(icon, color:  Colors.black),
+          prefixIcon: Icon(icon, color: Colors.black),
           hintText: hint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
+        ),
+        validator: (value) => value!.isEmpty ? "Please enter $hint" : null,
+      ),
+    );
+  }
+
+  // Text Field with Validation
+  Widget buildAgeField(
+      IconData icon, String hint, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          // prefixIcon: Icon(icon, color: const Color.fromARGB(255, 9, 130, 13)),
+          prefixIcon: Icon(icon, color: Colors.black),
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
           ),
         ),
         validator: (value) => value!.isEmpty ? "Please enter $hint" : null,
@@ -229,11 +293,16 @@ class RegisterScreen extends StatelessWidget {
           prefixIcon: const Icon(Icons.email, color: Colors.black),
           hintText: "Email",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
         ),
         validator: (value) {
           if (value!.isEmpty) {
             return "Please enter your email";
-          } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value)) {
+          } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$")
+              .hasMatch(value)) {
             return "Enter a valid email address";
           }
           return null;
@@ -255,6 +324,10 @@ class RegisterScreen extends StatelessWidget {
           prefixText: "+252  ",
           hintText: "Phone",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
         ),
         validator: (value) {
           if (value!.isEmpty) {
@@ -268,38 +341,151 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  // Password Field with Validation
-  Widget buildPasswordField(String hint, TextEditingController controller) {
+  // // Password Field with Validation
+  // Widget buildPasswordField(String hint, TextEditingController controller) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 12),
+  //     child: TextFormField(
+  //       controller: controller,
+  //       obscureText: true,
+  //       decoration: InputDecoration(
+  //         // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
+  //         prefixIcon: const Icon(Icons.lock, color: Colors.black),
+  //         hintText: hint,
+  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  //       ),
+  //       validator: (value) => value!.length < 6 ? "Password must be at least 6 characters" : null,
+  //     ),
+  //   );
+  // }
+
+  // // Confirm Password Field with Matching Validation
+  // Widget buildConfirmPasswordField(String hint, TextEditingController controller) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(bottom: 12),
+  //     child: TextFormField(
+  //       controller: controller,
+  //       obscureText: true,
+  //       decoration: InputDecoration(
+  //         prefixIcon: const Icon(Icons.lock, color: Colors.black),
+  //         // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
+  //         hintText: hint,
+  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+  //       ),
+  //       validator: (value) => value != _passwordController.text ? "Passwords do not match" : null,
+  //     ),
+  //   );
+  // }
+}
+
+class PasswordField extends StatefulWidget {
+  final String hint;
+  final TextEditingController controller;
+
+  const PasswordField({Key? key, required this.hint, required this.controller})
+      : super(key: key);
+
+  @override
+  _PasswordFieldState createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
-        controller: controller,
-        obscureText: true,
+        controller: widget.controller,
+        obscureText: _obscureText,
         decoration: InputDecoration(
-          // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
           prefixIcon: const Icon(Icons.lock, color: Colors.black),
-          hintText: hint,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+          hintText: widget.hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        validator: (value) => value!.length < 6 ? "Password must be at least 6 characters" : null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Please enter your password";
+          } else if (value.length < 6) {
+            return "Password must be at least 6 characters";
+          }
+          return null;
+        },
       ),
     );
   }
+}
 
-  // Confirm Password Field with Matching Validation
-  Widget buildConfirmPasswordField(String hint, TextEditingController controller) {
+class ConfirmPasswordField extends StatefulWidget {
+  final String hint;
+  final TextEditingController controller;
+  final TextEditingController passwordController;
+
+  const ConfirmPasswordField({
+    Key? key,
+    required this.hint,
+    required this.controller,
+    required this.passwordController,
+  }) : super(key: key);
+
+  @override
+  _ConfirmPasswordFieldState createState() => _ConfirmPasswordFieldState();
+}
+
+class _ConfirmPasswordFieldState extends State<ConfirmPasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
-        controller: controller,
-        obscureText: true,
+        controller: widget.controller,
+        obscureText: _obscureText,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
           prefixIcon: const Icon(Icons.lock, color: Colors.black),
-          // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
-          hintText: hint,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+          hintText: widget.hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        validator: (value) => value != _passwordController.text ? "Passwords do not match" : null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Please confirm your password";
+          } else if (value != widget.passwordController.text) {
+            return "Passwords do not match";
+          }
+          return null;
+        },
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:tele/services/StorageService.dart';
 
@@ -10,6 +11,38 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+
+  String name = 'loading..';
+  String phone = 'loading..';
+  String email = 'loading..';
+  String username = 'loading..';
+  String address = 'loading..';
+  String age = 'loading..';
+  String gender = 'loading..';
+  String? picture;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  Future<void> loadUserData() async {
+    Map<String, String?> userData = await StorageService.getUserData();
+    setState(() {
+      name = userData['username'] ?? 'unknow';
+      phone = userData['phone'] ?? 'N/A';
+      address = userData['address'] ?? "N/A";
+      username = userData['nickname'] ?? "N/A";
+      gender = userData['gender'] ?? "N/A";
+      age = userData['age'] ?? "N/A";
+      email = userData['email'] ?? "N/A";
+      picture = userData['picture'] ?? "N/A";
+    });
+  }
+
   void handleLogout() async {
     await StorageService.clearUserData(); // Clear saved user data
     Get.offAllNamed(
@@ -78,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _buildInfoRow(
                               Icons.person,
                               'Name:',
-                              'Abuubakar Ciise',
+                              name,
                             ),
                             _buildInfoRow(
                               Icons.public,
@@ -88,22 +121,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _buildInfoRow(
                               Icons.phone,
                               'Phone:',
-                              '+252617092491',
+                              phone,
                             ),
-                            _buildInfoRow(
-                              Icons.email,
-                              'Email:',
-                              'abuubakarciise@gmail.com',
-                            ),
+                            _buildInfoRow(Icons.email, 'Email:', email),
                             _buildInfoRow(
                               Icons.person_outline,
                               'User Name:',
-                              'abubakar',
+                              username,
                             ),
                             _buildInfoRow(
                               Icons.location_on,
                               'Address:',
-                              'Karaan',
+                              address,
+                            ),
+                            _buildInfoRow(
+                              Icons.location_on,
+                              'Gender:',
+                              gender,
+                            ),
+                            _buildInfoRow(
+                              Icons.location_on,
+                              'Age:',
+                              age,
                             ),
                           ],
                         ),
@@ -172,7 +211,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(height: 10),
                             _buildSettingsRow(Icons.qr_code, 'Share QR code'),
                             _buildSettingsRow(Icons.share, 'Share Apk'),
-                            _buildSettingsRow(Icons.logout, 'Log Out',onTap: handleLogout),
+                            _buildSettingsRow(Icons.logout, 'Sign Out',
+                                onTap: handleLogout),
                           ],
                         ),
                       ),
@@ -185,14 +225,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Circle Avatar + Pending status (overlapping the white container)
             Column(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.white, // White border effect
                   child: CircleAvatar(
                     radius: 47,
-                    backgroundImage: NetworkImage(
-                      'https://avatars.githubusercontent.com/u/138715168?v=4',
-                    ),
+                    backgroundImage:
+                        (picture?.isNotEmpty ?? false) && picture != "N/A"
+                            ? NetworkImage('$baseUrl/$picture')
+                            : AssetImage('assets/default_image.png')
+                                as ImageProvider,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -245,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // Helper widget to build each row in the Settings section
-  Widget _buildSettingsRow(IconData icon, String title,{VoidCallback? onTap}) {
+  Widget _buildSettingsRow(IconData icon, String title, {VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       child: Padding(
