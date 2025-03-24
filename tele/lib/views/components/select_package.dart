@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/PatientDetailsScreen.dart';
 
 class SelectPackageWidget extends StatefulWidget {
-   final Map<String, dynamic> doctor;
+   final DoctorList doctor;
   final DateTime selectedDay;
   final String? selectedTime;
   final Function(int) onPackageSelected;

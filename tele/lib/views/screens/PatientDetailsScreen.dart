@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
+import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/confirmation_screen.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorList doctor;
   final DateTime selectedDay;
   final String? selectedTime;
   final Map<String, dynamic>? selectedPackage;
@@ -28,10 +30,27 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
   String m = '';
   int selectedGender = 0;
 
+  Future<void> loadUserData() async {
+    Map<String,String?> userData =await StorageService.getUserData();
+    String gender = userData['gender'] ?? '';
+    // String fullName = userData['']
+    setState(() {
+      nameController.text = userData['username'] ?? '';
+      phoneController.text = userData['phone'] ?? '';
+      ageController.text = userData['age'] ?? '';
+      if(gender == 'Male'){
+        selectedGender = 0;
+      }else if(gender == 'Female'){
+        selectedGender = 1;
+      }
+      // selectedGender 
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-
+    loadUserData();
     // // Check if selectedPackage is not null and extract relevant info
     // if (widget.selectedPackage != null) {
     //   m = widget.selectedPackage?['title'] ?? ''; // Set name based on package title

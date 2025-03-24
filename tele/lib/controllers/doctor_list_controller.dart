@@ -1,0 +1,28 @@
+import 'package:get/get.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
+import 'package:tele/services/get_api_services.dart';
+
+class DoctorListController extends GetxController{
+  var doctorsList = <DoctorList>[].obs;
+  var isLoading = false.obs;
+
+  void fetchDoctorsList() async {
+    try {
+      isLoading.value = true;
+      final doctros = await ApiGetServices().fechDoctorsList();
+      doctorsList.assignAll(doctros);
+       doctorsList.refresh();
+    } catch (e) {
+      print("Error fetching Doctors: $e");
+    }finally{
+      isLoading.value = false;
+    }
+  }
+
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDoctorsList();
+  }
+}

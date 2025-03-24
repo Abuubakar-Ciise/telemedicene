@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tele/controllers/HospitalController.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
+import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/routes/app_routes.dart';
+import 'package:tele/services/get_api_services.dart';
 // import 'package:tele/views/a.dart';
 // import 'package:flutter/services.dart'; // Add this import
 import 'package:toastification/toastification.dart';
@@ -12,11 +14,16 @@ import 'package:toastification/toastification.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-
+  await testApi();
   runApp(ToastificationWrapper(
-    
     child: MyApp(),
   ));
+}
+Future<void> testApi () async {
+  List<Hospital> hospital = await ApiGetServices().fetchHospitals();
+  List<DoctorList> doctors = await ApiGetServices().fechDoctorsList();
+   print("Doctors List: ${doctors.map((d) => d.rating).toList()}");
+   print("hospital List: ${hospital.map((d) => d.name).toList()}");
 }
 
 class MyApp extends StatelessWidget {
@@ -59,6 +66,7 @@ class MyApp extends StatelessWidget {
             }else if(userType == "1"){
               initialRoute = '/mainscreen';
               // initialRoute = '/HospitalList';
+              // initialRoute = '/doctorList';
             }
             
             return GetMaterialApp(

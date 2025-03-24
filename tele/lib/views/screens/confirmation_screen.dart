@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/check_payment_Screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final Map<String, String> patientData;
-  final Map<String, dynamic> doctor;
+  final DoctorList doctor;
   final DateTime selectedDay;
   final String? selectedTime;
   final Map<String, dynamic>? selectedPackage;
@@ -17,6 +19,8 @@ class ConfirmationScreen extends StatelessWidget {
     required this.selectedTime,
     this.selectedPackage,
   });
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
 
   @override
   Widget build(BuildContext context) {
@@ -91,29 +95,37 @@ class ConfirmationScreen extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              doctor['image'],
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-            ),
+            child: (doctor.picture.isNotEmpty && doctor.picture != 'N/A')
+                ? Image.network(
+                    '$baseUrl/${doctor.picture}',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/default_image.png',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(doctor['name'],
+                Text(doctor.name,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 15)),
-                Text('${doctor['speciality']} • ${doctor['experience']}',
+                Text(
+                    '${doctor.speciality} • ${doctor.experienceyears} Years of Experience',
                     style:
                         const TextStyle(fontSize: 12, color: Colors.black54)),
                 Row(
                   children: [
                     const Icon(Icons.star, color: Colors.orange, size: 16),
                     const SizedBox(width: 4),
-                    Text(doctor['rating'].toString(),
+                    Text(doctor.rating.toString(),
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
@@ -196,14 +208,14 @@ class ConfirmationScreen extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => CheckPaymentScreen(
                   phone: patientData['phone'] ?? 'N/A',
-                  charges: doctor['charges'],
+                  charges: doctor.consultationfee.toString(),
                   selectedDay: DateFormat('MMM d, yyyy').format(selectedDay),
                   userName: patientData['name'] ?? 'N/A'),
             ),
           );
         },
         child: Text(
-          'Payment ${doctor['charges'].toString()}',
+          'Payment ${doctor.consultationfee.toString()}',
           style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),

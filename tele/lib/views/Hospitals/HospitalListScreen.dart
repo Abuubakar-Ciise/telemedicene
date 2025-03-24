@@ -147,6 +147,7 @@ class _HospitalCardsState extends State<HospitalCards> {
                     ? NetworkImage("$baseUrl/${widget.picture}")
                     : AssetImage('assets/default_image.png') as ImageProvider,
                 backgroundColor: Colors.white,
+                
               ),
               const SizedBox(height: 8),
               Text(

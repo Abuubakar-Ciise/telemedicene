@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:tele/Models/hospital_model.dart';
-import 'package:tele/services/auth_services.dart';
 import 'package:tele/services/get_api_services.dart';
 
 class HospitalController extends GetxController {

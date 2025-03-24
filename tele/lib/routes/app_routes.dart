@@ -5,6 +5,7 @@ import 'package:tele/views/DoctorScreens/doctor_main_screen.dart';
 import 'package:tele/views/Hospitals/HospitalListScreen.dart';
 import 'package:tele/views/auth/login_screen.dart';
 import 'package:tele/views/auth/register_screen.dart';
+import 'package:tele/views/screens/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/main_screen.dart';
 
 class AppRoutes{
@@ -14,5 +15,6 @@ class AppRoutes{
     GetPage(name: '/mainscreen', page: () => MainScreen()),
     GetPage(name: '/doctormainscreen', page: () => DoctorMainScreen()),
     GetPage(name: '/HospitalList', page: () => HospitalListScreen()),
+    GetPage(name: '/doctorList', page: () => VideoConsultationScreen()),
   ];
 }

@@ -1,12 +1,20 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/appointment_screen.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';
 
-class DoctorCard extends StatelessWidget {
-  final Map<String, dynamic> doctor;
+class DoctorCard extends StatefulWidget {
+  final DoctorList doctor;
   const DoctorCard({super.key, required this.doctor});
-
   @override
+  State<DoctorCard> createState() => _DoctorCardState();
+}
+
+class _DoctorCardState extends State<DoctorCard> {
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
@@ -20,9 +28,13 @@ class DoctorCard extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                      doctor['image']), // Replace with network image
+                  radius: 30, // Adjust size as needed
+                  backgroundImage: (widget.doctor.picture.isNotEmpty &&
+                          widget.doctor.picture != "N/A")
+                      ? CachedNetworkImageProvider("$baseUrl/${widget.doctor.picture}")
+                      : AssetImage('assets/default_image.png')
+                          as ImageProvider,
+                  backgroundColor: Colors.white,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -31,22 +43,27 @@ class DoctorCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        doctor['name'] ?? 'Geust',
-                        style: TextStyle(
+                        widget.doctor.name,
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        doctor['experience'] ?? "Experience not available",
-                        style: TextStyle(color: Colors.grey),
+                        "${widget.doctor.experienceyears} Years of Experience",
+                        style: const TextStyle(color: Colors.grey),
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, 
-                          MaterialPageRoute(builder: (context) => DoctorProfileScreen(doctor: doctor)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    DoctorProfileScreen(doctor: widget.doctor)),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 9, 130, 13),
+                          backgroundColor:
+                              const Color.fromARGB(255, 9, 130, 13),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 6),
                           shape: RoundedRectangleBorder(
@@ -60,44 +77,43 @@ class DoctorCard extends StatelessWidget {
                   ),
                 ),
                 const Icon(Icons.star, color: Colors.amber),
-                Text(doctor['rating'] != null
-                    ? doctor['rating'].toString()
-                    : 'N/A'),
+                // Text(doctor.rating != null ? doctor.rating.toString() : 'N/A'),
+                Text(widget.doctor.rating.toString()),
               ],
             ),
             const SizedBox(height: 10),
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Divider(
-                      thickness: 1,
-                      color: Colors.greenAccent,
-                    ),
-                    const SizedBox(height: 10),
-                    Text("Hospital: ${doctor['hospital'] ?? 'N/A'}"),
-                    const SizedBox(height: 5),
-                    Text("Speciality: ${doctor['speciality'] ?? 'N/A'}"),
-                    const SizedBox(height: 5),
-                    Text("Language: ${doctor['language'] ?? 'N/A'}"),
-                    const SizedBox(height: 5),
-                    Text("Standard Charges: ${doctor['charges'] ?? 'N/A'}"),
-                    //  Text("Standard Charges: ${doctor['charges'] != null ? doctor['charges'].toString() : 'N/A'}"),
-                  ],
-                )),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(thickness: 1, color: Colors.greenAccent),
+                  const SizedBox(height: 10),
+                  Text("Hospital: ${widget.doctor.hospitalname}"),
+                  const SizedBox(height: 5),
+                  Text("Speciality: ${widget.doctor.speciality}"),
+                  const SizedBox(height: 5),
+                  Text("Language: ${widget.doctor.countries}"),
+                  const SizedBox(height: 5),
+                  Text("Standard Charges: \$${widget.doctor.consultationfee}"),
+                ],
+              ),
+            ),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(context, 
-                          MaterialPageRoute(builder: (context) => AppointmentScreen(doctor: doctor)));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AppointmentScreen(doctor: widget.doctor)),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 9, 130, 13),
+                    backgroundColor: const Color.fromARGB(255, 9, 130, 13),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 100, vertical: 12),
                     shape: RoundedRectangleBorder(

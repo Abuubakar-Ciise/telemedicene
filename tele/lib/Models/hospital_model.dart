@@ -18,17 +18,16 @@ class Hospital {
     required this.picture,
     required this.createDate,
   });
- factory Hospital.fromJson(Map<String, dynamic> json) {
-  return Hospital(
-    id: json['_id'] ?? '',
-    name: json['name'] ?? 'Unknown',
-    sequenceId: json['sequence_id'] ?? '',
-    email: json['email'] ?? '',
-    address: json['address'] ?? '',
-    phone: json['phone'] ?? '',
-    picture: json['picture'] ?? '',  // Ensure it's not null
-    createDate: json['create_date'] ?? '', // Ensure it's not null
-  );
-}
-
+  factory Hospital.fromJson(Map<String, dynamic> json) {
+    return Hospital(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? 'Unknown',
+      sequenceId: json['sequence_id'] ?? '',
+      email: json['email'] ?? '',
+      address: json['address'] ?? '',
+      phone: json['phone'] ?? '',
+      picture: json['picture'] ?? '', // Ensure it's not null
+      createDate: json['create_date'] ?? '', // Ensure it's not null
+    );
+  }
 }

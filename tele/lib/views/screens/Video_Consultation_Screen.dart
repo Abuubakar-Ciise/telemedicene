@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/views/components/doctor_card.dart';
 import 'package:tele/views/screens/appointment_screen.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';
@@ -14,6 +17,7 @@ class VideoConsultationScreen extends StatefulWidget {
 class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  final doctorListController = Get.put(DoctorListController());
 
   final List<Map<String, dynamic>> doctors = [
     {
@@ -26,7 +30,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
       "rating": 4.5,
       "image":
           "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
-      "available" :["9:00", "11:30","8:15", "10:40","1:00 PM"]
+      "available": ["9:00", "11:30", "8:15", "10:40", "1:00 PM"]
     },
     {
       "name": "Eng Adnaan Hassan ",
@@ -38,7 +42,12 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
       "rating": 5.5,
       "image":
           "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
-      "available" :["8:00", "4:00","7:00", "6:00",]
+      "available": [
+        "8:00",
+        "4:00",
+        "7:00",
+        "6:00",
+      ]
     },
   ];
   void addDoctor() {
@@ -52,7 +61,6 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
         "charges": "\$10.00",
         "rating": 4.8,
         "image": "https://via.placeholder.com/150", // Placeholder image URL
-        
       });
     });
   }
@@ -103,22 +111,42 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
       //   ),
       // ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: doctors.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: DoctorCard(doctor: doctors[index]),
+          padding: const EdgeInsets.all(16.0),
+          child: Obx(() {
+            if (doctorListController.isLoading.value) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 9, 130, 13)),
+                ),
+              );
+            }
+             // Check if the list of hospitals is empty
+            if (doctorListController.doctorsList.isEmpty) {
+              return Center(
+                child: Text(
+                  "No hospitals available. ${doctorListController.doctorsList.length}",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
+            return ListView.builder(
+              itemCount: doctorListController.doctorsList.length,
+              itemBuilder: (context, index) {
+                // final doctorList = doctorListController.doctorsList[index];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: DoctorCard(
+                    doctor: doctorListController.doctorsList[index],
+                    ),
+                );
+              },
             );
-          },
-        ),
-      ),
+          })),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: addDoctor, // Call the addDoctor function
       //   child: const Icon(Icons.add),
       // ),
-   );
+    );
   }
 }
-

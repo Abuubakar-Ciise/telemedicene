@@ -1,18 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/components/available_time.dart';
 import 'package:tele/views/components/select_package.dart';
 import 'package:tele/views/screens/PatientDetailsScreen.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorList doctor;
   const AppointmentScreen({super.key, required this.doctor});
 
   @override
   State<AppointmentScreen> createState() => _AppointmentScreenState();
 }
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  final List<Map<String, dynamic>> doctors = [
+    {
+      "name": "Eng Abuubakar Ciise",
+      "experience": "12 Years Of Experience",
+      "hospital": "Baano HealthCare Technology",
+      "speciality": "Pediatric specialist",
+      "language": "English, Somali",
+      "charges": "\$6.00",
+      "rating": 4.5,
+      "image":
+          "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
+      "available": ["9:00", "11:30", "8:15", "10:40", "1:00 PM"]
+    },
+    {
+      "name": "Eng Adnaan Hassan ",
+      "experience": "100 Years Of Experience",
+      "hospital": "Somalia HealthCare Technology",
+      "speciality": "specialist",
+      "language": "Arabic, English",
+      "charges": "\$10.00",
+      "rating": 5.5,
+      "image":
+          "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
+      "available": [
+        "8:00",
+        "4:00",
+        "7:00",
+        "6:00",
+      ]
+    },
+  ];
   late List<String> availableTimes;
   int? _selectedIndex;
   int? _selectedPackage;
@@ -22,7 +54,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
-    availableTimes = List<String>.from(widget.doctor["available"] ?? []);
+    availableTimes = List<String>.from(doctors[1]["available"] ?? []);
     availableTimes = availableTimes.map((time) {
       DateTime dateTime = DateFormat("h:mm").parse(time);
       return DateFormat("h:mm a").format(dateTime); // Format to 12-hour AM/PM

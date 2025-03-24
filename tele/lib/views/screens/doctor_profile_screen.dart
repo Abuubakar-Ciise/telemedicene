@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
-  final Map<String, dynamic> doctor;
+  final DoctorList doctor;
 
   const DoctorProfileScreen({super.key, required this.doctor});
 
@@ -11,6 +13,9 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +36,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             // Profile Image
             CircleAvatar(
               radius: 60,
-              backgroundImage: NetworkImage(widget.doctor['image']),
+              backgroundImage: (widget.doctor.picture != null && widget.doctor.picture.isNotEmpty)
+                  ? NetworkImage('$baseUrl/${widget.doctor.picture}')
+                  : const AssetImage("assets/default_image.png"),
             ),
             const SizedBox(height: 16),
 
@@ -48,28 +55,27 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   children: [
                     // Professional Details Section
                     _buildSectionTitle("Professional Details"),
-                    _buildDetailRow("Full Name", widget.doctor['name']),
-                    _buildDetailRow("Hospital", widget.doctor['hospital']),
-                    _buildDetailRow("Speciality", widget.doctor['speciality']),
-                    _buildDetailRow("Experience", widget.doctor['experience']),
-                    _buildDetailRow("Language", widget.doctor['language']),
-                    _buildDetailRow("Consultation Fee", widget.doctor['charges']),
-                    // const Divider(),
+                    _buildDetailRow("Full Name", widget.doctor.name),
+                    _buildDetailRow("Hospital", widget.doctor.hospitalname),
+                    _buildDetailRow("Speciality", widget.doctor.speciality),
+                    _buildDetailRow("Experience", "${widget.doctor.experienceyears} years"),
+                    _buildDetailRow("Language", widget.doctor.countries),
+                    _buildDetailRow("Consultation Fee", "\$${widget.doctor.consultationfee}"),
 
                     // Basic Details Section
                     _buildSectionTitle("Basic Details"),
-                    // _buildDetailRow("Rating", "${}"),
-                    _buildRating(widget.doctor['rating']),
-                    // const Divider(),
+                    _buildRating(widget.doctor.rating ?? 0.0),
 
                     // About Me Section
                     _buildSectionTitle("About Me"),
-                    _buildDetailContainer(widget.doctor['about'] ?? "Passionate and experienced doctor providing the best healthcare services."),
-                    // const Divider(),
-                    SizedBox(height: 10,),
+                    _buildDetailContainer(
+                        "Passionate and experienced doctor providing the best healthcare services."),
+                    const SizedBox(height: 10),
+
                     // Extra Activities Section
                     _buildSectionTitle("Extra Activities"),
-                    _buildDetailContainer(widget.doctor['extraActivities'] ?? "Volunteers in medical camps and participates in community health programs."),
+                    _buildDetailContainer(
+                        "Volunteers in medical camps and participates in community health programs."),
                   ],
                 ),
               ),
@@ -104,7 +110,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-            margin: const EdgeInsets.only(top: 4,),
+            margin: const EdgeInsets.only(top: 4),
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
