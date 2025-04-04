@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/views/screens/appointment_screen.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';
 import 'package:tele/views/screens/patient/shift_appointment_screen.dart';
 

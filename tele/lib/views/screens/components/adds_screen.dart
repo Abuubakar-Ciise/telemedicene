@@ -1,0 +1,82 @@
+// import 'package:flutter/material.dart';
+
+// class AddsScreen extends StatefulWidget {
+//   final String imageUri;
+//   const AddsScreen({super.key, required this.imageUri});
+
+//   @override
+//   State<AddsScreen> createState() => _AddsScreenState();
+// }
+
+// class _AddsScreenState extends State<AddsScreen> {
+//    ImageProvider getImageProvider(String? uri) {
+//     if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
+//       return NetworkImage(uri!);
+//     } else {
+//       return AssetImage('assets/default_image.png');
+//     }
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       scrollDirection: Axis.horizontal,
+//       child: Row(
+//         children: List.generate(5, (index) {
+//           return Container(
+//               width: 200,
+//               height: 120,
+//               margin: EdgeInsets.only(right: 12),
+//               decoration: BoxDecoration(
+//                 borderRadius: BorderRadius.circular(12),
+//                 image: DecorationImage(
+//                   image: getImageProvider(widget.imageUri), // Replace with your own ad images
+//                   fit: BoxFit.cover,
+//                 ),
+//               ));
+//         }),
+//       ),
+//     );
+//   }
+// }
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+class AddsScreen extends StatefulWidget {
+  final String imageUri;
+  const AddsScreen({super.key, required this.imageUri});
+
+  @override
+  State<AddsScreen> createState() => _AddsScreenState();
+}
+
+class _AddsScreenState extends State<AddsScreen> {
+  static final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  ImageProvider getImageProvider(String? uri) {
+    if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
+      return NetworkImage('$baseUrl/$uri');
+    } else {
+      return AssetImage('assets/default_image.png');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+      width: 340,
+      height: 180,
+      margin: EdgeInsets.only(right: 10,top: 00),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        image: DecorationImage(
+          image: (widget.imageUri.isNotEmpty && widget.imageUri != 'N/A')
+              ? CachedNetworkImageProvider('$baseUrl/${widget.imageUri}')
+              : AssetImage('assets/default_image.png') as ImageProvider,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+}

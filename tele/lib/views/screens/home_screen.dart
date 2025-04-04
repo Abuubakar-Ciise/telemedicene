@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:tele/controllers/adds_controller.dart';
 
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
+import 'package:tele/views/screens/components/adds_screen.dart';
 import 'package:tele/views/screens/components/appointment_card.dart';
 import 'package:tele/views/screens/components/reusable.card.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
@@ -20,13 +24,57 @@ class _HomeScreenState extends State<HomeScreen> {
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
   final appoinmentsController = Get.put(AppoinmentsController());
+  final addsController = Get.put(AddsController());
   String username = "Loading...";
   String userId = "Loading...";
   String? picture;
+  int _currentIndex = 0;
+  ScrollController _scrollController = ScrollController();
+  Timer? _timer;
+  int hadda = 0;
+
+  void _startAutoScroll() {
+    _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
+      if (!mounted ||
+          addsController.adds.isEmpty ||
+          !_scrollController.hasClients) return;
+
+      final singleItemWidth =
+          350.0; // Adjust this to match AddsScreen width + margin
+      final targetPosition = _currentIndex * singleItemWidth;
+
+      _scrollController.animateTo(
+        targetPosition,
+        duration: Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+      setState(() {
+        hadda = _currentIndex;
+      });
+      _currentIndex++;
+      print("haddda $hadda");
+
+      if (_currentIndex >= addsController.adds.length) {
+        _currentIndex = 0; // Loop back to start
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     loadUserData();
+    // addsController.allAdds();
+    // _timer = Timer(Duration(seconds: 3),_scrollToPosition);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startAutoScroll();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   Future<void> loadUserData() async {
@@ -57,6 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": Icons.person_pin, "text": "self manage", 'route': null},
     {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
   ];
+
+  // void _scrollToPosition() {
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+  //         duration: Duration(seconds: 2), curve: Curves.easeInOut);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,75 +184,95 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Main Card with Title Centered
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 5,
-                color: const Color(0xff90B4CE),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 110,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: const DecorationImage(
-                            image: NetworkImage(
-                                'https://avatars.githubusercontent.com/u/138715168?v=4'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "30 Doctors available",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "Get free consultation for new users",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text(
-                                "Find a doctor",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+              // ADDS Row - Only Pictures in Horizontal Scrollable Containers
+              Obx(() {
+                if (addsController.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 9, 130, 13)),
+                    ),
+                  );
+                }
+                if (addsController.adds.isEmpty) {
+                  return Center(
+                    child: Text("No Adds Aviable"),
+                  );
+                }
+                // final imageUri = addsController.adds
+                // return SingleChildScrollView(
+                //   scrollDirection: Axis.horizontal,
+                //   controller: _scrollController,
+                //   child: Row(
+                //     children: addsController.adds.map((adds) {
+                //       print("dddddddddddddd ${adds.id}");
+                //       return AddsScreen(imageUri: adds.picture);
+                //     }).toList(),
+                //   ),
+                // );
+                return Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
-                ),
-              ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: _scrollController,
+                          child: Row(
+                            children: addsController.adds.map((adds) {
+                              // print("dddddddddddddd ${adds.id}");
+                              return AddsScreen(imageUri: adds.picture);
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // children: addsController.adds.map((adds) {
+                        children:
+                            addsController.adds.asMap().entries.map((entry) {
+                          // print("dddddddddddddd ${adds.id}");
+                          int index = entry.key;
+                          var adds = entry.value;
+                          // bool changeCircleColor = index == hadda;
+                          print(
+                              "dddddddddddddd ${'${adds.id} --- ${index} -- $hadda'}");
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(left: 10.0, bottom: 10),
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: index == hadda
+                                    ? Colors.green
+                                    : Colors.blueGrey[100],
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                );
+              }),
+
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 0,
@@ -228,8 +304,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                                content:
-                                    Text("No screen available for this service")),
+                                content: Text(
+                                    "No screen available for this service")),
                           );
                         }
                       },
@@ -241,227 +317,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 10,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
+                padding:
+                    EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
                 child: Text(
                   'Appointments',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
-              // Expanded(
-              //   child: Obx(() {
-              //     if (appoinmentsController.isLoading.value) {
-              //       return Center(
-              //         child: CircularProgressIndicator(
-              //           valueColor: AlwaysStoppedAnimation<Color>(
-              //               Color.fromARGB(255, 9, 130, 13)),
-              //         ),
-              //       );
-              //     }
-              //     if (appoinmentsController.appointmets.isEmpty) {
-              //       return Center(child: Text("No Appointments Found"));
-              //     }
-              //     return ListView.builder(
-              //       padding: EdgeInsets.zero, // Remove default padding
-                    
-              //       itemCount: appoinmentsController.appointmets.length,
-              //       itemBuilder: (context, index) {
-              //         final appointment =
-              //             appoinmentsController.appointmets[index];
-              //         return Padding(
-              //           padding: const EdgeInsets.symmetric(
-              //               vertical: 5), // Adjust spacing
-              //           child: AppointmentCard(
-              //             appointmentTime: appointment.shiftTime,
-              //             appointmentDate: appointment.appointmentDate,
-              //             doctorName: appointment.doctorName,
-              //             doctorImageUrl: appointment.doctorProfile,
-              //             status: appointment.status,
-              //           ),
-              //         );
-              //       },
-              //     );
-              //   }),
-              // ),
-        
+
               SizedBox(
-            height: 280,
-            child: Obx(() {
-                if (appoinmentsController.isLoading.value) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Color.fromARGB(255, 9, 130, 13)),
+                height: 220,
+                child: Obx(() {
+                  if (appoinmentsController.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Color.fromARGB(255, 9, 130, 13)),
+                      ),
+                    );
+                  }
+                  if (appoinmentsController.appointmets.isEmpty) {
+                    return Center(child: Text("No Appointments Found"));
+                  }
+                  return SingleChildScrollView(
+                    child: Column(
+                      children:
+                          appoinmentsController.appointmets.map((appointment) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: AppointmentCard(
+                            appointmentTime: appointment.shiftTime,
+                            appointmentDate: appointment.appointmentDate,
+                            doctorName: appointment.doctorName,
+                            doctorImageUrl: appointment.doctorProfile,
+                            status: appointment.status,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }),
               ),
-            );
-                }
-                if (appoinmentsController.appointmets.isEmpty) {
-            return Center(child: Text("No Appointments Found"));
-                }
-                return SingleChildScrollView(
-            child: Column(
-              children: appoinmentsController.appointmets.map((appointment) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: AppointmentCard(
-                    appointmentTime: appointment.shiftTime,
-                    appointmentDate: appointment.appointmentDate,
-                    doctorName: appointment.doctorName,
-                    doctorImageUrl: appointment.doctorProfile,
-                    status: appointment.status,
-                  ),
-                );
-              }).toList(),
-            ),
-                );
-              }),
-          ),
-              // const SizedBox(height: 10),
-              // "See More Appointments" Button
-              // TextButton(
-              //   onPressed: () {
-              //     // Navigator.push(
-              //     //   context,
-              //     //   MaterialPageRoute(
-              //     //     builder: (context) => AllAppointmentsScreen(), // Create this screen
-              //     //   ),
-              //     // );
-              //   },
-              //   child: const Text(
-              //     "See More Appointments",
-              //     style: TextStyle(fontSize: 16, color: Colors.blue),
-              //   ),
-              // ),
-              // AppointmentCard(
-              //   appointmentTime: "08:00 - 09:00",
-              //   appointmentDate: "Wed Jun 20",
-              //   doctorName: "Abuubakar",
-              //   doctorImageUrl:
-              //       "https://avatars.githubusercontent.com/u/138715168?v=4",
-              //   status: 0,
-              //   // Change this value (0 = Pending, 1 = Confirmed, 2 = Completed, any other = Cancelled)
-              // )
-        
-              // Card(
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(12),
-              //   ),
-              //   elevation: 2,
-              //   color: Colors.white,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         // Appointment date header
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             Text(
-              //               "Appointment date",
-              //               style: TextStyle(
-              //                 fontSize: 14,
-              //                 color: Colors.black54,
-              //               ),
-              //             ),
-              //             Row(
-              //               children: [
-              //                 Container(
-              //                   padding: EdgeInsets.symmetric(
-              //                       horizontal: 8, vertical: 0),
-              //                   decoration: BoxDecoration(
-              //                       color: Color.fromARGB(255, 9, 130, 13)
-              //                           .withOpacity(0.6),
-              //                       borderRadius: BorderRadius.circular(8)),
-              //                   child: Row(
-              //                     children: [
-              //                       Icon(Icons.check,
-              //                           color: Colors.white, size: 16),
-              //                       SizedBox(
-              //                         width: 4,
-              //                       ),
-              //                       Text(
-              //                         'Confirmed',
-              //                         style: TextStyle(
-              //                           fontSize: 14,
-              //                           fontWeight: FontWeight.bold,
-              //                           color: Colors.white,
-              //                         ),
-              //                       )
-              //                     ],
-              //                   ),
-              //                 )
-              //               ],
-              //             )
-              //           ],
-              //         ),
-              //         SizedBox(height: 8),
-              //         // Time slot row
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //           children: [
-              //             Row(
-              //               children: [
-              //                 Text(
-              //                   "08:00 ",
-              //                   style: TextStyle(
-              //                     fontSize: 16,
-              //                     fontWeight: FontWeight.bold,
-              //                     color: Colors.redAccent,
-              //                   ),
-              //                 ),
-              //                 Icon(
-              //                   Icons.arrow_right_alt,
-              //                   color: Colors.redAccent,
-              //                 ),
-              //                 Text(
-              //                   " 09:00",
-              //                   style: TextStyle(
-              //                     fontSize: 16,
-              //                     fontWeight: FontWeight.bold,
-              //                     color: Colors.redAccent,
-              //                   ),
-              //                 ),
-              //               ],
-              //             ),
-              //             Text(
-              //               "Wed Jun 20",
-              //               style: TextStyle(
-              //                 fontSize: 16,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: Colors.redAccent,
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //         SizedBox(height: 12),
-              //         // Doctor information
-              //         Row(
-              //           children: [
-              //             CircleAvatar(
-              //               radius: 18,
-              //               backgroundImage: NetworkImage(
-              //                   'https://avatars.githubusercontent.com/u/138715168?v=4'), // Replace with actual image
-              //             ),
-              //             SizedBox(width: 10),
-              //             Text(
-              //               "Abuubakar",
-              //               style: TextStyle(
-              //                 fontSize: 16,
-              //                 fontWeight: FontWeight.bold,
-              //               ),
-              //             ),
-              //             Spacer(),
-              //             CircleAvatar(
-              //               radius: 5,
-              //               backgroundColor:
-              //                   Colors.green, // Online status indicator
-              //             ),
-              //           ],
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // )
             ],
           ),
         ),

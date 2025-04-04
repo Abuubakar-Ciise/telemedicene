@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:tele/controllers/auth_controller.dart';
 import 'package:tele/views/screens/auth/register_screen.dart';
-import 'package:tele/views/screens/main_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -225,50 +223,13 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-  // Function to build password field with validation
-  // Widget buildPasswordField(String hint, TextEditingController controller) {
-  //   bool _obscureText = false;
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 12),
-  //     child: TextFormField(
-  //       controller: controller,
-  //       obscureText: _obscureText,
-  //       decoration: InputDecoration(
-  //         prefixIcon:
-  //             // const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
-  //             const Icon(Icons.lock, color: Colors.black),
-  //         suffixIcon: const Icon(Icons.visibility,
-  //             // color: Color.fromARGB(255, 9, 130, 13)),
-  //             color: Colors.black),
-  //         hintText: hint,
-  //         border: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(12),
-  //         ),
-  //         focusedBorder: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(12),
-  //           borderSide: const BorderSide(color: Colors.green, width: 2),
-  //         ),
-  //       ),
-  //       validator: (value) {
-  //         if (value == null || value.isEmpty) {
-  //           return "Please enter your password";
-  //         } else if (value.length < 6) {
-  //           return "Password must be at least 6 characters";
-  //         }
-  //         return null;
-  //       },
-  //     ),
-  //   );
-  // }
 }
 
 class PasswordField extends StatefulWidget {
   final String hint;
   final TextEditingController controller;
 
-  const PasswordField({Key? key, required this.hint, required this.controller})
-      : super(key: key);
+  const PasswordField({super.key, required this.hint, required this.controller});
 
   @override
   _PasswordFieldState createState() => _PasswordFieldState();

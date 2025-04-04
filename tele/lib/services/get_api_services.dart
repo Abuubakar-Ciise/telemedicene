@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:tele/Models/adds_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
@@ -184,5 +185,28 @@ class ApiGetServices {
       return [];
     }
   }
-  
+  // adds Api
+
+  static Future<List<AddsModel>> adds() async {
+    try {
+      final response = await http.post(Uri.parse('$baseUrl/adds'));
+      print("is call you ");
+      if(response.statusCode == 200) {
+         print("is call you ${response.body}");
+        final data = jsonDecode(response.body);
+        if(data['success']){
+          return (data['record'] as List)
+          .map((adds) => AddsModel.fromJson(adds))
+          .toList();
+        }else{
+          final data = jsonDecode(response.body);
+          throw Exception("API Error: ${data['message']}");
+        }
+        
+      }
+      throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      return [];
+    }
+  }
 }
