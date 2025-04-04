@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/Models/hospital_model.dart';
+import 'package:tele/Models/patient_appointements_model.dart';
+import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/routes/app_routes.dart';
 import 'package:tele/services/get_api_services.dart';
 // import 'package:tele/views/a.dart';
@@ -14,23 +17,29 @@ import 'package:toastification/toastification.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
-  await testApi();
+  // await testApi();
+
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));
 }
-Future<void> testApi () async {
-  List<Hospital> hospital = await ApiGetServices().fetchHospitals();
-  List<DoctorList> doctors = await ApiGetServices().fechDoctorsList();
-   print("Doctors List: ${doctors.map((d) => d.rating).toList()}");
-   print("hospital List: ${hospital.map((d) => d.name).toList()}");
-}
+
+// Future<void> testApi() async {
+//   final appoinmentsController = Get.put(AppoinmentsController());
+//   //  await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
+//   // final test = await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
+//   // List<PatientAppointementsModel> data = await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
+//       await appoinmentsController.fechtAppointments('67d926d506e5888f7411d368');
+//   print(appoinmentsController.appointmets);
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   Future<String?> _isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('auth_token');
+    // String? userId = prefs.getString('userId');
+    // print("hhhhhhhhhhhh $userId");
     String? userType = prefs.getString('userType');
 
     if (token != null && token.isNotEmpty) {
@@ -42,9 +51,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return FutureBuilder(
-      
         future: _isLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -52,26 +59,28 @@ class MyApp extends StatelessWidget {
               home: Scaffold(
                 body: Center(
                   child: CircularProgressIndicator(
-                   valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 9, 130, 13)),
-                ),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 9, 130, 13)),
+                  ),
                 ),
               ),
             );
           } else {
             // bool isLoggIn = snapshot.data ?? false;
             String? userType = snapshot.data;
-            String initialRoute  = '/login';
-            if(userType == "0") {
+            String initialRoute = '/login';
+            if (userType == "0") {
               initialRoute = '/doctormainscreen';
-            }else if(userType == "1"){
+            } else if (userType == "1") {
               initialRoute = '/mainscreen';
               // initialRoute = '/HospitalList';
               // initialRoute = '/doctorList';
+              // initialRoute = '/shitsScreen';
             }
-            
+
             return GetMaterialApp(
               debugShowCheckedModeBanner: false,
-              initialRoute: initialRoute ,
+              initialRoute: initialRoute,
               getPages: AppRoutes.routes,
             );
           }

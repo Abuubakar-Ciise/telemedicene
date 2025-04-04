@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tele/views/screens/TransactionHistoryScreen.dart';
-import 'package:tele/views/screens/contact_us_screen.dart';
+import 'package:tele/views/screens/patient/TransactionHistoryScreen.dart';
+import 'package:tele/views/screens/patient/contact_us_screen.dart';
 import 'package:tele/views/screens/home_screen.dart';
+import 'package:tele/views/screens/notification_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,7 +22,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> screens = [
     HomeScreen(),
-    Center(child: Text("Notification Screen")),
+    // Center(child: Text("Notification Screen")),
+    NotificationScreen(),
     TransactionHistoryScreen(),
     ContactUsScreen(),
     

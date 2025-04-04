@@ -47,10 +47,17 @@ dependencies:
   toastification: ^3.0.2
   dart_jsonwebtoken: ^3.2.0
   cached_network_image: ^3.4.1
+  lottie: ^3.3.1
+  flutter_lints: ^5.0.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
   flutter_test:
     sdk: flutter
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.jpg"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -73,6 +80,7 @@ flutter:
     - assets/images/
     - .env
     - assets/
+    - assets/animations/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

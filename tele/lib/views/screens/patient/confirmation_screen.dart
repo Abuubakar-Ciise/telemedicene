@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/views/screens/check_payment_Screen.dart';
+import 'package:tele/controllers/book_and_pay_controller.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final Map<String, String> patientData;
   final DoctorList doctor;
-  final DateTime selectedDay;
+  final String selectedDay;
+  final String selectedDate;
   final String? selectedTime;
+  final String patientId;
   final Map<String, dynamic>? selectedPackage;
 
-  const ConfirmationScreen({
+   ConfirmationScreen({
     super.key,
     required this.patientData,
     required this.doctor,
     required this.selectedDay,
+    required this.patientId,
+    required this.selectedDate,
     required this.selectedTime,
     this.selectedPackage,
   });
+  final bookAndPayController = Get.put(BookAndPayController());
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
-
+  // int doctorFee =  d
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +43,11 @@ class ConfirmationScreen extends StatelessWidget {
         foregroundColor: Colors.black,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: Obx(() {
+        if(bookAndPayController.isLoading.value){
+          return const Center(child: CircularProgressIndicator());
+        }
+        return SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +55,7 @@ class ConfirmationScreen extends StatelessWidget {
             _buildDoctorCard(),
             const SizedBox(height: 16),
             _sectionTitle('Scheduled Appointment'),
-            _infoRow('Date', DateFormat('MMM d, yyyy').format(selectedDay)),
+            _infoRow('Date', selectedDate),
             _infoRow('Time', selectedTime ?? 'N/A'),
             _infoRow('Duration', '30 Minutes'),
             const SizedBox(height: 16),
@@ -55,13 +64,40 @@ class ConfirmationScreen extends StatelessWidget {
             _infoRow('phone', patientData['phone'] ?? 'N/A'),
             _infoRow('Gender', patientData['gender'] ?? 'N/A'),
             _infoRow('Age', patientData['age'] ?? 'N/A'),
+            _infoRow('problem', patientData['problem'] ?? 'N/A'),
             const SizedBox(height: 16),
             _buildSelectedPackageCard(),
             const SizedBox(height: 24),
             _buildPayButton(context),
           ],
         ),
-      ),
+      );
+      }),
+      // body: SingleChildScrollView(
+      //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      //   child: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       _buildDoctorCard(),
+      //       const SizedBox(height: 16),
+      //       _sectionTitle('Scheduled Appointment'),
+      //       _infoRow('Date', DateFormat('MMM d, yyyy').format(selectedDay)),
+      //       _infoRow('Time', selectedTime ?? 'N/A'),
+      //       _infoRow('Duration', '30 Minutes'),
+      //       const SizedBox(height: 16),
+      //       _sectionTitle('Patient Information'),
+      //       _infoRow('Name', patientData['name'] ?? 'N/A'),
+      //       _infoRow('phone', patientData['phone'] ?? 'N/A'),
+      //       _infoRow('Gender', patientData['gender'] ?? 'N/A'),
+      //       _infoRow('Age', patientData['age'] ?? 'N/A'),
+      //       _infoRow('problem', patientData['problem'] ?? 'N/A'),
+      //       const SizedBox(height: 16),
+      //       _buildSelectedPackageCard(),
+      //       const SizedBox(height: 24),
+      //       _buildPayButton(context),
+      //     ],
+      //   ),
+      // ),
     );
   }
 
@@ -201,21 +237,34 @@ class ConfirmationScreen extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
-        onPressed: () {
+        onPressed: () async {
           // Handle payment
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CheckPaymentScreen(
-                  phone: patientData['phone'] ?? 'N/A',
-                  charges: doctor.consultationfee.toString(),
-                  selectedDay: DateFormat('MMM d, yyyy').format(selectedDay),
-                  userName: patientData['name'] ?? 'N/A'),
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => CheckPaymentScreen(
+          //         phone: patientData['phone'] ?? 'N/A',
+          //         charges: doctor.consultationfee.toString(),
+          //         selectedDay: DateFormat('MMM d, yyyy').format(selectedDay),
+          //         userName: patientData['name'] ?? 'N/A'),
+          //   ),
+          // );
+          // print("hhhhhhhhhhhhh $selectedDate and $selectedDay");
+
+          await bookAndPayController.bookAndPayController(
+            doctor.id,
+            patientId, 
+            selectedTime!, 
+            patientData['phone']!, 
+            doctor.phone, 
+            doctor.consultationfee, 
+            selectedDate, 
+            patientData['problem']!);
+         print("doctor_id -- ${doctor.id} patientId -- $patientId selectedTime -- $selectedTime patientPone! -- ${patientData['phone']!} doctorPone -- ${doctor.phone} --doctor fee -- ${doctor.consultationfee}  selectedDate -- $selectedDate problem --- ${patientData['problem']}");
         },
+        
         child: Text(
-          'Payment ${doctor.consultationfee.toString()}',
+          'Payment ${doctor.consultationfee.toString()}\$',
           style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),

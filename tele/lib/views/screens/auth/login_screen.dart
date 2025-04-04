@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:tele/controllers/auth_controller.dart';
-import 'package:tele/views/auth/register_screen.dart';
+import 'package:tele/views/screens/auth/register_screen.dart';
 import 'package:tele/views/screens/main_screen.dart';
 
 class LoginScreen extends StatelessWidget {

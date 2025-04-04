@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/views/components/available_time.dart';
-import 'package:tele/views/components/select_package.dart';
-import 'package:tele/views/screens/PatientDetailsScreen.dart';
+import 'package:tele/views/screens/components/available_time.dart';
+import 'package:tele/views/screens/components/select_package.dart';
+import 'package:tele/views/screens/patient/PatientDetailsScreen.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final DoctorList doctor;
@@ -134,7 +134,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               ),
               SelectPackageWidget(
                 selectedTime: _selectedTime,
-                selectedDay: _selectedDay,
+                // selectedDate: _selectedDay,
+                selectedDate:  DateFormat('yyyy-MM-dd').format(_selectedDay),
                 doctor: widget.doctor,
                 selectedPackage: _selectedPackage,
                 onPackageSelected: (index) {

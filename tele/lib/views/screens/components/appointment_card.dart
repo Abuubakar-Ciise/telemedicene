@@ -1,0 +1,163 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
+
+class AppointmentCard extends StatefulWidget {
+  
+  final String appointmentTime;
+  final String appointmentDate;
+  final String doctorName;
+  final String doctorImageUrl;
+  final int status; // Status number (0, 1, 2, or other)
+
+  const AppointmentCard({
+    super.key,
+    required this.appointmentTime,
+    required this.appointmentDate,
+    required this.doctorName,
+    required this.doctorImageUrl,
+    required this.status,
+  });
+  @override
+  _AppointmentCardState createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends State<AppointmentCard> {
+  
+
+  @override
+  Widget build(BuildContext context) {
+    // DateTime appointmentDate = DateTime.parse(widget.appointmentDate);
+     DateFormat inputFormat = DateFormat('dd MMMM yyyy'); // Input format for "02 April 2025"
+    DateTime appointmentDate = inputFormat.parse(widget.appointmentDate);
+
+    // Format the date
+    String formattedDate = DateFormat('EEE MMMM yy').format(appointmentDate);
+    // Determine status text and color
+    Map<int, Map<String, dynamic>> statusInfo = {
+      0: {"text": "Pending", "color": Colors.orange},
+      1: {"text": "Confirmed", "color": Colors.green},
+      2: {"text": "Completed", "color": Colors.blue},
+    };
+
+    final statusText = statusInfo[widget.status]?["text"] ?? "Cancelled";
+    final statusColor = statusInfo[widget.status]?["color"] ?? Colors.red;
+     final String baseUrl =
+      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 2,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 8,top: 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Appointment date header
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Appointment date",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.circle, color: Colors.white, size: 12),
+                      const SizedBox(width: 4),
+                      Text(
+                        statusText,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Time slot row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      widget.appointmentTime,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                    // const Icon(Icons.arrow_right_alt, color: Colors.redAccent),
+                    // Text(
+                    //   " $appointmentTime",
+                    //   style: const TextStyle(
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: Colors.redAccent,
+                    //   ),
+                    // ),
+                  ],
+                ),
+                Text(
+                 formattedDate,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.redAccent,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Doctor information
+            Row(
+              children: [
+                CircleAvatar(
+                      radius: 28,
+                      backgroundImage:
+                          (widget.doctorImageUrl?.isNotEmpty ?? false) && widget.doctorImageUrl != "N/A"
+                              ? NetworkImage('$baseUrl/${widget.doctorImageUrl}')
+                              : AssetImage('assets/default_image.png')
+                                  as ImageProvider,
+                      backgroundColor: Colors.white,
+                    ),
+                const SizedBox(width: 10),
+                Text(
+                  widget.doctorName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                const CircleAvatar(
+                  radius: 5,
+                  backgroundColor: Colors.green, // Online status indicator
+                ),
+              ],
+            ),
+            
+          ],
+        ),
+      ),
+    );
+  }
+}

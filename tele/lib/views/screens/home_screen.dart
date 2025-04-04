@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+
+import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/services/StorageService.dart';
-import 'package:tele/views/Hospitals/HospitalListScreen.dart';
-import 'package:tele/views/auth/login_screen.dart';
-import 'package:tele/views/components/reusable.card.dart';
-import 'package:tele/views/screens/Video_Consultation_Screen.dart';
-import 'package:tele/views/screens/user_profile.dart';
+import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
+import 'package:tele/views/screens/components/appointment_card.dart';
+import 'package:tele/views/screens/components/reusable.card.dart';
+import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
+import 'package:tele/views/screens/patient/user_profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  final appoinmentsController = Get.put(AppoinmentsController());
   String username = "Loading...";
   String userId = "Loading...";
   String? picture;
@@ -32,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       username = firstName;
       userId = userData["userId"] ?? "Unknown";
-       picture = userData['picture'] ?? "N/A";
+      picture = userData['picture'] ?? "N/A";
+      appoinmentsController.fechtAppointments(userId);
     });
   }
 
@@ -56,312 +61,409 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Welcome Back,",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[900],
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      username,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()));
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                        )
-                      ],
-                    ),
-                    child:  CircleAvatar(
-                      radius: 28,
-                      backgroundImage: (picture?.isNotEmpty ?? false) && picture != "N/A"
-                            ? NetworkImage('$baseUrl/$picture')
-                            : AssetImage('assets/default_image.png')
-                                as ImageProvider,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Main Card with Title Centered
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 5,
-              color: const Color(0xff90B4CE),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: const DecorationImage(
-                          image: NetworkImage(
-                              'https://avatars.githubusercontent.com/u/138715168?v=4'),
-                          fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Welcome Back,",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[900],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "30 Doctors available",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Get free consultation for new users",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text(
-                              "Find a doctor",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 5),
+                      Text(
+                        username,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[700],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 0,
-              ),
-              child: GridView.builder(
-                shrinkWrap:
-                    true, // Prevents unnecessary scrolling inside SingleChildScrollView
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
-                itemCount: services.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, // 4 cards per row
-                  crossAxisSpacing: 18, // Spacing between columns
-                  mainAxisSpacing: 18, // Spacing between rows
-                  childAspectRatio: 1, // Square-like shape
-                ),
-                itemBuilder: (context, index) {
-                  return ReusableCard(
-                    icon: services[index]["icon"],
-                    text: services[index]["text"],
-                    iconColor: Color.fromARGB(255, 9, 130, 13),
+                    ],
+                  ),
+                  GestureDetector(
                     onTap: () {
-                      if (services[index]['route'] != null) {
-                        Navigator.push(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => services[index]['route']),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content:
-                                  Text("No screen available for this service")),
-                        );
-                      }
+                              builder: (context) => ProfileScreen()));
                     },
-                  );
-                },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          )
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundImage:
+                            (picture?.isNotEmpty ?? false) && picture != "N/A"
+                                ? NetworkImage('$baseUrl/$picture')
+                                : AssetImage('assets/default_image.png')
+                                    as ImageProvider,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text(
-                'Appointments',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 2,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Appointment date header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Appointment date",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black54,
+              const SizedBox(height: 20),
+              // Main Card with Title Centered
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 5,
+                color: const Color(0xff90B4CE),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 110,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                                'https://avatars.githubusercontent.com/u/138715168?v=4'),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        Row(
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 0),
-                              decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 9, 130, 13)
-                                      .withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.check,
-                                      color: Colors.white, size: 16),
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Text(
-                                    'Confirmed',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    // Time slot row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "08:00 ",
+                            const Text(
+                              "30 Doctors available",
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.redAccent,
+                                color: Colors.white,
                               ),
                             ),
-                            Icon(
-                              Icons.arrow_right_alt,
-                              color: Colors.redAccent,
-                            ),
-                            Text(
-                              " 09:00",
+                            const SizedBox(height: 8),
+                            const Text(
+                              "Get free consultation for new users",
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.redAccent,
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                "Find a doctor",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.green,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        Text(
-                          "Wed Jun 20",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
-                    // Doctor information
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundImage: NetworkImage(
-                              'https://avatars.githubusercontent.com/u/138715168?v=4'), // Replace with actual image
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Abuubakar",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Spacer(),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor:
-                              Colors.green, // Online status indicator
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 0,
+                ),
+                child: GridView.builder(
+                  shrinkWrap:
+                      true, // Prevents unnecessary scrolling inside SingleChildScrollView
+                  physics:
+                      const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
+                  itemCount: services.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4, // 4 cards per row
+                    crossAxisSpacing: 18, // Spacing between columns
+                    mainAxisSpacing: 18, // Spacing between rows
+                    childAspectRatio: 1, // Square-like shape
+                  ),
+                  itemBuilder: (context, index) {
+                    return ReusableCard(
+                      icon: services[index]["icon"],
+                      text: services[index]["text"],
+                      iconColor: Color.fromARGB(255, 9, 130, 13),
+                      onTap: () {
+                        if (services[index]['route'] != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => services[index]['route']),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text("No screen available for this service")),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 0),
+                child: Text(
+                  'Appointments',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              // Expanded(
+              //   child: Obx(() {
+              //     if (appoinmentsController.isLoading.value) {
+              //       return Center(
+              //         child: CircularProgressIndicator(
+              //           valueColor: AlwaysStoppedAnimation<Color>(
+              //               Color.fromARGB(255, 9, 130, 13)),
+              //         ),
+              //       );
+              //     }
+              //     if (appoinmentsController.appointmets.isEmpty) {
+              //       return Center(child: Text("No Appointments Found"));
+              //     }
+              //     return ListView.builder(
+              //       padding: EdgeInsets.zero, // Remove default padding
+                    
+              //       itemCount: appoinmentsController.appointmets.length,
+              //       itemBuilder: (context, index) {
+              //         final appointment =
+              //             appoinmentsController.appointmets[index];
+              //         return Padding(
+              //           padding: const EdgeInsets.symmetric(
+              //               vertical: 5), // Adjust spacing
+              //           child: AppointmentCard(
+              //             appointmentTime: appointment.shiftTime,
+              //             appointmentDate: appointment.appointmentDate,
+              //             doctorName: appointment.doctorName,
+              //             doctorImageUrl: appointment.doctorProfile,
+              //             status: appointment.status,
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   }),
+              // ),
+        
+              SizedBox(
+            height: 280,
+            child: Obx(() {
+                if (appoinmentsController.isLoading.value) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Color.fromARGB(255, 9, 130, 13)),
+              ),
+            );
+                }
+                if (appoinmentsController.appointmets.isEmpty) {
+            return Center(child: Text("No Appointments Found"));
+                }
+                return SingleChildScrollView(
+            child: Column(
+              children: appoinmentsController.appointmets.map((appointment) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: AppointmentCard(
+                    appointmentTime: appointment.shiftTime,
+                    appointmentDate: appointment.appointmentDate,
+                    doctorName: appointment.doctorName,
+                    doctorImageUrl: appointment.doctorProfile,
+                    status: appointment.status,
+                  ),
+                );
+              }).toList(),
+            ),
+                );
+              }),
+          ),
+              // const SizedBox(height: 10),
+              // "See More Appointments" Button
+              // TextButton(
+              //   onPressed: () {
+              //     // Navigator.push(
+              //     //   context,
+              //     //   MaterialPageRoute(
+              //     //     builder: (context) => AllAppointmentsScreen(), // Create this screen
+              //     //   ),
+              //     // );
+              //   },
+              //   child: const Text(
+              //     "See More Appointments",
+              //     style: TextStyle(fontSize: 16, color: Colors.blue),
+              //   ),
+              // ),
+              // AppointmentCard(
+              //   appointmentTime: "08:00 - 09:00",
+              //   appointmentDate: "Wed Jun 20",
+              //   doctorName: "Abuubakar",
+              //   doctorImageUrl:
+              //       "https://avatars.githubusercontent.com/u/138715168?v=4",
+              //   status: 0,
+              //   // Change this value (0 = Pending, 1 = Confirmed, 2 = Completed, any other = Cancelled)
+              // )
+        
+              // Card(
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   elevation: 2,
+              //   color: Colors.white,
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         // Appointment date header
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               "Appointment date",
+              //               style: TextStyle(
+              //                 fontSize: 14,
+              //                 color: Colors.black54,
+              //               ),
+              //             ),
+              //             Row(
+              //               children: [
+              //                 Container(
+              //                   padding: EdgeInsets.symmetric(
+              //                       horizontal: 8, vertical: 0),
+              //                   decoration: BoxDecoration(
+              //                       color: Color.fromARGB(255, 9, 130, 13)
+              //                           .withOpacity(0.6),
+              //                       borderRadius: BorderRadius.circular(8)),
+              //                   child: Row(
+              //                     children: [
+              //                       Icon(Icons.check,
+              //                           color: Colors.white, size: 16),
+              //                       SizedBox(
+              //                         width: 4,
+              //                       ),
+              //                       Text(
+              //                         'Confirmed',
+              //                         style: TextStyle(
+              //                           fontSize: 14,
+              //                           fontWeight: FontWeight.bold,
+              //                           color: Colors.white,
+              //                         ),
+              //                       )
+              //                     ],
+              //                   ),
+              //                 )
+              //               ],
+              //             )
+              //           ],
+              //         ),
+              //         SizedBox(height: 8),
+              //         // Time slot row
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Row(
+              //               children: [
+              //                 Text(
+              //                   "08:00 ",
+              //                   style: TextStyle(
+              //                     fontSize: 16,
+              //                     fontWeight: FontWeight.bold,
+              //                     color: Colors.redAccent,
+              //                   ),
+              //                 ),
+              //                 Icon(
+              //                   Icons.arrow_right_alt,
+              //                   color: Colors.redAccent,
+              //                 ),
+              //                 Text(
+              //                   " 09:00",
+              //                   style: TextStyle(
+              //                     fontSize: 16,
+              //                     fontWeight: FontWeight.bold,
+              //                     color: Colors.redAccent,
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //             Text(
+              //               "Wed Jun 20",
+              //               style: TextStyle(
+              //                 fontSize: 16,
+              //                 fontWeight: FontWeight.bold,
+              //                 color: Colors.redAccent,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //         SizedBox(height: 12),
+              //         // Doctor information
+              //         Row(
+              //           children: [
+              //             CircleAvatar(
+              //               radius: 18,
+              //               backgroundImage: NetworkImage(
+              //                   'https://avatars.githubusercontent.com/u/138715168?v=4'), // Replace with actual image
+              //             ),
+              //             SizedBox(width: 10),
+              //             Text(
+              //               "Abuubakar",
+              //               style: TextStyle(
+              //                 fontSize: 16,
+              //                 fontWeight: FontWeight.bold,
+              //               ),
+              //             ),
+              //             Spacer(),
+              //             CircleAvatar(
+              //               radius: 5,
+              //               backgroundColor:
+              //                   Colors.green, // Online status indicator
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // )
+            ],
+          ),
         ),
       ),
     );

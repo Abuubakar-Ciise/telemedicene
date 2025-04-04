@@ -34,7 +34,7 @@ class ContactUsScreen extends StatelessWidget {
                 /// App Logo
                 Center(
                   child: Image.asset(
-                    'assets/images/logo.jpg', // Ensure this image exists in your assets folder
+                    'assets/images/app_icon.jpg', // Ensure this image exists in your assets folder
                     width: 100,
                     height: 100,
                     fit: BoxFit.contain,

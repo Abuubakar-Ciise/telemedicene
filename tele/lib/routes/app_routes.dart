@@ -1,12 +1,13 @@
 
 
 import 'package:get/get.dart';
-import 'package:tele/views/DoctorScreens/doctor_main_screen.dart';
-import 'package:tele/views/Hospitals/HospitalListScreen.dart';
-import 'package:tele/views/auth/login_screen.dart';
-import 'package:tele/views/auth/register_screen.dart';
-import 'package:tele/views/screens/Video_Consultation_Screen.dart';
+import 'package:tele/views/screens/DoctorScreens/doctor_main_screen.dart';
+import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
+import 'package:tele/views/screens/auth/login_screen.dart';
+import 'package:tele/views/screens/auth/register_screen.dart';
+import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/main_screen.dart';
+import 'package:tele/views/screens/patient/shift_appointment_screen.dart';
 
 class AppRoutes{
   static final routes = [
@@ -16,5 +17,6 @@ class AppRoutes{
     GetPage(name: '/doctormainscreen', page: () => DoctorMainScreen()),
     GetPage(name: '/HospitalList', page: () => HospitalListScreen()),
     GetPage(name: '/doctorList', page: () => VideoConsultationScreen()),
+    GetPage(name: '/shitsScreen', page: () => ShiftAppointmentScreen(doctor: Get.arguments,)),
   ];
 }

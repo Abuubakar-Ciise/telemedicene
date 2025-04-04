@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/views/screens/PatientDetailsScreen.dart';
+import 'package:tele/views/screens/patient/PatientDetailsScreen.dart';
 
 class SelectPackageWidget extends StatefulWidget {
    final DoctorList doctor;
-  final DateTime selectedDay;
+  final String selectedDate;
   final String? selectedTime;
   final Function(int) onPackageSelected;
   final int? selectedPackage;
@@ -14,7 +14,7 @@ class SelectPackageWidget extends StatefulWidget {
     required this.onPackageSelected,
     required this.selectedPackage,
     required this.doctor,
-    required this.selectedDay,
+    required this.selectedDate,
     required this.selectedTime,
   });
 
@@ -140,7 +140,7 @@ class _SelectPackageWidgetState extends State<SelectPackageWidget> {
                       builder: (context) => PatientDetailsScreen(
                             doctor: widget.doctor,
                             selectedPackage: packages[widget.selectedPackage!],
-                            selectedDay: widget.selectedDay,
+                            selectedDate: widget.selectedDate,
                             selectedTime: widget.selectedTime,
                             // selectedPackage: widget.selectedPackage!,
                           )));

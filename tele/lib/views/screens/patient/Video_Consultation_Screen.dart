@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/get_core.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
-import 'package:tele/views/components/doctor_card.dart';
-import 'package:tele/views/screens/appointment_screen.dart';
-import 'package:tele/views/screens/doctor_profile_screen.dart';
+import 'package:tele/views/screens/components/doctor_card.dart';
+
 
 class VideoConsultationScreen extends StatefulWidget {
   const VideoConsultationScreen({super.key});
@@ -18,52 +16,6 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   final doctorListController = Get.put(DoctorListController());
-
-  final List<Map<String, dynamic>> doctors = [
-    {
-      "name": "Eng Abuubakar Ciise",
-      "experience": "12 Years Of Experience",
-      "hospital": "Baano HealthCare Technology",
-      "speciality": "Pediatric specialist",
-      "language": "English, Somali",
-      "charges": "\$6.00",
-      "rating": 4.5,
-      "image":
-          "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
-      "available": ["9:00", "11:30", "8:15", "10:40", "1:00 PM"]
-    },
-    {
-      "name": "Eng Adnaan Hassan ",
-      "experience": "100 Years Of Experience",
-      "hospital": "Somalia HealthCare Technology",
-      "speciality": "specialist",
-      "language": "Arabic, English",
-      "charges": "\$10.00",
-      "rating": 5.5,
-      "image":
-          "https://avatars.githubusercontent.com/u/138715168?v=4", // Replace with actual URL
-      "available": [
-        "8:00",
-        "4:00",
-        "7:00",
-        "6:00",
-      ]
-    },
-  ];
-  void addDoctor() {
-    setState(() {
-      doctors.add({
-        "name": "Dr. New Doctor",
-        "experience": "5 Years Of Experience",
-        "hospital": "New Hospital",
-        "speciality": "General Physician",
-        "language": "English, Arabic",
-        "charges": "\$10.00",
-        "rating": 4.8,
-        "image": "https://via.placeholder.com/150", // Placeholder image URL
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,20 +48,6 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
           const SizedBox(width: 10),
         ],
       ),
-      // body: SingleChildScrollView(
-      //   child: Padding(
-      //     padding: const EdgeInsets.all(16.0),
-      //     child: Column(
-      //       children: [
-      //         DoctorCard(),
-      //         const SizedBox(height: 10),
-      //         DoctorCard(),
-      //         const SizedBox(height: 10),
-      //         DoctorCard(),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Obx(() {
@@ -143,10 +81,6 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
               },
             );
           })),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: addDoctor, // Call the addDoctor function
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 }

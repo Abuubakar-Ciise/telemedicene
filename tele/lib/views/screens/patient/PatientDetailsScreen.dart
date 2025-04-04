@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/services/StorageService.dart';
-import 'package:tele/views/screens/confirmation_screen.dart';
+import 'package:tele/views/screens/patient/confirmation_screen.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
   final DoctorList doctor;
-  final DateTime selectedDay;
+  final String selectedDate;
   final String? selectedTime;
   final Map<String, dynamic>? selectedPackage;
 
   const PatientDetailsScreen({
     super.key,
     required this.doctor,
-    required this.selectedDay,
+    required this.selectedDate,
     required this.selectedTime,
     this.selectedPackage,
   });
@@ -29,6 +29,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
   TextEditingController problemController = TextEditingController();
   String m = '';
   int selectedGender = 0;
+  String patientId = '';
 
   Future<void> loadUserData() async {
     Map<String,String?> userData =await StorageService.getUserData();
@@ -38,6 +39,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
       nameController.text = userData['username'] ?? '';
       phoneController.text = userData['phone'] ?? '';
       ageController.text = userData['age'] ?? '';
+      patientId = userData['userId'] ?? '';
       if(gender == 'Male'){
         selectedGender = 0;
       }else if(gender == 'Female'){
@@ -51,12 +53,6 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
   void initState() {
     super.initState();
     loadUserData();
-    // // Check if selectedPackage is not null and extract relevant info
-    // if (widget.selectedPackage != null) {
-    //   m = widget.selectedPackage?['title'] ?? ''; // Set name based on package title
-    // }
-
-    // nameController.text = m; // Set the nameController text as the extracted package title
   }
 
   @override
@@ -97,6 +93,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             TextField(
+              readOnly: true,
               controller: nameController,
               decoration: InputDecoration(
                 hintText: "Enter your name",
@@ -133,6 +130,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             TextField(
+              readOnly: true,
               controller: ageController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
@@ -151,17 +149,15 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             const Text("Gender",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
+            
             ToggleButtons(
+              
               borderRadius: BorderRadius.circular(10),
               selectedColor: Colors.white,
               fillColor: Color.fromARGB(255, 9, 130, 13),
               color: Colors.black,
               isSelected: [selectedGender == 0, selectedGender == 1],
-              onPressed: (int index) {
-                setState(() {
-                  selectedGender = index;
-                });
-              },
+              onPressed: (_) {},
               children: [
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -211,9 +207,11 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                     builder: (context) => ConfirmationScreen(
                       patientData: patientData,
                       doctor: widget.doctor,
-                      selectedDay: widget.selectedDay,
+                      selectedDay: widget.selectedDate,
                       selectedTime: widget.selectedTime,
                       selectedPackage: widget.selectedPackage,
+                      selectedDate:widget.selectedDate,
+                      patientId: patientId,
                     ),
                   ),
                 );

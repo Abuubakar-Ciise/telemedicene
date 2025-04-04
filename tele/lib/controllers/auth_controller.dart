@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:tele/services/auth_services.dart';
-import 'package:tele/views/auth/login_screen.dart';
+import 'package:tele/views/screens/auth/login_screen.dart';
 import 'package:toastification/toastification.dart';
 
 class AuthController extends GetxController {

@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/appointment_screen.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';
+import 'package:tele/views/screens/patient/shift_appointment_screen.dart';
 
 class DoctorCard extends StatefulWidget {
   final DoctorList doctor;
@@ -109,7 +110,9 @@ class _DoctorCardState extends State<DoctorCard> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              AppointmentScreen(doctor: widget.doctor)),
+                              // AppointmentScreen(doctor: widget.doctor)
+                              ShiftAppointmentScreen(doctor: widget.doctor)
+                              ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -158,6 +158,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         allowHalfRating: true,
         itemCount: 5,
         itemSize: 30,
+         ignoreGestures: true,
         itemPadding: const EdgeInsets.symmetric(horizontal: 2),
         itemBuilder: (context, _) => const Icon(Icons.star, color: Colors.amber),
         onRatingUpdate: (rating) {},
