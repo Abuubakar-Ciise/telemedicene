@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
-import 'package:tele/controllers/book_and_pay_controller.dart';
 import 'package:tele/controllers/payment_controller.dart';
 import 'package:tele/views/screens/PaymentStatusScreen.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
@@ -26,7 +25,6 @@ class ConfirmationScreen extends StatelessWidget {
     required this.selectedTime,
     this.selectedPackage,
   });
-  final bookAndPayController = Get.put(BookAndPayController());
   final paymentController = Get.put(PaymentController());
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
@@ -83,31 +81,6 @@ class ConfirmationScreen extends StatelessWidget {
           ),
         );
       }),
-      // body: SingleChildScrollView(
-      //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       _buildDoctorCard(),
-      //       const SizedBox(height: 16),
-      //       _sectionTitle('Scheduled Appointment'),
-      //       _infoRow('Date', DateFormat('MMM d, yyyy').format(selectedDay)),
-      //       _infoRow('Time', selectedTime ?? 'N/A'),
-      //       _infoRow('Duration', '30 Minutes'),
-      //       const SizedBox(height: 16),
-      //       _sectionTitle('Patient Information'),
-      //       _infoRow('Name', patientData['name'] ?? 'N/A'),
-      //       _infoRow('phone', patientData['phone'] ?? 'N/A'),
-      //       _infoRow('Gender', patientData['gender'] ?? 'N/A'),
-      //       _infoRow('Age', patientData['age'] ?? 'N/A'),
-      //       _infoRow('problem', patientData['problem'] ?? 'N/A'),
-      //       const SizedBox(height: 16),
-      //       _buildSelectedPackageCard(),
-      //       const SizedBox(height: 24),
-      //       _buildPayButton(context),
-      //     ],
-      //   ),
-      // ),
     );
   }
 
@@ -287,17 +260,6 @@ class ConfirmationScreen extends StatelessWidget {
               transition: Transition.fadeIn, 
             );
           }
-
-            // await bookAndPayController.bookAndPayController(
-            //   doctor.id,
-            //   patientId,
-            //   selectedTime!,
-            //   patientData['phone']!,
-            //   doctor.phone,
-            //   // doctor.consultationfee as double,
-            //   0.01,
-            //   selectedDate,
-            //   patientData['problem']!);
         },
         child: Text(
           'Payment 0.01\$',
