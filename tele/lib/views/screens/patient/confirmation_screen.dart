@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/book_and_pay_controller.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final Map<String, String> patientData;
@@ -45,7 +46,7 @@ class ConfirmationScreen extends StatelessWidget {
       ),
       body: Obx(() {
         if(bookAndPayController.isLoading.value){
-          return const Center(child: CircularProgressIndicator());
+          return LoadingMessage();
         }
         return SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:tele/controllers/auth_controller.dart';
 import 'package:tele/views/screens/auth/login_screen.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   RegisterScreen({super.key});
@@ -145,12 +146,7 @@ class RegisterScreen extends StatelessWidget {
                           // Register Button
                           Obx(
                             () => authController.isLoading.value
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color.fromARGB(255, 9, 130, 13)),
-                                    ),
-                                  )
+                                ? LoadingMessage()
                                 : ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:

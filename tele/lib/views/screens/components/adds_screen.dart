@@ -53,19 +53,22 @@ class AddsScreen extends StatefulWidget {
 class _AddsScreenState extends State<AddsScreen> {
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
-  ImageProvider getImageProvider(String? uri) {
-    if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
-      return NetworkImage('$baseUrl/$uri');
-    } else {
-      return AssetImage('assets/default_image.png');
-    }
-  }
+  // ImageProvider getImageProvider(String? uri) {
+  //   if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
+  //     return NetworkImage('$baseUrl/$uri');
+  //   } else {
+  //     return AssetImage('assets/default_image.png');
+  //   }
+  // }
+ 
 
   @override
   Widget build(BuildContext context) {
+     final screenWidth = MediaQuery.of(context).size.width;
+     final cardWith = screenWidth * 0.87;
     return Container(
       
-      width: 340,
+      width: cardWith,
       height: 180,
       margin: EdgeInsets.only(right: 10,top: 00),
       decoration: BoxDecoration(

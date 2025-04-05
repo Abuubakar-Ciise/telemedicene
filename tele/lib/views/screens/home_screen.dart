@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tele/controllers/adds_controller.dart';
 
 import 'package:tele/controllers/appoinments_controller.dart';
@@ -11,6 +12,7 @@ import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
 import 'package:tele/views/screens/components/adds_screen.dart';
 import 'package:tele/views/screens/components/appointment_card.dart';
 import 'package:tele/views/screens/components/reusable.card.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/patient/user_profile.dart';
 
@@ -38,9 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted ||
           addsController.adds.isEmpty ||
           !_scrollController.hasClients) return;
+      final screenWidth = MediaQuery.of(context).size.width;
+      final itemWidth = screenWidth * 0.87;
+      final margin = 10.0;
 
-      final singleItemWidth =
-          350.0; // Adjust this to match AddsScreen width + margin
+      // final singleItemWidth = 350.0; // Adjust this to match AddsScreen width + margin
+      final singleItemWidth = itemWidth + margin; // Adjust this to match AddsScreen width + margin
       final targetPosition = _currentIndex * singleItemWidth;
 
       _scrollController.animateTo(
@@ -187,12 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // ADDS Row - Only Pictures in Horizontal Scrollable Containers
               Obx(() {
                 if (addsController.isLoading.value) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Color.fromARGB(255, 9, 130, 13)),
-                    ),
-                  );
+                  return LoadingMessage();
                 }
                 if (addsController.adds.isEmpty) {
                   return Center(
@@ -329,12 +329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 220,
                 child: Obx(() {
                   if (appoinmentsController.isLoading.value) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Color.fromARGB(255, 9, 130, 13)),
-                      ),
-                    );
+                    return LoadingMessage();
                   }
                   if (appoinmentsController.appointmets.isEmpty) {
                     return Center(child: Text("No Appointments Found"));

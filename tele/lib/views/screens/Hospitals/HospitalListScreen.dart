@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:tele/controllers/HospitalController.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 class HospitalListScreen extends StatefulWidget {
   const HospitalListScreen({super.key});
@@ -65,35 +66,11 @@ class _HospitalListScreenState extends State<HospitalListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 20),
         child: Obx(() {
           if (hospitalController.isLoading.value) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 9, 130, 13)),
-              ),
-            );
+            return LoadingMessage();
           }
 
           if (hospitalController.filteredHospitals.isEmpty) {
-            return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Lottie.asset(
-                    'assets/animations/no_hospital.json',
-                    height: 200
-                  ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "No Hospitals found. Try another search!",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+            return LoadingMessage(animationAsset: 'assets/animations/no_hospital.json',);
           }
 
           return GridView.builder(

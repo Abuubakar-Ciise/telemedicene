@@ -135,12 +135,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               address,
                             ),
                             _buildInfoRow(
-                              Icons.location_on,
+                              Icons.person,
                               'Gender:',
                               gender,
                             ),
                             _buildInfoRow(
-                              Icons.location_on,
+                              Icons.cake,
                               'Age:',
                               age,
                             ),
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(height: 10),
                             _buildSettingsRow(Icons.qr_code, 'Share QR code'),
                             _buildSettingsRow(Icons.share, 'Share Apk'),
-                            _buildSettingsRow(Icons.logout, 'Sign Out',
+                            _buildSettingsRow(Icons.logout, 'Log Out',
                                 onTap: handleLogout),
                           ],
                         ),

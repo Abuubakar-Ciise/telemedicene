@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/shift_controller.dart';
 import 'package:tele/services/get_api_services.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/PatientDetailsScreen.dart';
 import 'package:toastification/toastification.dart';
 
@@ -124,7 +125,7 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
       ),
       body: Obx(() {
         if (shiftController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return LoadingMessage();
         }
 
         // if (shiftController.errorMessage.isNotEmpty) {

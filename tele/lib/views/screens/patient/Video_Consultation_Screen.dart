@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/views/screens/components/doctor_card.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 
 class VideoConsultationScreen extends StatefulWidget {
@@ -52,12 +53,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Obx(() {
             if (doctorListController.isLoading.value) {
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Color.fromARGB(255, 9, 130, 13)),
-                ),
-              );
+              return LoadingMessage();
             }
              // Check if the list of hospitals is empty
             if (doctorListController.doctorsList.isEmpty) {

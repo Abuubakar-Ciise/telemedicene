@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/controllers/auth_controller.dart';
 import 'package:tele/views/screens/auth/register_screen.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -97,12 +98,7 @@ class LoginScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           Obx(
                             () => authController.isLoading.value
-                                ? Center(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Color.fromARGB(255, 9, 130, 13)),
-                                    ),
-                                  )
+                                ? LoadingMessage()
                                 : ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:

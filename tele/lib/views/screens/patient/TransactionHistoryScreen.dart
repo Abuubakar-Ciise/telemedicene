@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/controllers/patient_transection_controller.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -48,13 +49,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       backgroundColor: Colors.white,
       body: Obx(() {
         if (patientTransectionController.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Color.fromARGB(255, 9, 130, 13),
-              ),
-            ),
-          );
+          return LoadingMessage();
         }
         return Padding(
           padding: const EdgeInsets.all(12.0),
