@@ -4,7 +4,7 @@ class DoctorList {
   final String name;
   final String sequenceid;
   final String email;
-  final int consultationfee;
+  final double consultationfee;
   final int experienceyears;
   final String speciality;
   final String countries;
@@ -36,7 +36,7 @@ class DoctorList {
       name: json['name'] ?? 'unknow', 
       sequenceid: json['sequence_id'] ?? '', 
       email: json['email'] ?? 'unknow', 
-      consultationfee: json['consultation_fee'] ?? 0, 
+      consultationfee: (json['consultation_fee'] ?? 0).toDouble(), 
       experienceyears: json['experience_years'] ?? 0, 
       speciality: json['speciality'] ?? "", 
       countries: json['countries'] ?? '', 

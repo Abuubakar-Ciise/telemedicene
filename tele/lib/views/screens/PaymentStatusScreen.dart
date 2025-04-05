@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 class PaymentStatusScreen extends StatelessWidget {
   final bool isSuccess;
+  final String paymentStatus;
+  final String errorMessage;
 
-  const PaymentStatusScreen({super.key, required this.isSuccess});
+  const PaymentStatusScreen({
+    super.key, 
+    required this.isSuccess, required this.paymentStatus, required this.errorMessage });
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +36,8 @@ class PaymentStatusScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   isSuccess
-                      ? "Congratulations, your appointment has been successful."
-                      : "Unfortunately, the appointment has not been successful.",
+                      ? paymentStatus
+                      : errorMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
                 ),

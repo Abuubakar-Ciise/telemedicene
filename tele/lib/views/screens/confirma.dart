@@ -66,14 +66,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                     onPressed: () {
                       // Handle payment submission
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentStatusScreen(
-                              isSuccess:
-                                  false), // Pass true for success, false for failure
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => PaymentStatusScreen(
+                      //         isSuccess:
+                      //             false), // Pass true for success, false for failure
+                      //   ),
+                      // );
                     },
                     child: const Text(
                       'Pay Now',

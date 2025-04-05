@@ -21,11 +21,11 @@ class LoadingMessage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Lottie.asset(animationAsset, height: animationHeight),
-          const SizedBox(height: 16),
+          const SizedBox(height: 6),
           Text(
             message,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.grey,
             ),

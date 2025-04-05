@@ -60,7 +60,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     _buildDetailRow("Speciality", widget.doctor.speciality),
                     _buildDetailRow("Experience", "${widget.doctor.experienceyears} years"),
                     _buildDetailRow("Language", widget.doctor.countries),
-                    _buildDetailRow("Consultation Fee", "\$${widget.doctor.consultationfee}"),
+                    // _buildDetailRow("Consultation Fee", "\$${widget.doctor.consultationfee}"),
+                    _buildDetailRow("Consultation Fee", "\$${0.01}"),
 
                     // Basic Details Section
                     _buildSectionTitle("Basic Details"),

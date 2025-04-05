@@ -7,7 +7,7 @@ class ApiPostServices {
 
   Future<Map<String,dynamic>> bookAndPay(
     String doctorId, String patientId, String shiftsId,
-    String senderPhone, String reciverPhone, int amount,
+    String senderPhone, String reciverPhone, double amount,
     String appointmentDate, String reason
     ) async {
     try {

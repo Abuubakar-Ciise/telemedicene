@@ -96,6 +96,7 @@ class _DoctorCardState extends State<DoctorCard> {
                   Text("Language: ${widget.doctor.countries}"),
                   const SizedBox(height: 5),
                   Text("Standard Charges: \$${widget.doctor.consultationfee}"),
+                  // Text("Standard Charges: \$${0.01}"),
                 ],
               ),
             ),
