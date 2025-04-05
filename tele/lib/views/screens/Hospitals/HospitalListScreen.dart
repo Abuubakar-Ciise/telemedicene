@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:tele/controllers/HospitalController.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';

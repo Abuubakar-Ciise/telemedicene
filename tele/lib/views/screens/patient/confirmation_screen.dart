@@ -248,18 +248,7 @@ class ConfirmationScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: () async {
-          // Handle payment
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => CheckPaymentScreen(
-          //         phone: patientData['phone'] ?? 'N/A',
-          //         charges: doctor.consultationfee.toString(),
-          //         selectedDay: DateFormat('MMM d, yyyy').format(selectedDay),
-          //         userName: patientData['name'] ?? 'N/A'),
-          //   ),
-          // );
-          // print("hhhhhhhhhhhhh $selectedDate and $selectedDay");
+        
 
           await paymentController.pay(
               phone: patientData['phone']!,
@@ -309,7 +298,6 @@ class ConfirmationScreen extends StatelessWidget {
             //   0.01,
             //   selectedDate,
             //   patientData['problem']!);
-           print("doctor_id -- ${doctor.id} patientId -- $patientId selectedTime -- $selectedTime patientPone! -- ${patientData['phone']!} doctorPone -- ${doctor.phone} --doctor fee --   selectedDate -- $selectedDate problem --- ${patientData['problem']}");
         },
         child: Text(
           'Payment 0.01\$',
