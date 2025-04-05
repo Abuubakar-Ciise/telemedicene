@@ -29,9 +29,9 @@ class ConfirmationScreen extends StatelessWidget {
   static final String baseUrl =
       dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
   static final String maer =
-      dotenv.env['MERCHANTUID'] ?? 'http://localhost:5000';
-  static final String api = dotenv.env['APIUSERID'] ?? 'http://localhost:5000';
-  static final String apikey = dotenv.env['APIKEY'] ?? 'http://localhost:5000';
+      dotenv.env['MERCHANTUID'] ?? '';
+  static final String api = dotenv.env['APIUSERID'] ?? '';
+  static final String apikey = dotenv.env['APIKEY'] ?? '';
   // int doctorFee =  d
 
   @override

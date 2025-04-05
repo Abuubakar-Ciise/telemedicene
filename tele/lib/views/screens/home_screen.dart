@@ -112,12 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
   ];
 
-  // void _scrollToPosition() {
-  //   if (_scrollController.hasClients) {
-  //     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-  //         duration: Duration(seconds: 2), curve: Curves.easeInOut);
-  //   }
-  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -233,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _scrollController,
                           child: Row(
                             children: addsController.adds.map((adds) {
-                              // print("dddddddddddddd ${adds.id}");
+                            
                               return AddsScreen(imageUri: adds.picture);
                             }).toList(),
                           ),
@@ -247,12 +242,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         // children: addsController.adds.map((adds) {
                         children:
                             addsController.adds.asMap().entries.map((entry) {
-                          // print("dddddddddddddd ${adds.id}");
+                          
                           int index = entry.key;
                           var adds = entry.value;
-                          // bool changeCircleColor = index == hadda;
-                          // print(
-                          //     "dddddddddddddd ${'${adds.id} --- ${index} -- $hadda'}");
+                        
                           return Padding(
                             padding:
                                 const EdgeInsets.only(left: 10.0, bottom: 10),
@@ -280,15 +273,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: GridView.builder(
                   shrinkWrap:
-                      true, // Prevents unnecessary scrolling inside SingleChildScrollView
+                      true, 
                   physics:
-                      const NeverScrollableScrollPhysics(), // Disable GridView's own scrolling
+                      const NeverScrollableScrollPhysics(), 
                   itemCount: services.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, // 4 cards per row
-                    crossAxisSpacing: 18, // Spacing between columns
-                    mainAxisSpacing: 18, // Spacing between rows
-                    childAspectRatio: 1, // Square-like shape
+                    crossAxisCount: 4, 
+                    crossAxisSpacing: 18, 
+                    mainAxisSpacing: 18, 
+                    childAspectRatio: 1, 
                   ),
                   itemBuilder: (context, index) {
                     return ReusableCard(

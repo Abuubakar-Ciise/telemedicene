@@ -59,7 +59,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
             if (doctorListController.doctorsList.isEmpty) {
               return Center(
                 child: Text(
-                  "No hospitals available. ${doctorListController.doctorsList.length}",
+                  "No Doctors available. ${doctorListController.doctorsList.length}",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               );
