@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:tele/views/screens/components/config.dart';
 class ApiPostServices {
-  static final String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  static final url = Config.baseUrl;
 
   Future<Map<String,dynamic>> bookAndPay(
     String doctorId, String patientId, String shiftsId,
@@ -12,7 +13,7 @@ class ApiPostServices {
     ) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/bookAndPay'),
+        Uri.parse('$url/bookAndPay'),
         // headers: {'Content-Type': 'application/json'},
         headers: {'Content-Type': 'application/json'},
         body:jsonEncode({
@@ -26,7 +27,7 @@ class ApiPostServices {
           "reason": reason
         })
         );
-        print("Api format ${'$baseUrl/bookAndPay'}");
+        print("Api format ${'$url/bookAndPay'}");
         print("Resonponse body ${response.body} and statusCode ${response.statusCode}");
         if(response.statusCode == 200){
           final Map<String, dynamic> responseBody = jsonDecode(response.body);

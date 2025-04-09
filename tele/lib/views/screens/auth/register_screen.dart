@@ -307,7 +307,6 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  // Phone Field with Validation
   Widget buildPhoneField(TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -315,18 +314,48 @@ class RegisterScreen extends StatelessWidget {
         controller: controller,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
-          // prefixIcon: const Icon(Icons.phone, color: Color.fromARGB(255, 9, 130, 13)),
-          prefixIcon: const Icon(Icons.phone, color: Colors.black),
-          prefixText: "+252  ",
-          hintText: "Phone",
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          // Combine icon + prefix in one go
+          prefixIconConstraints:
+              const BoxConstraints(minWidth: 0, minHeight: 0),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.phone, size: 20, color: Colors.black87),
+                SizedBox(width: 4),
+                Text(
+                  '+252',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          hintText: "Enter phone number",
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Colors.green, width: 2),
           ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
         ),
         validator: (value) {
-          if (value!.isEmpty) {
+          if (value == null || value.isEmpty) {
             return "Please enter your phone number";
           } else if (value.length < 9 || value.length > 12) {
             return "Enter a valid phone number";

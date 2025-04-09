@@ -4,7 +4,6 @@ import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/views/screens/components/doctor_card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
-
 class VideoConsultationScreen extends StatefulWidget {
   const VideoConsultationScreen({super.key});
 
@@ -55,7 +54,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
             if (doctorListController.isLoading.value) {
               return LoadingMessage();
             }
-             // Check if the list of hospitals is empty
+            // Check if the list of hospitals is empty
             if (doctorListController.doctorsList.isEmpty) {
               return Center(
                 child: Text(
@@ -72,7 +71,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
                   padding: EdgeInsets.only(bottom: 10),
                   child: DoctorCard(
                     doctor: doctorListController.doctorsList[index],
-                    ),
+                  ),
                 );
               },
             );

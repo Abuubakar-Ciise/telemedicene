@@ -7,11 +7,12 @@ class ShiftController extends GetxController {
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var success = false.obs;
+  var currentDay = ''.obs;
 
-  Future<void> fetchShifts(String doctorId) async {
+  Future<void> fetchShifts(String doctorId, String appointmentDate, String dayName) async {
     try {
       isLoading.value = true;
-      final allShifts = await ApiGetServices().fetchShiftsEasy(doctorId);
+      final allShifts = await ApiGetServices().fetchShiftsEasy(doctorId,appointmentDate,dayName);
       if (allShifts.isNotEmpty) {
         shiftsByDay.assignAll(allShifts);
         shiftsByDay.refresh();

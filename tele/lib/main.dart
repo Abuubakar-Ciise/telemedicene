@@ -1,37 +1,46 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tele/Models/patient_appointements_model.dart';
-import 'package:tele/controllers/appoinments_controller.dart';
+import 'package:tele/controllers/internet_controller.dart';
+import 'package:tele/controllers/shift_controller.dart';
 import 'package:tele/routes/app_routes.dart';
-import 'package:tele/services/get_api_services.dart';
-// import 'package:tele/views/a.dart';
-// import 'package:flutter/services.dart'; // Add this import
 import 'package:toastification/toastification.dart';
-// import 'package:tele/views/screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   // await testApi();
-
+  Get.put(InternetController(), permanent: true);
+  print(DateTime.now().microsecondsSinceEpoch);
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));
 }
 
 // Future<void> testApi() async {
-//   final appoinmentsController = Get.put(AppoinmentsController());
-//   //  await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
-//   // final test = await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
-//   // List<PatientAppointementsModel> data = await ApiGetServices.patientAppointements('67d926d506e5888f7411d368');
-//       await appoinmentsController.fechtAppointments('67d926d506e5888f7411d368');
-//   print(appoinmentsController.appointmets);
+//   final shiftController = Get.put(ShiftController());
+
+//   // Example test data
+//   String doctorId = "67dbdc0c0c0600af527e1880";
+//   String appointmentDate = "10 April 2025";
+//   String dayName = "Thursday_Shifts";
+//   await shiftController.fetchShifts(doctorId, appointmentDate, dayName);
+
+//   print("Fetched Shifts:");
+//   shiftController.shiftsByDay.forEach((key, value) {
+//     print("Day: $key");
+//     for (var shift in value) {
+//       print("--------------Shift: ${shift.day}, Time: ${shift.time}");
+//     }
+//   });
+
+//   if (shiftController.errorMessage.isNotEmpty) {
+//     print("Error: ${shiftController.errorMessage.value}");
+//   }
 // }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -48,7 +57,6 @@ class MyApp extends StatelessWidget {
       return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -77,7 +85,6 @@ class MyApp extends StatelessWidget {
               // initialRoute = '/doctorList';
               // initialRoute = '/shitsScreen';
             }
-
             return GetMaterialApp(
               debugShowCheckedModeBanner: false,
               initialRoute: initialRoute,

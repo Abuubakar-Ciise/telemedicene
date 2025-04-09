@@ -2,11 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:tele/views/screens/components/config.dart';
 
 class EvsPlusServices {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
-
   String formatMerchantPhone(String phone) {
     if (phone.startsWith('+252')) {
       return phone.substring(1, 13);
@@ -52,13 +50,14 @@ class EvsPlusServices {
         }
       }
     };
+    
     final response = await http.post(
       Uri.parse('https://api.waafipay.net/asm'),
       headers: { "Content-type": "application/json"},
       body: jsonEncode(body)
     );
      final data = jsonDecode(response.body);
-     print("EVS-PLUS RESPONSE ${data}");
+     print("EVS-PLUS RESPONSE ${data} and body ${data['responseMsg']}}");
     if(data['responseMsg'] != "RCS_SUCCESS"){
       String error = '';
       if(data['responseMsg'] == "RCS_NO_ROUTE_FOUND"){
@@ -70,7 +69,7 @@ class EvsPlusServices {
       }
       return {
         'status': false,
-        'error': error.isNotEmpty ? error : data['responseMsg'],
+        'error': error.isNotEmpty ? error : data['params']['description'],
         'message': 'Maxaa u canceka gareese'
 
       };

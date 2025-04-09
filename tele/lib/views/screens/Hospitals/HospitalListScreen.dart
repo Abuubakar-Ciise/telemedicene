@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
 import 'package:tele/controllers/HospitalController.dart';
+import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class HospitalListScreen extends StatefulWidget {
@@ -15,8 +16,6 @@ class HospitalListScreen extends StatefulWidget {
 class _HospitalListScreenState extends State<HospitalListScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
   final hospitalController = Get.put(HospitalController());
 
   @override
@@ -25,6 +24,13 @@ class _HospitalListScreenState extends State<HospitalListScreen> {
     _searchController.addListener(() {
       hospitalController.filterHospitals(_searchController.text);
     });
+  }
+   @override
+  void dispose() {
+    super.dispose();
+    // Clear search query and reset hospitals when the screen is disposed
+    _searchController.clear();
+    hospitalController.filterHospitals('');
   }
 
   @override
@@ -62,17 +68,45 @@ class _HospitalListScreenState extends State<HospitalListScreen> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
         child: Obx(() {
           if (hospitalController.isLoading.value) {
             return LoadingMessage();
           }
 
           if (hospitalController.filteredHospitals.isEmpty) {
-            return LoadingMessage(animationAsset: 'assets/animations/no_hospital.json',);
+            return LoadingMessage(
+              animationAsset: 'assets/animations/no_hospital.json',
+            );
           }
+          // return SingleChildScrollView(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       // You can add any other widgets above the grid, like titles or buttons here
+          //       Wrap(
+          //         spacing: 10, // Horizontal space between items
+          //         runSpacing: 10, // Vertical space between rows
+          //         children: List.generate(
+          //             hospitalController.filteredHospitals.length, (index) {
+          //           final hospital = hospitalController.filteredHospitals[
+          //               index]; // Get hospital data at current index
+          //           return Container(
+          //             width: (MediaQuery.of(context).size.width / 2) -
+          //                 60, // Ensures 2 columns by dividing screen width
+          //             child: HospitalCards(
+          //               name: hospital.name, // Pass hospital name
+          //               picture: hospital.picture, // Pass hospital picture
+          //             ),
+          //           );
+          //         }),
+          //       ),
+          //     ],
+          //   ),
+          // );
 
           return GridView.builder(
+
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5),
             itemCount: hospitalController.filteredHospitals.length,
@@ -90,7 +124,6 @@ class _HospitalListScreenState extends State<HospitalListScreen> {
   }
 }
 
-
 class HospitalCards extends StatefulWidget {
   final String name;
   final String picture;
@@ -101,8 +134,7 @@ class HospitalCards extends StatefulWidget {
 }
 
 class _HospitalCardsState extends State<HospitalCards> {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  final url = Config.baseUrl;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -118,7 +150,7 @@ class _HospitalCardsState extends State<HospitalCards> {
                 color: Colors.black.withOpacity(0.2),
                 spreadRadius: 0.5,
                 blurRadius: 3,
-                offset: Offset(0,0), // Shadow position
+                offset: Offset(0, 0), // Shadow position
               ),
             ],
           ),
@@ -129,10 +161,9 @@ class _HospitalCardsState extends State<HospitalCards> {
                 radius: 50, // Adjust size as needed
                 backgroundImage: (widget.picture?.isNotEmpty ?? false) &&
                         widget.picture != "N/A"
-                    ? NetworkImage("$baseUrl/${widget.picture}")
+                    ? NetworkImage("$url/${widget.picture}")
                     : AssetImage('assets/default_image.png') as ImageProvider,
                 backgroundColor: Colors.white,
-                
               ),
               const SizedBox(height: 8),
               Text(

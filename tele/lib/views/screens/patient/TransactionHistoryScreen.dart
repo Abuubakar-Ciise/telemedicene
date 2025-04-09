@@ -1,8 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/controllers/patient_transection_controller.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/services/biometric_service.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -14,13 +16,29 @@ class TransactionHistoryScreen extends StatefulWidget {
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   final patientTransectionController = Get.put(PatientTransectionController());
+  final RxBool isBlurred = true.obs;
+  final BiometricService biometricService = BiometricService();
+
   String userId = "Loading...";
 
   @override
   void initState() {
     super.initState();
+    _authenticateUser();
     loadUserData();
   }
+
+  Future<void> _authenticateUser() async {
+    bool isAuthenticated = await biometricService.authenticate();
+    if (!isAuthenticated) {
+      // If authentication fails, show a biometric authentication prompt dialog
+      
+    }else{
+      isBlurred.value = false;
+    }
+  }
+
+ 
 
   Future<void> loadUserData() async {
     Map<String, String?> userData = await StorageService.getUserData();
@@ -39,7 +57,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 9, 130, 13),
         centerTitle: true,
         title: const Text(
           'Transaction History',
@@ -57,26 +75,43 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             itemCount: patientTransectionController.transections.length,
             itemBuilder: (context, index) {
               final transaction = patientTransectionController.transections[index];
-              return Card(
-                color: Colors.white,
-                margin: const EdgeInsets.only(bottom: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+
+              return Obx(() => Stack(
                     children: [
-                      _infoRow('Sender:', transaction.patientName, transaction.senderPhone),
-                      _infoRow('Receiver:', transaction.doctorName, transaction.reciverPhone),
-                      _infoRow('Amount:', '','\$${transaction.amount.toString()}'),
-                      _infoRow('Date:', '',formatDate(transaction.createDate)),
+                      Card(
+                        color: Colors.white.withOpacity(0.95),
+                        margin: const EdgeInsets.only(bottom: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _infoRow('Sender:', transaction.patientName, transaction.senderPhone),
+                              _infoRow('Receiver:', transaction.doctorName, transaction.reciverPhone),
+                              _infoRow('Amount:', '', '\$${transaction.amount.toString()}'),
+                              _infoRow('Date:', '', formatDate(transaction.createDate)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (isBlurred.value)
+                        Positioned.fill(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                              child: Container(
+                                color: Colors.white.withOpacity(0.1),
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
-                  ),
-                ),
-              );
+                  ));
             },
           ),
         );
@@ -91,7 +126,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: const TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-          const SizedBox(width: 5), // Small spacing
+          const SizedBox(width: 5),
           Expanded(
             child: Text(
               name,

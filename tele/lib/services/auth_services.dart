@@ -5,10 +5,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/components/config.dart';
 
 class AuthServices {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+
+  static final url = Config.baseUrl;
 
   // register Patient
   static Future<Map<String, dynamic>> registerPatient(
@@ -21,7 +22,7 @@ class AuthServices {
       String username,
       String password) async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl/register_Patient'),
+      final response = await http.post(Uri.parse('$url/register_Patient'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             "name": name,
@@ -60,7 +61,7 @@ class AuthServices {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse("$baseUrl/login_DoctorAndPatient"),
+        Uri.parse("$url/login_DoctorAndPatient"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "PassWord": password}),
       );
@@ -114,8 +115,8 @@ class AuthServices {
 
   static Future<List<Hospital>> fetchHospitals() async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl/getAll_Hospitals'));
-      print("Fetching data from: $baseUrl/getAll_Hospitals");
+      final response = await http.post(Uri.parse('$url/getAll_Hospitals'));
+      print("Fetching data from: $url/getAll_Hospitals");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

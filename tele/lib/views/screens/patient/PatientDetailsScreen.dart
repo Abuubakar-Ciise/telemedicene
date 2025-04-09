@@ -3,11 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/patient/confirmation_screen.dart';
+import 'package:toastification/toastification.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
   final DoctorList doctor;
   final String selectedDate;
   final String? selectedTime;
+  final String shiftId;
   final Map<String, dynamic>? selectedPackage;
 
   const PatientDetailsScreen({
@@ -15,6 +17,7 @@ class PatientDetailsScreen extends StatefulWidget {
     required this.doctor,
     required this.selectedDate,
     required this.selectedTime,
+    required this.shiftId,
     this.selectedPackage,
   });
 
@@ -34,10 +37,11 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
   Future<void> loadUserData() async {
     Map<String,String?> userData =await StorageService.getUserData();
     String gender = userData['gender'] ?? '';
+    String  mmmm = userData['phone'] ?? '';
     // String fullName = userData['']
     setState(() {
       nameController.text = userData['username'] ?? '';
-      phoneController.text = userData['phone'] ?? '';
+      phoneController.text = mmmm.substring(4,) ?? '';
       ageController.text = userData['age'] ?? '';
       patientId = userData['userId'] ?? '';
       if(gender == 'Male'){
@@ -192,6 +196,17 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             // Next Button
             ElevatedButton(
               onPressed: () {
+                if (problemController.text == null || problemController.text.isEmpty) {
+                toastification.show(
+                  type: ToastificationType.error,
+                  style: ToastificationStyle.flat,
+                  title: const Text('Error'),
+                  description: const Text('Please tell us your problem'),
+                  autoCloseDuration: const Duration(seconds: 3),
+                  alignment: Alignment.topRight,
+                  showProgressBar: true,
+                );
+              }else {
                 // Create a map of patient data
                 final patientData = {
                   'name': nameController.text,
@@ -212,9 +227,12 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                       selectedPackage: widget.selectedPackage,
                       selectedDate:widget.selectedDate,
                       patientId: patientId,
+                      shifId:widget.shiftId,
                     ),
                   ),
                 );
+              }
+                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromARGB(255, 9, 130, 13),

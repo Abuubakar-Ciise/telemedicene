@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/payment_controller.dart';
 import 'package:tele/views/screens/PaymentStatusScreen.dart';
+import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
@@ -12,6 +13,7 @@ class ConfirmationScreen extends StatelessWidget {
   final String selectedDay;
   final String selectedDate;
   final String? selectedTime;
+  final String? shifId;
   final String patientId;
   final Map<String, dynamic>? selectedPackage;
 
@@ -23,11 +25,11 @@ class ConfirmationScreen extends StatelessWidget {
     required this.patientId,
     required this.selectedDate,
     required this.selectedTime,
+    required this.shifId,
     this.selectedPackage,
   });
   final paymentController = Get.put(PaymentController());
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  final url = Config.baseUrl;
   static final String maer =
       dotenv.env['MERCHANTUID'] ?? '';
   static final String api = dotenv.env['APIUSERID'] ?? '';
@@ -64,6 +66,7 @@ class ConfirmationScreen extends StatelessWidget {
               const SizedBox(height: 16),
               _sectionTitle('Scheduled Appointment'),
               _infoRow('Date', selectedDate),
+              // _infoRow('Time', shifId ?? 'N/A'),
               _infoRow('Time', selectedTime ?? 'N/A'),
               _infoRow('Duration', '30 Minutes'),
               const SizedBox(height: 16),
@@ -116,7 +119,7 @@ class ConfirmationScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: (doctor.picture.isNotEmpty && doctor.picture != 'N/A')
                 ? Image.network(
-                    '$baseUrl/${doctor.picture}',
+                    '$url/${doctor.picture}',
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
@@ -225,7 +228,7 @@ class ConfirmationScreen extends StatelessWidget {
 
           await paymentController.pay(
               phone: patientData['phone']!,
-              amount: 0.01,
+              amount: doctor.consultationfee,
               merchantUid: maer,
               apiUserId: api,
               apiKey: apikey);
@@ -233,11 +236,11 @@ class ConfirmationScreen extends StatelessWidget {
             await paymentController.bookAndPayController(
               doctor.id,
               patientId,
-              selectedTime!,
+              shifId!,
               patientData['phone']!,
               doctor.phone,
-              // doctor.consultationfee,
-              0.01,
+              doctor.consultationfee,
+              // 0.01,
               selectedDate,
               patientData['problem']!);
               print('hhhhhhhhhhhhhh ${paymentController.paymentStatus.value}');
@@ -255,14 +258,14 @@ class ConfirmationScreen extends StatelessWidget {
               () => PaymentStatusScreen(
                 isSuccess: false,
                 paymentStatus: '',
-                errorMessage: paymentController.paymentStatus.value,
+                errorMessage: paymentController.errorMessage.value,
                 ),
               transition: Transition.fadeIn, 
             );
           }
         },
         child: Text(
-          'Payment 0.01\$',
+          'Payment \$${doctor.consultationfee}',
           style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),

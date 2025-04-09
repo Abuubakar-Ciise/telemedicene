@@ -1,20 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:tele/controllers/adds_controller.dart';
-
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
 import 'package:tele/views/screens/components/adds_screen.dart';
 import 'package:tele/views/screens/components/appointment_card.dart';
+import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/components/reusable.card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/patient/user_profile.dart';
+import 'package:tele/views/screens/selfManagement.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,8 +22,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  
+  final url = Config.baseUrl;
   final appoinmentsController = Get.put(AppoinmentsController());
   final addsController = Get.put(AddsController());
   String username = "Loading...";
@@ -37,12 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startAutoScroll() {
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (!mounted ||
-          addsController.adds.isEmpty ||
-          !_scrollController.hasClients) return;
+      if (!mounted || addsController.adds.isEmpty || !_scrollController.hasClients) return;
       final screenWidth = MediaQuery.of(context).size.width;
       final itemWidth = screenWidth * 0.87;
       final margin = 10.0;
+      
 
       // final singleItemWidth = 350.0; // Adjust this to match AddsScreen width + margin
       final singleItemWidth = itemWidth + margin; // Adjust this to match AddsScreen width + margin
@@ -62,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (_currentIndex >= addsController.adds.length) {
         _currentIndex = 0; // Loop back to start
+        
       }
     });
   }
@@ -70,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     loadUserData();
-    // addsController.allAdds();
+    addsController.allAdds();
     // _timer = Timer(Duration(seconds: 3),_scrollToPosition);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startAutoScroll();
@@ -108,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "text": "Hospital",
       'route': HospitalListScreen()
     },
-    {"icon": Icons.person_pin, "text": "self manage", 'route': null},
+    {"icon": Icons.person_pin, "text": "self manage", 'route': Selfmanagement()},
     {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
   ];
 
@@ -175,10 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         radius: 28,
                         backgroundImage:
                             (picture?.isNotEmpty ?? false) && picture != "N/A"
-                                ? NetworkImage('$baseUrl/$picture')
+                                ? NetworkImage('$url/$picture')
                                 : AssetImage('assets/default_image.png')
                                     as ImageProvider,
                         backgroundColor: Colors.white,
+                        
                       ),
                     ),
                   )

@@ -41,7 +41,7 @@ class PaymentController extends GetxController{
         isPaymentSuccessful.value = true;
         print(result['message']);
       }else{
-        errorMessage.value = result['message'];
+        errorMessage.value = result['error'];
         isPaymentSuccessful.value = false;
         print(result['message']);
         print(result['error']);

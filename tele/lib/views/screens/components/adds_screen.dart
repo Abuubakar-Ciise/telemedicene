@@ -41,6 +41,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:tele/views/screens/components/config.dart';
 
 class AddsScreen extends StatefulWidget {
   final String imageUri;
@@ -51,8 +52,7 @@ class AddsScreen extends StatefulWidget {
 }
 
 class _AddsScreenState extends State<AddsScreen> {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  final url = Config.baseUrl;
   // ImageProvider getImageProvider(String? uri) {
   //   if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
   //     return NetworkImage('$baseUrl/$uri');
@@ -75,7 +75,7 @@ class _AddsScreenState extends State<AddsScreen> {
         borderRadius: BorderRadius.circular(12),
         image: DecorationImage(
           image: (widget.imageUri.isNotEmpty && widget.imageUri != 'N/A')
-              ? CachedNetworkImageProvider('$baseUrl/${widget.imageUri}')
+              ? CachedNetworkImageProvider('$url/${widget.imageUri}')
               : AssetImage('assets/default_image.png') as ImageProvider,
           fit: BoxFit.cover,
         ),

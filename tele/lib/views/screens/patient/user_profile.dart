@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/components/config.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,8 +12,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+  final url = Config.baseUrl;
 
   String name = 'loading..';
   String phone = 'loading..';
@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     radius: 47,
                     backgroundImage:
                         (picture?.isNotEmpty ?? false) && picture != "N/A"
-                            ? NetworkImage('$baseUrl/$picture')
+                            ? NetworkImage('$url/$picture')
                             : AssetImage('assets/default_image.png')
                                 as ImageProvider,
                   ),
@@ -267,7 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Icon(icon, color: Colors.green, size: 20),
+          Icon(icon, color: Colors.black, size: 20),
           const SizedBox(width: 10),
           Text(
             label,
@@ -294,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            Icon(icon, color: Colors.green, size: 20),
+            Icon(icon, color: Colors.black, size: 20),
             const SizedBox(width: 10),
             Text(title),
           ],

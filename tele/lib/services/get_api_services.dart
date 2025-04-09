@@ -5,18 +5,20 @@ import 'package:tele/Models/adds_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
+import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
 import 'package:tele/Models/transection_model.dart';
+import 'package:tele/views/screens/components/config.dart';
 
 class ApiGetServices {
-  static final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+
+  static final url = Config.baseUrl;
 
   // get List of Hospitals
   Future<List<Hospital>> fetchHospitals() async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl/getAll_Hospitals'));
-      print("Fetching data from: $baseUrl/getAll_Hospitals");
+      final response = await http.post(Uri.parse('$url/getAll_Hospitals'));
+      print("Fetching data from: $url/getAll_Hospitals");
       print("cccaalling");
 
       if (response.statusCode == 200) {
@@ -40,8 +42,8 @@ class ApiGetServices {
   // get list of dectors
   Future<List<DoctorList>> fechDoctorsList() async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl/getAll_Doctors'));
-      print("Fetching data from: $baseUrl/getAll_Doctors");
+      final response = await http.post(Uri.parse('$url/getAll_Doctors'));
+      print("Fetching data from: $url/getAll_Doctors");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -60,50 +62,97 @@ class ApiGetServices {
       return [];
     }
   }
-  Future<Map<String, List<Shift>>> fetchShiftsEasy(String doctorId) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/shifts'),
-         headers: {
-        "Content-Type": "application/json", // Ensure the request is sent as JSON
+  // Future<Map<String, List<Shift>>> fetchShiftsEasy(String doctorId,String appointmentDate, String dayName) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('$baseUrl/$dayName'),
+  //        headers: {
+  //       "Content-Type": "application/json", // Ensure the request is sent as JSON
+  //     },
+  //     body: json.encode({
+  //       "doctor_id": doctorId, // Passing the doctor_id in the request body
+  //       "appointment_date": appointmentDate
+  //     }),
+  //       );
+      
+  //     if (response.statusCode == 200) {
+  //       final data = json.decode(response.body);
+
+  //       if (data["success"] == true) {
+  //         Map<String, List<Shift>> shiftsByDay = {};
+
+  //         // Loop through the response keys (days of the week)
+  //         data.forEach((key, value) {
+  //           if (key != "success" && key != "message") {
+  //             shiftsByDay[key] = (value as List)
+  //                 .map((shift) => Shift.fromJson(shift))
+  //                 .toList();
+  //           }
+  //         });
+
+  //         return shiftsByDay;
+  //       } else {
+  //         throw Exception("Failed to fetch shifts");
+  //       }
+  //     } else {
+  //       throw Exception("Failed to load shifts: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     throw Exception("Error: $e");
+  //   }
+  // }
+
+  Future<Map<String, List<Shift>>> fetchShiftsEasy(
+    String doctorId, String appointmentDate, String dayName) async {
+  try {
+    final response = await http.post(
+      Uri.parse('$url/${dayName}_Shifts'),
+      headers: {
+        "Content-Type": "application/json",
       },
       body: json.encode({
-        "doctor_id": doctorId, // Passing the doctor_id in the request body
+        "doctor_id": doctorId,
+        "appointment_date": appointmentDate,
       }),
-        );
-      
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+    );
+    print("From API response: ${response.body} ");
+    print('baseURl ${'$url/${dayName}_Shifts'}');
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data["success"] == true) {
+        Map<String, List<Shift>> shiftsByDay = {};
 
-        if (data["success"] == true) {
-          Map<String, List<Shift>> shiftsByDay = {};
+        // Iterate over the 'shifts' object in the response
+        data["shifts"].forEach((key, value) {
+          if (value is List) {
+            // Process the shift data and map to Shift objects
+            shiftsByDay[key] = (value as List)
+                .map((shift) => Shift.fromJson(shift))
+                .toList();
+          } else {
+            print("Unexpected format for key $key: $value");
+          }
+        });
 
-          // Loop through the response keys (days of the week)
-          data.forEach((key, value) {
-            if (key != "success" && key != "message") {
-              shiftsByDay[key] = (value as List)
-                  .map((shift) => Shift.fromJson(shift))
-                  .toList();
-            }
-          });
-
-          return shiftsByDay;
-        } else {
-          throw Exception("Failed to fetch shifts");
-        }
+        return shiftsByDay;
       } else {
-        throw Exception("Failed to load shifts: ${response.statusCode}");
+        throw Exception("Failed to fetch shifts");
       }
-    } catch (e) {
-      throw Exception("Error: $e");
+    } else {
+      throw Exception("Failed to load shifts: ${response.statusCode}");
     }
+  } catch (e) {
+    throw Exception("Error: $e");
   }
+}
+
+
 
   // check shifts
   static Future<Map<String,dynamic>> checkShifts(String shiftsId, String appointmentDate) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/check_shifts'),
+        Uri.parse('$url/check_shifts'),
         headers: {'content-Type': 'application/json'},
         body: jsonEncode({
           'shifts_id':shiftsId,
@@ -133,7 +182,7 @@ class ApiGetServices {
   static Future<List<PatientAppointementsModel>> patientAppointements(String patientId) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/patient_appointements'),
+        Uri.parse('$url/patient_appointements'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "patient_id": patientId
@@ -162,7 +211,7 @@ class ApiGetServices {
   static Future<List<PatientTransectionModel>> patientTransection(String patientId) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/patient_transection'),
+        Uri.parse('$url/patient_transection'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "patient_id": patientId
@@ -189,10 +238,10 @@ class ApiGetServices {
 
   static Future<List<AddsModel>> adds() async {
     try {
-      final response = await http.post(Uri.parse('$baseUrl/adds'));
-      print("is call you ");
+      final response = await http.post(Uri.parse('$url/adds'));
+      // print("is call you ");
       if(response.statusCode == 200) {
-         print("is call you ${response.body}");
+        //  print("is call you ${response.body}");
         final data = jsonDecode(response.body);
         if(data['success']){
           return (data['record'] as List)
@@ -205,6 +254,28 @@ class ApiGetServices {
         
       }
       throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // selfmanagment
+  
+  Future<List<SelfManagmentModels>> selfManagment() async {
+    try {
+      final response = await http.post(Uri.parse('$url/selfmanagment'));
+
+      if(response.statusCode == 200){
+        final data = jsonDecode(response.body);
+        if(data['success']){
+          return (data['record'] as List)
+          .map((self) => SelfManagmentModels.fromJson(self)).toList();
+        }else {
+          
+          throw Exception("API Error: ${data['message']}");
+        }
+      }
+       throw Exception("Server Error: ${response.statusCode}");
     } catch (e) {
       return [];
     }

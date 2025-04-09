@@ -1,7 +1,7 @@
 class PatientTransectionModel {
   final String id;
   final int status;
-  final int amount;
+  final double amount;
   final String senderPhone;  
   final String reciverPhone;  
   final String doctorName; 
@@ -22,7 +22,7 @@ class PatientTransectionModel {
     return PatientTransectionModel(
       id: json['_id'] ?? '', 
       status: json['status'] ?? 0, 
-      amount: json['amount'] ?? 0, 
+      amount: (json['amount'] ?? 0).toDouble(), 
       senderPhone: json['sender_phone'] ?? '', 
       reciverPhone: json['reciver_phone'] ?? '', 
       doctorName: json['doctor_name'] ?? '', 

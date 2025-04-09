@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:tele/views/screens/components/config.dart';
 
 class AppointmentCard extends StatefulWidget {
   
@@ -42,8 +43,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
     final statusText = statusInfo[widget.status]?["text"] ?? "Cancelled";
     final statusColor = statusInfo[widget.status]?["color"] ?? Colors.red;
-     final String baseUrl =
-      dotenv.env['BASE_URL'] ?? 'http://localhost:5000';
+     final url = Config.baseUrl;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -134,7 +134,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                       radius: 28,
                       backgroundImage:
                           (widget.doctorImageUrl?.isNotEmpty ?? false) && widget.doctorImageUrl != "N/A"
-                              ? NetworkImage('$baseUrl/${widget.doctorImageUrl}')
+                              ? NetworkImage('$url/${widget.doctorImageUrl}')
                               : AssetImage('assets/default_image.png')
                                   as ImageProvider,
                       backgroundColor: Colors.white,
