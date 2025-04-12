@@ -3,22 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tele/controllers/doctor_transection_controller.dart';
 import 'package:tele/controllers/internet_controller.dart';
-import 'package:tele/controllers/shift_controller.dart';
+import 'package:tele/controllers/user_Controller.dart';
 import 'package:tele/routes/app_routes.dart';
 import 'package:toastification/toastification.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   // await testApi();
+    Get.put(UserController());
+    Get.put(DoctorTransectionController()); 
   Get.put(InternetController(), permanent: true);
-  print(DateTime.now().microsecondsSinceEpoch);
+    
+  // print(DateTime.now().microsecondsSinceEpoch);
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));
 }
-
 // Future<void> testApi() async {
 //   final shiftController = Get.put(ShiftController());
 
@@ -79,6 +81,7 @@ class MyApp extends StatelessWidget {
             String initialRoute = '/login';
             if (userType == "0") {
               initialRoute = '/doctormainscreen';
+              // initialRoute = '/mainscreen';
             } else if (userType == "1") {
               initialRoute = '/mainscreen';
               // initialRoute = '/HospitalList';
@@ -89,11 +92,11 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               initialRoute: initialRoute,
               getPages: AppRoutes.routes,
+              
             );
           }
         });
   }
-
   // @override
   // Widget build(BuildContext context) {
   //   return GetMaterialApp(

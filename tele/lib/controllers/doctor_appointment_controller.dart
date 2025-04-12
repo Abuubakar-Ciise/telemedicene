@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
-import 'package:tele/Models/patient_appointements_model.dart';
+import 'package:tele/Models/doctor_appointements_model.dart';
 import 'package:tele/services/get_api_services.dart';
 
-class AppoinmentsController extends GetxController {
+class DoctorAppointmentController extends GetxController {
   var isLoading = false.obs;
-  var appointmets = <PatientAppointementsModel>[].obs;
+  var appointmets = <DoctorAppointementsModel>[].obs;
   
   Future<void> fechtAppointments(String patientId) async {
     // Change return type to Future<void>
     try {
       isLoading.value = true;
-      final response = await ApiGetServices.patientAppointements(patientId);
+      final response = await ApiGetServices.doctorAppointements(patientId);
       appointmets.assignAll(response);
       
     } catch (e) {

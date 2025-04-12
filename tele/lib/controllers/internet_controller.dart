@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:tele/views/screens/loading_message_screen.dart'; // Custom widget for No Internet
+import 'package:tele/controllers/user_Controller.dart';
+import 'package:tele/views/screens/NoInternetConnection.dart';
 
 class InternetController extends GetxController {
   late final InternetConnectionChecker _connectionChecker;
   late final RxBool hasInternet = true.obs;
   late final RxBool isChecking = false.obs; // Track if checking is ongoing
+  late bool isSnackbarShown = false; // Flag to track if snackbar is shown
+  String? userType;
 
   @override
   void onInit() {
@@ -35,28 +40,38 @@ class InternetController extends GetxController {
     hasInternet.value = isConnected;
     _handleConnectionChange(isConnected);
   }
+
   // Handle status change: Internet lost or restored
-  void _handleConnectionChange(bool isConnected) {
+  void _handleConnectionChange(bool isConnected) async {
     if (!isConnected) {
       print("No internet connection - showing snackbar");
 
-      // Show snackbar to notify user
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.rawSnackbar(
-          titleText: SizedBox(
-            width: double.infinity,
-            height: Get.size.height / 1.1,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: LoadingMessage(message: 'No Internet',), // Your custom widget
+      // Only show the snackbar if it is not already shown
+      if (!isSnackbarShown) {
+        isSnackbarShown = true; // Set flag to true when snackbar is shown
+
+        // Show snackbar to notify user
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.rawSnackbar(
+            titleText: SizedBox(
+              width: double.infinity,
+              // height: Get.size.height / 1.1,
+              height: (Get.size.height != 0)
+                  ? Get.size.height / 1.1
+                  : 600, // fallback default height
+
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: NoInternetConnection(), // Your custom widget
+              ),
             ),
-          ),
-          messageText: Container(),
-          backgroundColor: Colors.transparent,
-          isDismissible: false,
-          duration: const Duration(days: 1),
-        );
-      });
+            messageText: Container(),
+            backgroundColor: Colors.transparent,
+            isDismissible: false,
+            duration: const Duration(days: 1),
+          );
+        });
+      }
       // Attempt to reconnect periodically every 10 seconds (optional retry mechanism)
       if (!isChecking.value) {
         isChecking.value = true;
@@ -66,6 +81,12 @@ class InternetController extends GetxController {
       if (Get.isSnackbarOpen) {
         print("Internet restored - closing snackbar");
         Get.closeCurrentSnackbar();
+
+        // Reset snackbar flag after closing
+        isSnackbarShown = false;
+
+        final UserController userController = Get.find<UserController>();
+        await userController.checkUserType();
       }
     }
   }

@@ -12,7 +12,7 @@ class PaymentStatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade900, // Background color
+      backgroundColor: Color.fromARGB(255, 9, 130, 13), // Background color
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 240),
         child: Card(
@@ -46,7 +46,7 @@ class PaymentStatusScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade800,
+                      backgroundColor: Color.fromARGB(255, 9, 130, 13),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),

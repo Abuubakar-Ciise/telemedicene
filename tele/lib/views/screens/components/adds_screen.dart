@@ -40,7 +40,6 @@
 // }
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tele/views/screens/components/config.dart';
 
 class AddsScreen extends StatefulWidget {
@@ -76,7 +75,7 @@ class _AddsScreenState extends State<AddsScreen> {
         image: DecorationImage(
           image: (widget.imageUri.isNotEmpty && widget.imageUri != 'N/A')
               ? CachedNetworkImageProvider('$url/${widget.imageUri}')
-              : AssetImage('assets/default_image.png') as ImageProvider,
+              : AssetImage('assets/images/noads.png') as ImageProvider,
           fit: BoxFit.cover,
         ),
       ),

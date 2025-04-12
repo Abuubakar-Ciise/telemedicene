@@ -3,29 +3,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/controllers/adds_controller.dart';
-import 'package:tele/controllers/appoinments_controller.dart';
+import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/DoctorScreens/doctor_appointment_screen.dart';
+import 'package:tele/views/screens/DoctorScreens/doctor_profile_Screen.dart';
 import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
 import 'package:tele/views/screens/components/adds_screen.dart';
-import 'package:tele/views/screens/components/appointment_card.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/components/reusable.card.dart';
-import 'package:tele/views/screens/components/reusable_card_for_patient.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
-import 'package:tele/views/screens/patient/user_profile.dart';
 import 'package:tele/views/screens/selfManagement.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class DoctorHomeScreen extends StatefulWidget {
+  const DoctorHomeScreen({super.key});
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  
+class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   final url = Config.baseUrl;
-  final appoinmentsController = Get.put(AppoinmentsController());
+  final DoctorAppointmentController doctorAppointmentController =
+      Get.put(DoctorAppointmentController());
   final addsController = Get.put(AddsController());
   String username = "Loading...";
   String userId = "Loading...";
@@ -37,14 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startAutoScroll() {
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (!mounted || addsController.adds.isEmpty || !_scrollController.hasClients) return;
+      if (!mounted ||
+          addsController.adds.isEmpty ||
+          !_scrollController.hasClients) return;
       final screenWidth = MediaQuery.of(context).size.width;
       final itemWidth = screenWidth * 0.87;
       final margin = 10.0;
-      
 
       // final singleItemWidth = 350.0; // Adjust this to match AddsScreen width + margin
-      final singleItemWidth = itemWidth + margin; // Adjust this to match AddsScreen width + margin
+      final singleItemWidth =
+          itemWidth + margin; // Adjust this to match AddsScreen width + margin
       final targetPosition = _currentIndex * singleItemWidth;
 
       _scrollController.animateTo(
@@ -61,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (_currentIndex >= addsController.adds.length) {
         _currentIndex = 0; // Loop back to start
-        
       }
     });
   }
@@ -91,28 +91,72 @@ class _HomeScreenState extends State<HomeScreen> {
       username = firstName;
       userId = userData["userId"] ?? "Unknown";
       picture = userData['picture'] ?? "N/A";
-      appoinmentsController.fechtAppointments(userId);
+      doctorAppointmentController.fechtAppointments(userId);
     });
   }
 
-  final List<Map<String, dynamic>> services = [
+  final List<Map<String, dynamic>> doctorCategories = [
     {
-      "icon": Icons.video_call,
-      "text": "Consultation",
-      // "text": "Video Consultation",
-      'route': VideoConsultationScreen()
+      "icon": Icons.healing,
+      "text": "Appointment",
+      "route": DoctorAppointmentScreen(),
+      "color": Colors.blue,
     },
     {
-      "icon": Icons.apartment,
-      // "text": "Book on Appointment",
+      "icon": Icons.healing,
+      "text": "Prescription",
+      "route": null,
+      "color": Colors.green,
+    },
+    {
+      "icon": Icons.local_hospital,
       "text": "Hospital",
-      'route': HospitalListScreen()
+      "route": HospitalListScreen(),
+      "olor": Colors.purple,
     },
-    {"icon": Icons.person_pin, "text": "self manage", 'route': Selfmanagement()},
-    {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
+    {
+      "icon": Icons.medical_services,
+      "text": "Consultation",
+      "route": VideoConsultationScreen(),
+      "color": Colors.pink,
+    },
+    {
+      "icon": Icons.self_improvement,
+      "text": "Self-Management",
+      "route": Selfmanagement(),
+      "color": Colors.red,
+    },
+    {
+      "icon": Icons.child_care,
+      "text": "Pediatrician",
+      "route": null,
+      "color": Colors.orange,
+    },
   ];
 
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Good Morning,';
+    } else if (hour < 17) {
+      return 'Good Afternoon,';
+    } else {
+      return 'Good Evening,';
+    }
+  }
 
+  final List<String> quotes = [
+    "Keep pushing forward 💪",
+    "You're doing great today! 🌟",
+    "Success is just around the corner 🚀",
+    "Stay positive, work hard, and make it happen 🧠",
+    "Make today count! 💯",
+  ];
+
+  String getRandomQuote() {
+    quotes.shuffle(); // Randomize
+    return quotes.first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,16 +177,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Welcome Back,",
+                        getGreeting(),
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey[900],
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(
+                        height: 5,
+                        width: 10,
+                      ),
                       Text(
-                        username,
+                        'Dr $username',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -156,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProfileScreen()));
+                              builder: (context) => DoctorProfileScreenInmainScreen()));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(4),
@@ -179,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : AssetImage('assets/default_image.png')
                                     as ImageProvider,
                         backgroundColor: Colors.white,
-                        
                       ),
                     ),
                   )
@@ -194,17 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (addsController.adds.isEmpty) {
                   return AddsScreen(imageUri: '');
                 }
-                // final imageUri = addsController.adds
-                // return SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   controller: _scrollController,
-                //   child: Row(
-                //     children: addsController.adds.map((adds) {
-                //       print("dddddddddddddd ${adds.id}");
-                //       return AddsScreen(imageUri: adds.picture);
-                //     }).toList(),
-                //   ),
-                // );
                 return Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -227,7 +262,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _scrollController,
                           child: Row(
                             children: addsController.adds.map((adds) {
-                            
                               return AddsScreen(imageUri: adds.picture);
                             }).toList(),
                           ),
@@ -241,13 +275,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         // children: addsController.adds.map((adds) {
                         children:
                             addsController.adds.asMap().entries.map((entry) {
-                          
                           int index = entry.key;
-                          var adds = entry.value;
-                        
+                          // var adds = entry.value;
+
                           return Padding(
                             padding:
-                                const EdgeInsets.only(left: 10.0, bottom: 10),
+                                const EdgeInsets.only(left: 10.0, bottom: 5),
                             child: Container(
                               width: 10,
                               height: 10,
@@ -267,36 +300,34 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
 
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: GridView.builder(
-                  shrinkWrap:
-                      true, 
-                  physics:
-                      const NeverScrollableScrollPhysics(), 
-                  itemCount: services.length,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: doctorCategories.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, 
-                    crossAxisSpacing: 18, 
-                    mainAxisSpacing: 18, 
-                    childAspectRatio: 1, 
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1.2,
                   ),
                   itemBuilder: (context, index) {
-                    return ReusableCardP(
-                      icon: services[index]["icon"],
-                      text: services[index]["text"],
-                      iconColor: Color.fromARGB(255, 9, 130, 13),
+                    final category = doctorCategories[index];
+                    return ReusableCard(
+                      icon: category["icon"],
+                      text: category["text"],
+                      iconColor: category["color"],
                       onTap: () {
-                        if (services[index]['route'] != null) {
+                        if (category['route'] != null) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => services[index]['route']),
+                              builder: (context) => category['route'],
+                            ),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                                 content: Text(
                                     "No screen available for this service")),
                           );
@@ -305,46 +336,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding:
-                    EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
-                child: Text(
-                  'Appointments',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-
-              SizedBox(
-                height: 220,
-                child: Obx(() {
-                  if (appoinmentsController.isLoading.value) {
-                    return LoadingMessage();
-                  }
-                  if (appoinmentsController.appointmets.isEmpty) {
-                    return Center(child: Text("No Appointments Found"));
-                  }
-                  return SingleChildScrollView(
-                    child: Column(
-                      children:
-                          appoinmentsController.appointmets.map((appointment) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: AppointmentCard(
-                            appointmentTime: appointment.shiftTime,
-                            appointmentDate: appointment.appointmentDate,
-                            doctorName: appointment.doctorName,
-                            doctorImageUrl: appointment.doctorProfile,
-                            status: appointment.status,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  );
-                }),
               ),
             ],
           ),

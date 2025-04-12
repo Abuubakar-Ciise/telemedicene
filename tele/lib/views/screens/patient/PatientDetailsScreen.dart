@@ -41,7 +41,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
     // String fullName = userData['']
     setState(() {
       nameController.text = userData['username'] ?? '';
-      phoneController.text = mmmm.substring(4,) ?? '';
+      phoneController.text = formatMerchantPhone(userData['phone'] ?? '');
       ageController.text = userData['age'] ?? '';
       patientId = userData['userId'] ?? '';
       if(gender == 'Male'){
@@ -52,6 +52,16 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
       // selectedGender 
     });
   }
+  String formatMerchantPhone(String phone) {
+  // Remove the country code if it exists
+  if (phone.startsWith('+252')) {
+    return phone.substring(4); // Remove "+252"
+  } else if (phone.startsWith('252')) {
+    return phone.substring(3); // Remove "252"
+  }
+  return phone; // Already local
+}
+
 
   @override
   void initState() {

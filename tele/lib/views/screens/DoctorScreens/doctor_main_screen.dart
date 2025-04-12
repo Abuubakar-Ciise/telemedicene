@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/DoctorScreens/doctor_home_screen.dart';
+import 'package:tele/views/screens/DoctorScreens/doctor_transection_history_screen.dart';
+import 'package:tele/views/screens/patient/contact_us_screen.dart';
+import 'package:tele/views/screens/notification_screen.dart';
 
 class DoctorMainScreen extends StatefulWidget {
   const DoctorMainScreen({super.key});
@@ -10,70 +12,94 @@ class DoctorMainScreen extends StatefulWidget {
 }
 
 class _DoctorMainScreenState extends State<DoctorMainScreen> {
-  String username = "Loading...";
-  String userId = "Loading...";
-  String userType = "Loading...";
+  int _selectedItem = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    loadUserData();
-  }
-
-  Future<void> loadUserData() async {
-    Map<String, String?> userData = await StorageService.getUserData();
-    String fullName = userData["username"] ?? "Unknown";
-    String usertype = userData["userType"] ?? "Unknown";
-    String firstName = fullName.split(" ").first; // Extract first name
-    
-    if(usertype == "0"){
-      usertype = 'Doctor';
-    }
+  void _onItemTapped(int index) {
     setState(() {
-      username = firstName;
-      userId = userData["userId"] ?? "Unknown";
-      userType = usertype;
+      _selectedItem = index;
     });
   }
 
-  void handleLogout() async {
-    await StorageService.clearUserData(); // Clear saved user data
-    Get.offAllNamed('/login'); // Navigate to login screen & remove all previous screens
-  }
+  final List<Widget> screens = [
+    DoctorHomeScreen(),
+    NotificationScreen(),
+    DoctorTransectionHistoryScreen(),
+    ContactUsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Doctor Main Screen"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: handleLogout,
+      body: screens[_selectedItem],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Welcome, $username",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "userType, $userType",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "User ID: $userId",
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, -2),
             ),
           ],
         ),
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(Icons.home, "Home", 0),
+            _buildNavItem(Icons.notifications, "Notification", 1),
+            _buildNavItem(Icons.loop, "Transaction", 2),
+            _buildNavItem(Icons.call, "Contact", 3),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final bool isSelected = _selectedItem == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue : Colors.transparent,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.3),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 4),
+                      )
+                    ]
+                  : [],
+            ),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.grey,
+              size: 24,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.blue : Colors.grey,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
       ),
     );
   }

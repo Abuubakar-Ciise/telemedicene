@@ -1,63 +1,52 @@
 import 'package:flutter/material.dart';
 
-class ReusableCard extends StatefulWidget {
+class ReusableCard extends StatelessWidget {
   final IconData icon;
   final String text;
-  final Color iconColor;
+  final Color? iconColor ;
   final VoidCallback onTap;
 
   const ReusableCard({
     super.key,
     required this.icon,
     required this.text,
-    required this.iconColor,
+     this.iconColor,
     required this.onTap,
   });
 
   @override
-  State<ReusableCard> createState() => _ReusableCardState();
-}
-
-class _ReusableCardState extends State<ReusableCard> {
-  @override
   Widget build(BuildContext context) {
+    final Color effectiveColor = iconColor ?? Colors.blue; 
     return GestureDetector(
-      onTap: widget.onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 55,
-            height: 55,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 3,
-                  spreadRadius: 1,
-                  offset: const Offset(1, 1),
-                ),
-              ],
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
             ),
-            child: Center(
-              child: Icon(widget.icon, size: 30, color: widget.iconColor),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: effectiveColor.withOpacity(0.2),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            widget.text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+            const SizedBox(height: 8),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-  
   }
 }

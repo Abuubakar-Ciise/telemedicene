@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/Models/adds_model.dart';
+import 'package:tele/Models/doctor_appointements_model.dart';
+import 'package:tele/Models/doctor_transection_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
@@ -177,11 +178,12 @@ class ApiGetServices {
       return {'success':false, 'message': "failed to connect to server"};
     }
   }
-  // Appointments
+  // patient Appointements
 
   static Future<List<PatientAppointementsModel>> patientAppointements(String patientId) async {
     try {
       final response = await http.post(
+        // Uri.parse('$url/patient_appointements'),
         Uri.parse('$url/patient_appointements'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -206,8 +208,36 @@ class ApiGetServices {
     }
   }
 
-  // transection
+  // doctor Appointements
+  static Future<List<DoctorAppointementsModel>> doctorAppointements(String doctorId) async {
+    try {
+      final response = await http.post(
+        // Uri.parse('$url/patient_appointements'),
+        Uri.parse('$url/doctor_appointements'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "doctor_id": doctorId
+        })
+      );
 
+      if(response.statusCode == 200) {
+        final record = jsonDecode(response.body);
+        if(record['success']){
+          return (record['record'] as List)
+          .map((appointments) => DoctorAppointementsModel.fromJson(appointments)).toList();
+        }else {
+          throw Exception("API Error: ${record['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+       
+      return [];
+    }
+  }
+
+  // patient Transection
   static Future<List<PatientTransectionModel>> patientTransection(String patientId) async {
     try {
       final response = await http.post(
@@ -234,6 +264,33 @@ class ApiGetServices {
       return [];
     }
   }
+  // doctor Transection
+  static Future<List<DoctorTransectionModel>> doctorTransection(String patientId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/doctor_transection'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "doctor_id": patientId
+        })
+      );
+      
+      if(response.statusCode == 200) {
+        final record = jsonDecode(response.body);
+        if(record['success']){
+          return (record['record'] as List)
+          .map((appointments) => DoctorTransectionModel.fromJson(appointments)).toList();
+        }else {
+          throw Exception("API Error: ${record['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+       
+      return [];
+    }
+  }
   // adds Api
 
   static Future<List<AddsModel>> adds() async {
@@ -243,6 +300,7 @@ class ApiGetServices {
       if(response.statusCode == 200) {
         //  print("is call you ${response.body}");
         final data = jsonDecode(response.body);
+        
         if(data['success']){
           return (data['record'] as List)
           .map((adds) => AddsModel.fromJson(adds))

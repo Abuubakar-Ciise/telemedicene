@@ -1,6 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';

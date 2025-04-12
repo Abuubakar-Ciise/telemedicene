@@ -5,7 +5,6 @@ import 'package:tele/services/get_api_services.dart';
 class AddsController extends GetxController{
   var isLoading = false.obs;
   var adds = <AddsModel>[].obs;
-
   Future<void> allAdds() async{
     try {
       isLoading.value = true;

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/services/StorageService.dart';
@@ -90,8 +89,8 @@ class AuthServices {
         String token = jwt.sign(SecretKey('my_secret_key'));
 
         await StorageService.saveUserData(
-          token, record['_id'], record['name'],record['type'],
-          record['email'],record['address'],record['gender'],record['age'],record['phone'],record['picture'],record['user_name']
+          token , record['_id'] , record['name'] ?? '',record['type'] ?? 0,
+          record['email'] ?? '',record['address'] ?? '',record['gender'] ?? '',record['age'] ?? 20,record['phone'] ?? '',record['picture'] ?? '',record['user_name'] ?? ''
           );
         print("current user etails  $token ----- ${record['_id']} ---- ${record['name']}--- ${record['type']} --- ${record['email']} -- ${record['address']} -- ${record['gender']} --${record['age']} -- ${record['phone']} --${record['picture']} --- ${record['user_name']}");
         return {

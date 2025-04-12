@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:tele/views/screens/components/config.dart';
 
 class EvsPlusServices {
   String formatMerchantPhone(String phone) {
