@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:tele/views/screens/components/config.dart';
 
 class AppointmentCard extends StatefulWidget {
-  
   final String appointmentTime;
   final String appointmentDate;
   final String doctorName;
@@ -23,14 +22,19 @@ class AppointmentCard extends StatefulWidget {
 }
 
 class _AppointmentCardState extends State<AppointmentCard> {
-  
-
   @override
   Widget build(BuildContext context) {
     // DateTime appointmentDate = DateTime.parse(widget.appointmentDate);
-     DateFormat inputFormat = DateFormat('dd MMMM yyyy'); // Input format for "02 April 2025"
-    DateTime appointmentDate = inputFormat.parse(widget.appointmentDate);
-
+    DateFormat inputFormat =
+        DateFormat('dd MMMM yyyy'); // Input format for "02 April 2025"
+    // DateTime appointmentDate = inputFormat.parse(widget.appointmentDate);
+    DateTime appointmentDate;
+    try {
+      appointmentDate = DateTime.parse(widget.appointmentDate);
+    } catch (e) {
+      appointmentDate =
+          DateFormat('dd MMMM yyyy').parse(widget.appointmentDate);
+    }
     // Format the date
     String formattedDate = DateFormat('EEE MMMM yy').format(appointmentDate);
     // Determine status text and color
@@ -42,7 +46,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
     final statusText = statusInfo[widget.status]?["text"] ?? "Cancelled";
     final statusColor = statusInfo[widget.status]?["color"] ?? Colors.red;
-     final url = Config.baseUrl;
+    final url = Config.baseUrl;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -51,7 +55,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
       elevation: 2,
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 8,top: 0),
+        padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8, top: 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,7 +71,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
@@ -104,19 +109,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         color: Colors.redAccent,
                       ),
                     ),
-                    // const Icon(Icons.arrow_right_alt, color: Colors.redAccent),
-                    // Text(
-                    //   " $appointmentTime",
-                    //   style: const TextStyle(
-                    //     fontSize: 16,
-                    //     fontWeight: FontWeight.bold,
-                    //     color: Colors.redAccent,
-                    //   ),
-                    // ),
+                   
                   ],
                 ),
                 Text(
-                 formattedDate,
+                  formattedDate,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -130,14 +127,14 @@ class _AppointmentCardState extends State<AppointmentCard> {
             Row(
               children: [
                 CircleAvatar(
-                      radius: 28,
-                      backgroundImage:
-                          (widget.doctorImageUrl?.isNotEmpty ?? false) && widget.doctorImageUrl != "N/A"
-                              ? NetworkImage('$url/${widget.doctorImageUrl}')
-                              : AssetImage('assets/default_image.png')
-                                  as ImageProvider,
-                      backgroundColor: Colors.white,
-                    ),
+                  radius: 28,
+                  backgroundImage: (widget.doctorImageUrl?.isNotEmpty ??
+                              false) &&
+                          widget.doctorImageUrl != "N/A"
+                      ? NetworkImage('$url/${widget.doctorImageUrl}')
+                      : AssetImage('assets/default_image.png') as ImageProvider,
+                  backgroundColor: Colors.white,
+                ),
                 const SizedBox(width: 10),
                 Text(
                   widget.doctorName,
@@ -153,7 +150,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 ),
               ],
             ),
-            
           ],
         ),
       ),

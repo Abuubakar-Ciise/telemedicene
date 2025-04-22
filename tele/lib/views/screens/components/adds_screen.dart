@@ -52,15 +52,6 @@ class AddsScreen extends StatefulWidget {
 
 class _AddsScreenState extends State<AddsScreen> {
   final url = Config.baseUrl;
-  // ImageProvider getImageProvider(String? uri) {
-  //   if ((uri?.isNotEmpty ?? false) && uri != "N/A") {
-  //     return NetworkImage('$baseUrl/$uri');
-  //   } else {
-  //     return AssetImage('assets/default_image.png');
-  //   }
-  // }
- 
-
   @override
   Widget build(BuildContext context) {
      final screenWidth = MediaQuery.of(context).size.width;

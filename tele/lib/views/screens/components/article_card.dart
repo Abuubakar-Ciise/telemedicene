@@ -138,39 +138,6 @@ class ArticleCard extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Align(
-              //   alignment: Alignment.centerLeft,
-              //   child: Text(formatDate(createdDate)),
-              // ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       Navigator.push(
-              //         context,
-              //         MaterialPageRoute(
-              //             builder: (context) => Selfdetailts(
-              //                   imagePath: imagePath,
-              //                   title: title,
-              //                   description: description,
-              //                   createdDate: createdDate,
-              //                 )),
-              //       );
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.pinkAccent,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(8),
-              //       ),
-              //       elevation: 2,
-              //     ),
-              //     child: const Text(
-              //       'Read more',
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

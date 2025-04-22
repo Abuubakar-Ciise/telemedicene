@@ -56,8 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
         hadda = _currentIndex;
       });
       _currentIndex++;
-      // print("haddda $hadda --- waqtiga hadda ${DateTime.now().microsecondsSinceEpoch}");
-      // print("waqtiga hadda ${DateTime.now().microsecondsSinceEpoch}");
 
       if (_currentIndex >= addsController.adds.length) {
         _currentIndex = 0; // Loop back to start
@@ -194,17 +192,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (addsController.adds.isEmpty) {
                   return AddsScreen(imageUri: '');
                 }
-                // final imageUri = addsController.adds
-                // return SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   controller: _scrollController,
-                //   child: Row(
-                //     children: addsController.adds.map((adds) {
-                //       print("dddddddddddddd ${adds.id}");
-                //       return AddsScreen(imageUri: adds.picture);
-                //     }).toList(),
-                //   ),
-                // );
                 return Container(
                   width: double.infinity,
                   decoration: BoxDecoration(

@@ -11,8 +11,7 @@ class AppoinmentsController extends GetxController {
     try {
       isLoading.value = true;
       final response = await ApiGetServices.patientAppointements(patientId);
-      appointmets.assignAll(response);
-      
+      appointmets.assignAll(response.where((st) => st.status == 1));
     } catch (e) {
       print("Error fetching hospitals: $e");
       //  return [];

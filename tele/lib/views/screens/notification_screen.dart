@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tele/views/screens/empty_notification_screen';
+import 'package:tele/views/screens/empty_notification_screen.dart';
 
 class NotificationScreen extends StatelessWidget {
   final bool hasNotifications;
@@ -72,12 +72,12 @@ class NotificationScreenContent extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EmptyNotificationScreen(),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => const EmptyNotificationScreen(),
+                //   ),
+                // );
               },
               child: const Text("Clear"),
             ),

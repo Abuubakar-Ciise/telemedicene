@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/Models/adds_model.dart';
 import 'package:tele/Models/doctor_appointements_model.dart';
@@ -19,9 +20,6 @@ class ApiGetServices {
   Future<List<Hospital>> fetchHospitals() async {
     try {
       final response = await http.post(Uri.parse('$url/getAll_Hospitals'));
-      print("Fetching data from: $url/getAll_Hospitals");
-      print("cccaalling");
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
@@ -44,11 +42,9 @@ class ApiGetServices {
   Future<List<DoctorList>> fechDoctorsList() async {
     try {
       final response = await http.post(Uri.parse('$url/getAll_Doctors'));
-      print("Fetching data from: $url/getAll_Doctors");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // print("fffffffffffff${response.body}");
         if (data['success']) {
           return (data['record'] as List)
               .map((doctor) => DoctorList.fromJson(doctor))
@@ -116,8 +112,6 @@ class ApiGetServices {
         "appointment_date": appointmentDate,
       }),
     );
-    print("From API response: ${response.body} ");
-    print('baseURl ${'$url/${dayName}_Shifts'}');
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       if (data["success"] == true) {
@@ -219,7 +213,6 @@ class ApiGetServices {
           "doctor_id": doctorId
         })
       );
-
       if(response.statusCode == 200) {
         final record = jsonDecode(response.body);
         if(record['success']){
@@ -296,9 +289,7 @@ class ApiGetServices {
   static Future<List<AddsModel>> adds() async {
     try {
       final response = await http.post(Uri.parse('$url/adds'));
-      // print("is call you ");
       if(response.statusCode == 200) {
-        //  print("is call you ${response.body}");
         final data = jsonDecode(response.body);
         
         if(data['success']){
@@ -336,6 +327,32 @@ class ApiGetServices {
        throw Exception("Server Error: ${response.statusCode}");
     } catch (e) {
       return [];
+    }
+  }
+  // update FCM Token
+
+  static Future<void> updateFcmToken(String userId) async {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+    final String? token = await _firebaseMessaging.getToken();
+    try {
+      if (token != null) {
+        final response = await http.post(
+          Uri.parse('$url/update_token'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({"_id": userId, "token": token}),
+        );
+    
+
+        if (response.statusCode == 200) {
+          print("✅ FCM TOKEN updated successfully");
+        } else {
+          print('❌ Failed to update token: ${response.statusCode}');
+        }
+      } else {
+        print('❌ FCM token is null');
+      }
+    } catch (e) {
+      print('🔥 Error updating FCM token: $e');
     }
   }
 }

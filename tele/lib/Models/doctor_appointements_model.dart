@@ -2,31 +2,40 @@ class DoctorAppointementsModel {
   final String id;
   final int status;
   final String appointmentDate;
+  final String doctorName;
   final String patientName;
   final String patientProfile;
   final String shiftTime;
   final String shiftDay;
+  final String doctorToken;
+  final String patientToken;
   DoctorAppointementsModel({
     required this.id,
     required this.status,
     required this.appointmentDate,
+    required this.doctorName,
     required this.patientName,
     required this.patientProfile,
     required this.shiftTime,
     required this.shiftDay,
+    required this.doctorToken,
+    required this.patientToken,
   });
-  factory DoctorAppointementsModel.fromJson(Map<String,dynamic> json) {
+  factory DoctorAppointementsModel.fromJson(Map<String, dynamic> json) {
     return DoctorAppointementsModel(
-      id: json['_id'] ?? '', 
-      status: json['status'] ?? 0, 
-      appointmentDate: json['appointment_date'] ?? '', 
-      patientName: json['patient_name'] ?? '', 
-      patientProfile: json['patient_profile'] ?? '', 
-      shiftTime: json['shift_time'] ?? '', 
-      shiftDay: json['shift_day'] ?? ''
-      );
+        id: json['_id'] ?? '',
+        status: json['status'] ?? 0,
+        appointmentDate: json['appointment_date'] ?? '',
+        doctorName: json['doctor_name'] ?? '',
+        patientName: json['patient_name'] ?? '',
+        patientProfile: json['patient_profile'] ?? '',
+        shiftTime: json['shift_time'] ?? '',
+        shiftDay: json['shift_day'] ?? '',
+        doctorToken: json['doctor_token'] ?? '',
+        patientToken: json['patient_token'] ?? ''
+        );
   }
-   String toString() {
+  String toString() {
     return 'Appointment(id: $id, status: $status, date: $appointmentDate, doctor: $patientName, time: $shiftTime, day: $shiftDay)';
   }
 }

@@ -10,7 +10,6 @@ class DoctorAppointmentScreen extends StatefulWidget {
   @override
   State<DoctorAppointmentScreen> createState() => _DoctorAppointmentScreenState();
 }
-
 class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
   final doctorAppointmentController = Get.put(DoctorAppointmentController());
   @override

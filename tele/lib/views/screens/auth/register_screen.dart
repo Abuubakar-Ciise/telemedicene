@@ -365,42 +365,6 @@ class RegisterScreen extends StatelessWidget {
       ),
     );
   }
-
-  // // Password Field with Validation
-  // Widget buildPasswordField(String hint, TextEditingController controller) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 12),
-  //     child: TextFormField(
-  //       controller: controller,
-  //       obscureText: true,
-  //       decoration: InputDecoration(
-  //         // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
-  //         prefixIcon: const Icon(Icons.lock, color: Colors.black),
-  //         hintText: hint,
-  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-  //       ),
-  //       validator: (value) => value!.length < 6 ? "Password must be at least 6 characters" : null,
-  //     ),
-  //   );
-  // }
-
-  // // Confirm Password Field with Matching Validation
-  // Widget buildConfirmPasswordField(String hint, TextEditingController controller) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(bottom: 12),
-  //     child: TextFormField(
-  //       controller: controller,
-  //       obscureText: true,
-  //       decoration: InputDecoration(
-  //         prefixIcon: const Icon(Icons.lock, color: Colors.black),
-  //         // prefixIcon: const Icon(Icons.lock, color: Color.fromARGB(255, 9, 130, 13)),
-  //         hintText: hint,
-  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-  //       ),
-  //       validator: (value) => value != _passwordController.text ? "Passwords do not match" : null,
-  //     ),
-  //   );
-  // }
 }
 
 class PasswordField extends StatefulWidget {

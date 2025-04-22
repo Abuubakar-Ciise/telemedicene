@@ -57,12 +57,13 @@ class AuthServices {
   static Future<Map<String, dynamic>> loginDoctorAndPatient(
     String email,
     String password,
+    String token
   ) async {
     try {
       final response = await http.post(
         Uri.parse("$url/login_DoctorAndPatient"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": email, "PassWord": password}),
+        body: jsonEncode({"email": email, "PassWord": password,'token':token}),
       );
 
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
@@ -134,4 +135,5 @@ class AuthServices {
       return [];
     }
   }
+
 }

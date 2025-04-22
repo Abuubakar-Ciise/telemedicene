@@ -243,8 +243,6 @@ class ConfirmationScreen extends StatelessWidget {
               // 0.01,
               selectedDate,
               patientData['problem']!);
-              print('hhhhhhhhhhhhhh ${paymentController.paymentStatus.value}');
-              print('hhhhhhhhhhhhhh ${paymentController.errorMessage.value}');
             Get.to(
               () => PaymentStatusScreen(
                 isSuccess: true,

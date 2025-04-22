@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tele/controllers/adds_controller.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/DoctorScreens/conseltaion_screen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_screen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_profile_Screen.dart';
 import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
@@ -117,7 +118,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     {
       "icon": Icons.medical_services,
       "text": "Consultation",
-      "route": VideoConsultationScreen(),
+      "route": ConseltaionScreen(),
       "color": Colors.pink,
     },
     {
@@ -144,7 +145,6 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       return 'Good Evening,';
     }
   }
-
   final List<String> quotes = [
     "Keep pushing forward 💪",
     "You're doing great today! 🌟",

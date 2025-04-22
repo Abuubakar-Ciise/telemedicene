@@ -19,7 +19,6 @@ class StorageService {
     await prefs.setString('picture', picture);
     await prefs.setString('nickname', nickname);
   }
-
   static Future<Map<String, String?>> getUserData() async {
     final prefs = await SharedPreferences.getInstance();
     return {

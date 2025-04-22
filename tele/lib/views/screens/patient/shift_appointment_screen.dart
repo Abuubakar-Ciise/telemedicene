@@ -45,10 +45,8 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
     dayNameCurrent = daysOfWeek[selectedDayIndex!];
     // updateDayName();
     shiftController.currentDay.value = daysOfWeek[selectedDayIndex!];
-    print(shiftController.currentDay);
     currentDate = getFormattedDate(selectedDayIndex!);
     dayName = '${daysOfWeek[selectedDayIndex!]}_Shifts';
-    print("tttttttttt $dayName");
     shiftController.fetchShifts(widget.doctor.id, currentDate!, daysOfWeek[selectedDayIndex!]);
   }
 
@@ -66,10 +64,7 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
 
   Future<void> checkShiftAvailability(String shiftId) async {
     final test = await ApiGetServices.checkShifts(shiftId, currentDate!);
-    // print(test['success']);
-    // print(
-    //     "Checking shift availability for Shift ID: $shiftId, Date: $currentDate");
-
+    
     setState(() {
       shiftAvailability[shiftId] = test['success']; // Store success/failure
     });
@@ -115,7 +110,6 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
     for (var shift in shifts) {
       String time = shift['time']!;
       String shiftId = shift['shiftId']!;
-      // print("shift TIME ${shift['time']} AND shiftId ${shift['shiftId']}");
       DateTime parsedTime = DateFormat('h:mm a').parse(time);
 
       int hour = parsedTime.hour;
@@ -173,7 +167,6 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
     
     // Get the current day name (e.g., "Saturday")
     String currentDay = daysOfWeek[selectedDayIndex!];
-    print("Selected Day: $currentDay");
 
     // Get shifts for this day from the controller
     List<Shift>? dayShifts = shiftController.shiftsByDay[currentDay];
@@ -263,7 +256,6 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
           shrinkWrap: true,
           children: ['morning', 'afternoon', 'evening'].map((timePeriod) {
             List<Map<String, dynamic>> shifts = categorizedTimes[timePeriod] ?? [];
-            print("Categorized Times for $timePeriod: ${categorizedTimes[timePeriod]}");
 
             return Card(
               color: Colors.white,

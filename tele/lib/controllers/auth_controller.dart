@@ -38,10 +38,10 @@ class AuthController extends GetxController {
 
   // Login Docator an datient
 
-  Future<void> loginDoctorAndPatient(String email, String password) async {
+  Future<void> loginDoctorAndPatient(String email, String password ,String token) async {
     try {
       isLoading.value = true;
-      final response = await AuthServices.loginDoctorAndPatient(email, password);
+      final response = await AuthServices.loginDoctorAndPatient(email, password,token);
 
       if(response['success'] == true) {
         toastification.show(

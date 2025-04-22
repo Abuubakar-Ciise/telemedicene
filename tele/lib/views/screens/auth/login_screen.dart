@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/controllers/auth_controller.dart';
@@ -11,6 +12,7 @@ class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -111,18 +113,12 @@ class LoginScreen extends StatelessWidget {
                                     ),
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        // If form is valid, proceed to next screen
-                                        // Navigator.pushReplacement(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //       builder: (context) =>
-                                        //           MainScreen()),
-                                        // );
+                                        final token = await _firebaseMessaging.getToken();
                                         await authController
                                             .loginDoctorAndPatient(
                                                 _emailController.text.trim(),
                                                 _passwordController.text
-                                                    .trim());
+                                                    .trim(),token!);
                                       }
                                     },
                                     child: const Text(

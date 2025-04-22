@@ -9,6 +9,7 @@ import 'package:tele/views/screens/auth/register_screen.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
 import 'package:tele/views/screens/main_screen.dart';
 import 'package:tele/views/screens/patient/shift_appointment_screen.dart';
+import 'package:tele/views/testcallscreen.dart';
 
 class AppRoutes{
   static final routes = [
@@ -20,6 +21,7 @@ class AppRoutes{
     GetPage(name: '/HospitalList', page: () => HospitalListScreen()),
     GetPage(name: '/doctorList', page: () => VideoConsultationScreen()),
     GetPage(name: '/shitsScreen', page: () => ShiftAppointmentScreen(doctor: Get.arguments,)),
+    GetPage(name: '/testcall', page: () => Testcallscreen()),
     
   ];
 }
