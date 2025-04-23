@@ -23,6 +23,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // LocalNotificationService.initialize(navigatorKey.currentContext!);
   // FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+  
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(
     options: FirebaseOptions(
@@ -62,7 +63,7 @@ await flutterLocalNotificationsPlugin
   Get.put(InternetController(), permanent: true);
   // print(DateTime.now().microsecondsSinceEpoch);
   // FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-  await FirebaseApi().initNotification();
+  await FirebaseNotification().initNotification();
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   ZegoUIKit().init(appID: Config.appId, appSign: Config.appSign);
   // await setupFcmTokenListener();

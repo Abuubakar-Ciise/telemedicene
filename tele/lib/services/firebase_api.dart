@@ -56,36 +56,58 @@ class FirebaseApis {
     print("FCM send response: ${response.statusCode} ${response.body}");
   }
 
-  void initNotification() {}
+  Future<void> sendCallEndFCM(String token) async {
+    try {
+      final accessToken = await AccessTokenService().getAccessToken();
+      final projectId = Config.firebaseprojectid;
 
+      final url = Uri.parse(
+        'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+      );
 
- Future<void> sendCallEndFCM(String token) async {
-  final accessToken = await AccessTokenService().getAccessToken();
-  final projectId = Config.firebaseprojectid;
-
-  final url = Uri.parse(
-    'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
-  );
-
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    },
-    body: jsonEncode({
-      "message": {
-        "token": token,
-        "data": {
-          "type": "call_end"
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
         },
-        "android": {
-          "priority": "high"
-        }
-      }
-    }),
-  );
+        body: jsonEncode({
+          "message": {
+            "token": token,
+            "notification": {
+              "title": "Call Ended",
+              "body": "The call has been ended",
+            },
+            "data": {
+              "type": "call_end",
+              "timestamp": DateTime.now().millisecondsSinceEpoch.toString()
+            },
+            "android": {
+              "priority": "high",
+              "notification": {
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "channel_id": "call_channel",
+                "sound": "default"
+              }
+            },
+            "apns": {
+              "payload": {
+                "aps": {
+                  "sound": "default"
+                }
+              }
+            }
+          }
+        }),
+      );
 
-  print("FCM send call_end response: ${response.statusCode} ${response.body}");
-}
+      print("FCM send call_end response: ${response.statusCode} ${response.body}");
+      if (response.statusCode != 200) {
+        throw Exception('Failed to send call end FCM');
+      }
+    } catch (e) {
+      print('Error sending call end FCM: $e');
+      rethrow;
+    }
+  }
 }
