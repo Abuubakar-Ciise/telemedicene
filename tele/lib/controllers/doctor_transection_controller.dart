@@ -7,7 +7,6 @@ import 'package:tele/services/get_api_services.dart';
 class DoctorTransectionController extends GetxController{
   var isLoading = false.obs;
   var transections = <DoctorTransectionModel>[].obs;
-
   Future<void> fechtTransection(String patientId) async {
     // Change return type to Future<void>
     try {

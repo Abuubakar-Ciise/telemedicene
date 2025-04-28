@@ -31,7 +31,7 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
     final callerToken = data['callerToken'];
     final callerPhone = data['callerPhone'];
     final callType = data['callType'];
-    CallKitService.showCallkit(
+    await CallKitService.showCallkit(
         callerName, roomId, picture, callerToken, callerPhone, callType);
   } else if (data['type'] == 'call_end') {
     print('Received call_end message in background, ending all calls');

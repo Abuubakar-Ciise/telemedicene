@@ -8,7 +8,6 @@ class AppointmentCard extends StatefulWidget {
   final String doctorName;
   final String doctorImageUrl;
   final int status; // Status number (0, 1, 2, or other)
-
   const AppointmentCard({
     super.key,
     required this.appointmentTime,
@@ -20,7 +19,6 @@ class AppointmentCard extends StatefulWidget {
   @override
   _AppointmentCardState createState() => _AppointmentCardState();
 }
-
 class _AppointmentCardState extends State<AppointmentCard> {
   @override
   Widget build(BuildContext context) {
@@ -42,6 +40,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
       0: {"text": "Pending", "color": Colors.orange},
       1: {"text": "Confirmed", "color": Colors.green},
       2: {"text": "Completed", "color": Colors.blue},
+      4: {"text": "Re Appointment", "color": Colors.green},
     };
 
     final statusText = statusInfo[widget.status]?["text"] ?? "Cancelled";

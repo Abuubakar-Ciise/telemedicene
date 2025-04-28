@@ -384,7 +384,7 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-            ),
+            ), 
             child: const Text(
               "Set Appointment",
               style: TextStyle(

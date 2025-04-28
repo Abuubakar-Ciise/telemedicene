@@ -42,7 +42,6 @@ class ApiGetServices {
   Future<List<DoctorList>> fechDoctorsList() async {
     try {
       final response = await http.post(Uri.parse('$url/getAll_Doctors'));
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {

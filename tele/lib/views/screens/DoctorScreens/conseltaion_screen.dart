@@ -43,20 +43,20 @@ class _DoctorAppointmentScreenState extends State<ConseltaionScreen> {
           if(doctorAppointmentController.isLoading.value){
             return LoadingMessage();
           }
-          if(doctorAppointmentController.uniquePatientAppointments.isEmpty){
+          if(doctorAppointmentController.allConfirmedAppointments.isEmpty){
             return Center(child: Text("No Appointments Found"));
           }
           return ListView.builder(
-            itemCount: doctorAppointmentController.uniquePatientAppointments.length,
+            itemCount: doctorAppointmentController.allConfirmedAppointments.length,
             // itemCount: 5,
             itemBuilder: (context,index) {
-              final appointment = doctorAppointmentController.uniquePatientAppointments[index];
+              final appointment = doctorAppointmentController.allConfirmedAppointments[index];
               final hasMultiple = doctorAppointmentController.hasMultipleAppointments(appointment.patientToken);
               print('for doctor ${appointment.doctorToken} -- ${appointment.id}');
               print('for pateint ${appointment.patientToken} -- ${appointment.id}');
               return Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: DocotorAppointmentCard(
+                child: DoctorAppointmentCard(
                   appointmentTime: appointment.shiftTime, 
                   appointmentDate: appointment.appointmentDate, 
                   doctorName: appointment.doctorName, 
@@ -64,9 +64,13 @@ class _DoctorAppointmentScreenState extends State<ConseltaionScreen> {
                   patientProfile: appointment.patientProfile,
                   doctorToken: appointment.doctorToken,
                   patientToken: appointment.patientToken,
+                  doctorPhone: appointment.doctorPhone,
+                  patientPhone: appointment.patientPhone,
                   id: appointment.id,
                   hasMultipleAppointments: hasMultiple,
-                  
+                  doctorId: appointment.doctorId,
+                  patientId:appointment.patientId ,
+                  status: appointment.status,
                   // /status: appointment.status
                   ),
                 );

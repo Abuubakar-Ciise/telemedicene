@@ -10,6 +10,8 @@ class DoctorAppointmentChatScreen extends StatefulWidget {
   final String patientProfile;
   final String doctorToken;
   final String patientToken;
+  final String doctorPhone;
+  final String patientPhone;
 
   const DoctorAppointmentChatScreen({
     super.key,
@@ -18,6 +20,8 @@ class DoctorAppointmentChatScreen extends StatefulWidget {
     required this.patientProfile,
     required this.doctorToken,
     required this.patientToken,
+    required this.doctorPhone,
+    required this.patientPhone,
   });
 
   @override
@@ -160,8 +164,8 @@ class _DoctorAppointmentChatScreenState
                               widget.patientToken,
                               widget.doctorName,
                               roomId,
-                              '617092491',
-                              'admin_profile/67d926d506e5888f7411d368_i7qH.jpg',
+                              widget.doctorPhone,
+                              widget.patientProfile,
                               '0',
                               widget.doctorToken);
                           Navigator.push(
@@ -181,8 +185,8 @@ class _DoctorAppointmentChatScreenState
                               widget.patientToken,
                               widget.doctorName,
                               roomId,
-                              '617092491',
-                              'admin_profile/67d926d506e5888f7411d368_i7qH.jpg',
+                              widget.doctorPhone,
+                              widget.patientProfile,
                               '1',
                               widget.doctorToken);
                           Navigator.push(

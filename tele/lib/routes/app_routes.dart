@@ -1,6 +1,8 @@
 
 
 import 'package:get/get.dart';
+import 'package:tele/DoctorPrescriptionScreen.dart';
+import 'package:tele/PrescriptionScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_home_screen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_main_screen.dart';
 import 'package:tele/views/screens/Hospitals/HospitalListScreen.dart';
@@ -22,6 +24,7 @@ class AppRoutes{
     GetPage(name: '/doctorList', page: () => VideoConsultationScreen()),
     GetPage(name: '/shitsScreen', page: () => ShiftAppointmentScreen(doctor: Get.arguments,)),
     GetPage(name: '/testcall', page: () => Testcallscreen()),
-    
+    GetPage(name: '/prescriptionscreen', page: () => PrescriptionScreen()),
+    GetPage(name: '/doctorprescriptionscreen', page: () => DoctorPrescriptionScreen()),
   ];
 }

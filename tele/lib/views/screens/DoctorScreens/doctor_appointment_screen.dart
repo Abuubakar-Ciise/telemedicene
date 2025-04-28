@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
+import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/appointment_card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class DoctorAppointmentScreen extends StatefulWidget {
   const DoctorAppointmentScreen({super.key});
-
   @override
   State<DoctorAppointmentScreen> createState() => _DoctorAppointmentScreenState();
 }
 class _DoctorAppointmentScreenState extends State<DoctorAppointmentScreen> {
   final doctorAppointmentController = Get.put(DoctorAppointmentController());
+  String? userId;
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+  Future<void> loadUserData() async {
+    Map<String, String?> userData = await StorageService.getUserData();
+    setState(() {
+      userId = userData["userId"] ?? "Unknown";
+      doctorAppointmentController.fechtAppointments(userId!);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

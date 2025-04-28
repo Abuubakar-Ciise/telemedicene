@@ -9,6 +9,11 @@ class DoctorAppointementsModel {
   final String shiftDay;
   final String doctorToken;
   final String patientToken;
+  final String doctorPhone;
+  final String patientPhone;
+  final String doctorId;
+  final String patientId;
+
   DoctorAppointementsModel({
     required this.id,
     required this.status,
@@ -20,6 +25,10 @@ class DoctorAppointementsModel {
     required this.shiftDay,
     required this.doctorToken,
     required this.patientToken,
+    required this.patientPhone,
+    required this.doctorPhone,
+     required this.doctorId,
+    required this.patientId,
   });
   factory DoctorAppointementsModel.fromJson(Map<String, dynamic> json) {
     return DoctorAppointementsModel(
@@ -32,7 +41,11 @@ class DoctorAppointementsModel {
         shiftTime: json['shift_time'] ?? '',
         shiftDay: json['shift_day'] ?? '',
         doctorToken: json['doctor_token'] ?? '',
-        patientToken: json['patient_token'] ?? ''
+        patientToken: json['patient_token'] ?? '',
+        doctorPhone: json['doctor_phone'] ?? '',
+        patientPhone: json['patient_phone'] ?? '',
+        doctorId: json['doctor_id'] ?? '',
+        patientId: json['patient_id'] ?? '',
         );
   }
   String toString() {

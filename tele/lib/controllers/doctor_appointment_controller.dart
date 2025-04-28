@@ -32,22 +32,19 @@ class DoctorAppointmentController extends GetxController {
     try {
       isLoading.value = true;
       final response = await ApiGetServices.doctorAppointements(patientId);
-
-      final confirmed = response.where((a) => a.status == 1).toList();
+      // final confirmed = response.where((a) => a.status == 1).toList();
+      final confirmed = response.where((a) => a.status != 2).toList();
       allConfirmedAppointments.assignAll(confirmed);
-
       final Map<String, List<DoctorAppointementsModel>> grouped = {};
       for (var appointment in confirmed) {
         grouped.putIfAbsent(appointment.patientToken, () => []);
         grouped[appointment.patientToken]!.add(appointment);
       }
-
       patientsWithMultipleAppointments.clear();
       grouped.forEach((token, appointments) {
         patientsWithMultipleAppointments[token] = appointments.length > 1;
          patientShiftTimes[token] = appointments.map((a) => a.shiftTime).toList();
       });
-
       uniquePatientAppointments.assignAll(
         grouped.entries.map((e) => e.value.first).toList(),
       );

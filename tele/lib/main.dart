@@ -17,13 +17,12 @@ import 'package:tele/views/screens/CallPage/firebase_api.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // LocalNotificationService.initialize(navigatorKey.currentContext!);
   // FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-  
+
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(
     options: FirebaseOptions(
@@ -34,19 +33,20 @@ void main() async {
     ),
   );
   // ✅ Create Notification Channel for "call_channel"
-const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
-  'call_channel', // ID
-  'Call Notifications', // Name
-  description: 'Channel used for incoming call notifications',
-  importance: Importance.high,
-);
+  const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
+    'call_channel', // ID
+    'Call Notifications', // Name
+    description: 'Channel used for incoming call notifications',
+    importance: Importance.high,
+  );
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-await flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-    ?.createNotificationChannel(callChannel);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(callChannel);
 
   final accessToken = await AccessTokenService().getAccessToken();
   final token = await FirebaseMessaging.instance.getToken();
@@ -62,9 +62,9 @@ await flutterLocalNotificationsPlugin
   Get.put(DoctorTransectionController());
   Get.put(InternetController(), permanent: true);
   // print(DateTime.now().microsecondsSinceEpoch);
-  // FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-  await FirebaseNotification().initNotification();
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+  await FirebaseNotification().initNotification();
+  
   ZegoUIKit().init(appID: Config.appId, appSign: Config.appSign);
   // await setupFcmTokenListener();
   // ✅ Update FCM token at startup if user is logged in
@@ -77,7 +77,7 @@ await flutterLocalNotificationsPlugin
   // ✅ Listen for future token refresh
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     Map<String, String?> userData = await StorageService.getUserData();
-  final userId = userData["userId"]; 
+    final userId = userData["userId"];
     if (userId != null) {
       await ApiGetServices.updateFcmToken(userId);
     }
@@ -86,6 +86,7 @@ await flutterLocalNotificationsPlugin
     child: MyApp(),
   ));
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   Future<String?> _isLoggedIn() async {
@@ -122,6 +123,8 @@ class MyApp extends StatelessWidget {
             String initialRoute = '/login';
             if (userType == "0") {
               initialRoute = '/doctormainscreen';
+              // initialRoute = '/prescriptionscreen';
+              // initialRoute = '/doctorprescriptionscreen';
               // initialRoute = '/testcall';
               // initialRoute = '/mainscreen';
             } else if (userType == "1") {

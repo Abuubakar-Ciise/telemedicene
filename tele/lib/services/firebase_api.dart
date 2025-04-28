@@ -90,18 +90,19 @@ class FirebaseApis {
                 "sound": "default"
               }
             },
-            "apns": {
-              "payload": {
-                "aps": {
-                  "sound": "default"
-                }
-              }
-            }
+            // "apns": {
+            //   "payload": {
+            //     "aps": {
+            //       "sound": "default"
+            //     }
+            //   }
+            // }
           }
         }),
       );
 
-      print("FCM send call_end response: ${response.statusCode} ${response.body}");
+      print(
+          "FCM send call_end response: ${response.statusCode} ${response.body}");
       if (response.statusCode != 200) {
         throw Exception('Failed to send call end FCM');
       }
