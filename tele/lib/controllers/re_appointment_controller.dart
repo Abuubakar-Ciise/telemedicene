@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/post_api_services.dart';
 import 'package:toastification/toastification.dart';
 

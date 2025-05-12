@@ -7,7 +7,7 @@ import 'package:tele/views/screens/DoctorScreens/ReAppointmentScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_chat_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
 
-class DoctorAppointmentCard extends StatelessWidget {
+class PatientAppointmentCard extends StatelessWidget {
   final String appointmentTime;
   final String appointmentDate;
   final String doctorName;
@@ -18,12 +18,12 @@ class DoctorAppointmentCard extends StatelessWidget {
   final String doctorPhone;
   final String patientPhone;
   final String id;
-  final bool hasMultipleAppointments;
+  // final bool hasMultipleAppointments;
   final String doctorId;
   final String patientId;
   final int status;
 
-  const DoctorAppointmentCard({
+  const PatientAppointmentCard({
     super.key,
     required this.appointmentTime,
     required this.appointmentDate,
@@ -35,7 +35,7 @@ class DoctorAppointmentCard extends StatelessWidget {
     required this.doctorPhone,
     required this.patientPhone,
     required this.id,
-    required this.hasMultipleAppointments,
+    // required this.hasMultipleAppointments,
     required this.doctorId,
     required this.patientId,
     required this.status,
@@ -88,7 +88,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DoctorAppointmentChatScreen(
-                          patientName: patientName,
+                          patientName: doctorName,
                           doctorName: doctorName,
                           patientProfile: patientProfile,
                           doctorToken: doctorToken,
@@ -128,7 +128,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                patientName,
+                                doctorName,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -166,18 +166,18 @@ class DoctorAppointmentCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              if (hasMultipleAppointments)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    "Multiple Appointments",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
+                              // if (hasMultipleAppointments)
+                              //   const Padding(
+                              //     padding: EdgeInsets.only(top: 4),
+                              //     child: Text(
+                              //       "Multiple Appointments",
+                              //       style: TextStyle(
+                              //         fontSize: 12,
+                              //         color: Colors.orange,
+                              //         fontWeight: FontWeight.w500,
+                              //       ),
+                              //     ),
+                              //   ),
                             ],
                           ),
                         ),
@@ -190,100 +190,100 @@ class DoctorAppointmentCard extends StatelessWidget {
               const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
 
               // Buttons
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16)),
-                              ),
-                              builder: (context) {
-                                return ConfirmCompleteBottomSheet(
-                                  onConfirm: () async {
-                                    await reAppointmentController.reAppointment(
-                                      appointmentDate,
-                                      patientId,
-                                      id,
-                                      2,
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Complete',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            print('Re-Appointment button clicked');
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => ReAppointmentScreen(
-                                doctorId: doctorId,
-                                appointmentDate: appointmentDate,
-                                appointmentId: id,
-                                patientId: patientId,
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Re-Appointment',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //     children: [
+              //       Expanded(
+              //         child: Material(
+              //           color: Colors.transparent,
+              //           child: InkWell(
+              //             borderRadius: BorderRadius.circular(8),
+              //             onTap: () {
+              //               showModalBottomSheet(
+              //                 context: context,
+              //                 shape: const RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.vertical(
+              //                       top: Radius.circular(16)),
+              //                 ),
+              //                 builder: (context) {
+              //                   return ConfirmCompleteBottomSheet(
+              //                     onConfirm: () async {
+              //                       await reAppointmentController.reAppointment(
+              //                         appointmentDate,
+              //                         patientId,
+              //                         id,
+              //                         2,
+              //                       );
+              //                     },
+              //                   );
+              //                 },
+              //               );
+              //             },
+              //             child: Container(
+              //               padding: const EdgeInsets.symmetric(vertical: 9),
+              //               decoration: BoxDecoration(
+              //                 color: Colors.blue,
+              //                 borderRadius: BorderRadius.circular(8),
+              //               ),
+              //               child: const Center(
+              //                 child: Text(
+              //                   'Complete',
+              //                   style: TextStyle(
+              //                     color: Colors.white,
+              //                     fontSize: 13,
+              //                     fontWeight: FontWeight.w500,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       const SizedBox(width: 10),
+              //       Expanded(
+              //         child: Material(
+              //           color: Colors.transparent,
+              //           child: InkWell(
+              //             borderRadius: BorderRadius.circular(8),
+              //             onTap: () {
+              //               print('Re-Appointment button clicked');
+              //               showModalBottomSheet(
+              //                 context: context,
+              //                 backgroundColor: Colors.transparent,
+              //                 builder: (context) => ReAppointmentScreen(
+              //                   doctorId: doctorId,
+              //                   appointmentDate: appointmentDate,
+              //                   appointmentId: id,
+              //                   patientId: patientId,
+              //                 ),
+              //               );
+              //             },
+              //             child: Container(
+              //               padding: const EdgeInsets.symmetric(vertical: 9),
+              //               decoration: BoxDecoration(
+              //                 color: Colors.green,
+              //                 borderRadius: BorderRadius.circular(8),
+              //               ),
+              //               child: const Center(
+              //                 child: Text(
+              //                   'Re-Appointment',
+              //                   style: TextStyle(
+              //                     color: Colors.white,
+              //                     fontSize: 13,
+              //                     fontWeight: FontWeight.w500,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),

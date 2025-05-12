@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tele/views/screens/patient/TransactionHistoryScreen.dart';
+import 'package:tele/views/screens/patient/chats_list_screen_appointment.dart';
 import 'package:tele/views/screens/patient/contact_us_screen.dart';
 import 'package:tele/views/screens/home_screen.dart';
 import 'package:tele/views/screens/notification_screen.dart';
@@ -25,6 +26,7 @@ class _MainScreenState extends State<MainScreen> {
     // Center(child: Text("Notification Screen")),
     NotificationScreen(),
     TransactionHistoryScreen(),
+    ChatsListScreenAppointment(),
     ContactUsScreen(),
     
   ];
@@ -55,11 +57,14 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.loop),
             label: "Transaction",
           ),
+           BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Chat",
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
             label: "Contact",
           ),
-          
         ],
       ),
     );

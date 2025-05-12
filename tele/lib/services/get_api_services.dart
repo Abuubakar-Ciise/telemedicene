@@ -9,6 +9,7 @@ import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
 import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
+import 'package:tele/Models/specialist_model.dart';
 import 'package:tele/Models/transection_model.dart';
 import 'package:tele/views/screens/components/config.dart';
 
@@ -37,7 +38,27 @@ class ApiGetServices {
       return [];
     }
   }
-
+  // get specialist
+  Future<List<SpecialistModel>> fetchSpecialist() async {
+    try {
+      final response = await http.post(Uri.parse('$url/getAll_Speciality'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((hospital) => SpecialistModel.fromJson(hospital))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Fetch Error: $e");
+      return [];
+    }
+  }
   // get list of dectors
   Future<List<DoctorList>> fechDoctorsList() async {
     try {

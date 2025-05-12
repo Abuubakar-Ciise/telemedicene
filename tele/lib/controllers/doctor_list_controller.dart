@@ -5,11 +5,11 @@ import 'package:tele/services/get_api_services.dart';
 class DoctorListController extends GetxController{
   var doctorsList = <DoctorList>[].obs;
   var isLoading = false.obs;
-
   void fetchDoctorsList() async {
     try {
       isLoading.value = true;
       final doctros = await ApiGetServices().fechDoctorsList();
+      // doctorsList.assignAll(doctros.where((hname) => hname.hospitalname.toLowerCase().startsWith('dig')));
       doctorsList.assignAll(doctros);
        doctorsList.refresh();
     } catch (e) {
@@ -18,7 +18,6 @@ class DoctorListController extends GetxController{
       isLoading.value = false;
     }
   }
-
 
   @override
   void onInit() {

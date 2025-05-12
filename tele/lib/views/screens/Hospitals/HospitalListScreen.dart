@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-
 import 'package:tele/controllers/HospitalController.dart';
+import 'package:tele/controllers/specialist_controller.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
@@ -13,24 +12,47 @@ class HospitalListScreen extends StatefulWidget {
   _HospitalListScreenState createState() => _HospitalListScreenState();
 }
 
-class _HospitalListScreenState extends State<HospitalListScreen> {
+class _HospitalListScreenState extends State<HospitalListScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   final hospitalController = Get.put(HospitalController());
+  final specialistController = Get.put(SpecialistController());
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+
     _searchController.addListener(() {
-      hospitalController.filterHospitals(_searchController.text);
+      final searchText = _searchController.text;
+      final tabIndex = _tabController.index;
+
+      if (tabIndex == 0) {
+        hospitalController.filterHospitals(searchText);
+      } else {
+        specialistController.filterSpecialist(searchText);
+      }
+    });
+
+    _tabController.addListener(() {
+      final searchText = _searchController.text;
+      if (_tabController.index == 0) {
+        hospitalController.filterHospitals(searchText);
+      } else if (_tabController.index == 1) {
+        specialistController.filterSpecialist(searchText);
+      }
     });
   }
-   @override
+
+  @override
   void dispose() {
-    super.dispose();
-    // Clear search query and reset hospitals when the screen is disposed
-    _searchController.clear();
+    _tabController.dispose();
+    _searchController.dispose();
     hospitalController.filterHospitals('');
+    specialistController.filterSpecialist('');
+    super.dispose();
   }
 
   @override
@@ -38,145 +60,207 @@ class _HospitalListScreenState extends State<HospitalListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        // elevation: 0,
         backgroundColor: Colors.white,
         title: _isSearching
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
                 decoration: const InputDecoration(
-                  hintText: "Search Hospital...",
+                  hintText: "Search...",
                   border: InputBorder.none,
                 ),
                 style: const TextStyle(color: Colors.black, fontSize: 18),
               )
-            : const Text("Search Hospitals"),
+            : const Text("Search Hospitals",
+                style: TextStyle(color: Colors.black)),
         actions: [
           IconButton(
-            icon: Icon(_isSearching ? Icons.close : Icons.search, size: 30),
+            icon: Icon(_isSearching ? Icons.close : Icons.search,
+                size: 28, color: Colors.black),
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
                 if (!_isSearching) {
                   _searchController.clear();
                   hospitalController.filterHospitals('');
+                  specialistController.filterSpecialist('');
                 }
               });
             },
           ),
         ],
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.blueAccent,
+          labelColor: Colors.blueAccent,
+          unselectedLabelColor: Colors.black54,
+          tabs: const [
+            Tab(text: "Hospitals"),
+            Tab(text: "Specialist"),
+          ],
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-        child: Obx(() {
-          if (hospitalController.isLoading.value) {
-            return LoadingMessage();
-          }
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Hospitals Tab
+          Obx(() {
+            if (hospitalController.isLoading.value) {
+              return const LoadingMessage();
+            }
+            if (hospitalController.filteredHospitals.isEmpty) {
+              return const LoadingMessage(
+                  animationAsset: 'assets/animations/no_hospital.json');
+            }
+            return _buildHospitalGrid();
+          }),
 
-          if (hospitalController.filteredHospitals.isEmpty) {
-            return LoadingMessage(
-              animationAsset: 'assets/animations/no_hospital.json',
-            );
-          }
-          // return SingleChildScrollView(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //     children: [
-          //       // You can add any other widgets above the grid, like titles or buttons here
-          //       Wrap(
-          //         spacing: 10, // Horizontal space between items
-          //         runSpacing: 10, // Vertical space between rows
-          //         children: List.generate(
-          //             hospitalController.filteredHospitals.length, (index) {
-          //           final hospital = hospitalController.filteredHospitals[
-          //               index]; // Get hospital data at current index
-          //           return Container(
-          //             width: (MediaQuery.of(context).size.width / 2) -
-          //                 60, // Ensures 2 columns by dividing screen width
-          //             child: HospitalCards(
-          //               name: hospital.name, // Pass hospital name
-          //               picture: hospital.picture, // Pass hospital picture
-          //             ),
-          //           );
-          //         }),
-          //       ),
-          //     ],
-          //   ),
-          // );
+          // Specialist Tab
+          Obx(() {
+            if (specialistController.isLoading.value) {
+              return const LoadingMessage();
+            }
+            if (specialistController.filteredSpecialist.isEmpty) {
+              return const LoadingMessage(
+                  animationAsset: 'assets/animations/no_hospital.json');
+            }
+            return _buildSpecialistGrid();
+          }),
+        ],
+      ),
+    );
+  }
 
-          return GridView.builder(
+  Widget _buildHospitalGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.only(top: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: hospitalController.filteredHospitals.length,
+      itemBuilder: (context, index) {
+        final hospital = hospitalController.filteredHospitals[index];
+        return HospitalCard(
+          name: hospital.name,
+          picture: hospital.picture,
+        );
+      },
+    );
+  }
 
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5),
-            itemCount: hospitalController.filteredHospitals.length,
-            itemBuilder: (context, index) {
-              final hospital = hospitalController.filteredHospitals[index];
-              return HospitalCards(
-                name: hospital.name,
-                picture: hospital.picture,
-              );
-            },
-          );
-        }),
+  Widget _buildSpecialistGrid() {
+    return GridView.builder(
+      padding: const EdgeInsets.only(top: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: specialistController.filteredSpecialist.length,
+      itemBuilder: (context, index) {
+        final specialist = specialistController.filteredSpecialist[index];
+        return SpecialistCard(
+          name: specialist.name,
+          picture: specialist.picture,
+        );
+      },
+    );
+  }
+}
+
+class SpecialistCard extends StatelessWidget {
+  final String name;
+  final String picture;
+  const SpecialistCard({super.key, required this.name, required this.picture});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = Config.baseUrl;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 45,
+            backgroundImage: (picture.isNotEmpty && picture != "N/A")
+                ? NetworkImage("$url/$picture")
+                : const AssetImage('assets/default_image.png') as ImageProvider,
+            backgroundColor: Colors.white,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class HospitalCards extends StatefulWidget {
+class HospitalCard extends StatelessWidget {
   final String name;
   final String picture;
-  const HospitalCards({super.key, required this.name, required this.picture});
+  const HospitalCard({super.key, required this.name, required this.picture});
 
-  @override
-  State<HospitalCards> createState() => _HospitalCardsState();
-}
-
-class _HospitalCardsState extends State<HospitalCards> {
-  final url = Config.baseUrl;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 160,
-          height: 160,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 0.5,
-                blurRadius: 3,
-                offset: Offset(0, 0), // Shadow position
-              ),
-            ],
+    final url = Config.baseUrl;
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50, // Adjust size as needed
-                backgroundImage: (widget.picture?.isNotEmpty ?? false) &&
-                        widget.picture != "N/A"
-                    ? NetworkImage("$url/${widget.picture}")
-                    : AssetImage('assets/default_image.png') as ImageProvider,
-                backgroundColor: Colors.white,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 45,
+            backgroundImage: (picture.isNotEmpty && picture != "N/A")
+                ? NetworkImage("$url/$picture")
+                : const AssetImage('assets/default_image.png') as ImageProvider,
+            backgroundColor: Colors.white,
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          Text(
+            name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

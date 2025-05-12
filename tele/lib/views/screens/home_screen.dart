@@ -311,13 +311,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (appoinmentsController.isLoading.value) {
                     return LoadingMessage();
                   }
-                  if (appoinmentsController.appointmets.isEmpty) {
+                  if (appoinmentsController.appointments.isEmpty) {
                     return Center(child: Text("No Appointments Found"));
                   }
                   return SingleChildScrollView(
                     child: Column(
                       children:
-                          appoinmentsController.appointmets.map((appointment) {
+                          appoinmentsController.appointments.map((appointment) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: AppointmentCard(

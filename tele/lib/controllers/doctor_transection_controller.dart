@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
-import 'package:tele/Models/doctor_appointements_model.dart';
 import 'package:tele/Models/doctor_transection_model.dart';
-import 'package:tele/Models/transection_model.dart';
 import 'package:tele/services/get_api_services.dart';
 
 class DoctorTransectionController extends GetxController{
