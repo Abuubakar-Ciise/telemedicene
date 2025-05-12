@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/HospitalController.dart';
 import 'package:tele/controllers/specialist_controller.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/components/doctor_card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class HospitalListScreen extends StatefulWidget {
@@ -147,6 +149,7 @@ class _HospitalListScreenState extends State<HospitalListScreen>
         return HospitalCard(
           name: hospital.name,
           picture: hospital.picture,
+          hospitalId: hospital.id,
         );
       },
     );
@@ -167,6 +170,7 @@ class _HospitalListScreenState extends State<HospitalListScreen>
         return SpecialistCard(
           name: specialist.name,
           picture: specialist.picture,
+          specialistid: specialist.id,
         );
       },
     );
@@ -176,44 +180,60 @@ class _HospitalListScreenState extends State<HospitalListScreen>
 class SpecialistCard extends StatelessWidget {
   final String name;
   final String picture;
-  const SpecialistCard({super.key, required this.name, required this.picture});
+  final String specialistid;
+  const SpecialistCard({
+    super.key,
+    required this.name,
+    required this.picture,
+    required this.specialistid,
+  });
 
   @override
   Widget build(BuildContext context) {
     final url = Config.baseUrl;
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 45,
-            backgroundImage: (picture.isNotEmpty && picture != "N/A")
-                ? NetworkImage("$url/$picture")
-                : const AssetImage('assets/default_image.png') as ImageProvider,
-            backgroundColor: Colors.white,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+    return GestureDetector(
+      onTap: () async {
+        final specialistController = Get.find<SpecialistController>();
+        await specialistController.fetchDoctorsList(specialistid);
+        print("✅✅✅✅");
+        print(specialistController.doctorsList.first);
+        Get.to(() =>DoctorsListScreen(doctors:specialistController.doctorsList));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
             ),
-          ),
-        ],
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 45,
+              backgroundImage: (picture.isNotEmpty && picture != "N/A")
+                  ? NetworkImage("$url/$picture")
+                  : const AssetImage('assets/default_image.png')
+                      as ImageProvider,
+              backgroundColor: Colors.white,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -222,44 +242,82 @@ class SpecialistCard extends StatelessWidget {
 class HospitalCard extends StatelessWidget {
   final String name;
   final String picture;
-  const HospitalCard({super.key, required this.name, required this.picture});
+  final String hospitalId;
+  const HospitalCard({
+    super.key,
+    required this.name,
+    required this.picture,
+    required this.hospitalId,
+  });
 
   @override
   Widget build(BuildContext context) {
     final url = Config.baseUrl;
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 45,
-            backgroundImage: (picture.isNotEmpty && picture != "N/A")
-                ? NetworkImage("$url/$picture")
-                : const AssetImage('assets/default_image.png') as ImageProvider,
-            backgroundColor: Colors.white,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            name,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+    return GestureDetector(
+      onTap: () async {
+        final hospitalController = Get.find<HospitalController>();
+        await hospitalController.fetchDoctorsList(hospitalId);
+        print("✅✅✅✅");
+        print(hospitalController.doctorsList.first);
+
+        Get.to(() =>DoctorsListScreen(doctors:hospitalController.doctorsList));
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
             ),
-          ),
-        ],
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 45,
+              backgroundImage: (picture.isNotEmpty && picture != "N/A")
+                  ? NetworkImage("$url/$picture")
+                  : const AssetImage('assets/default_image.png')
+                      as ImageProvider,
+              backgroundColor: Colors.white,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DoctorsListScreen extends StatelessWidget {
+  final List<DoctorList> doctors;
+  const DoctorsListScreen({super.key, required this.doctors});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: Text('Doctors')),
+      body: ListView.builder(
+        itemCount: doctors.length,
+        itemBuilder: (context, index) {
+          return Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: DoctorCard(doctor: doctors[index]));
+        },
       ),
     );
   }

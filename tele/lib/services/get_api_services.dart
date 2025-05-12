@@ -79,6 +79,58 @@ class ApiGetServices {
       return [];
     }
   }
+  // get filter_Hospital;
+  Future<List<DoctorList>> filterHospital(String hospitalId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/filter_Hospital'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "hospital_id":hospitalId,
+        })
+        );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((doctor) => DoctorList.fromJson(doctor))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+  // get filter_Speciality
+  Future<List<DoctorList>> filterSpeciality(String hospitalId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/filter_Speciality'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "speciality_id":hospitalId,
+        })
+        );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((doctor) => DoctorList.fromJson(doctor))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      return [];
+    }
+  }
   // Future<Map<String, List<Shift>>> fetchShiftsEasy(String doctorId,String appointmentDate, String dayName) async {
   //   try {
   //     final response = await http.post(
