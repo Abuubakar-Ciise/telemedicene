@@ -54,11 +54,8 @@ class ApiPostServices {
 
   // re-Appointment
 
-  Future<Map<String, dynamic>> reAppointment(
-      String appointmentDate,
-      String shiftsId,
-      String appointmentId,
-      int status) async {
+  Future<Map<String, dynamic>> reAppointment(String appointmentDate,
+      String shiftsId, String appointmentId, int status) async {
     try {
       final response = await http.post(Uri.parse('$url/re_appointment'),
           headers: {'Content-Type': 'application/json'},
@@ -86,6 +83,48 @@ class ApiPostServices {
       }
     } catch (e) {
       print("Error from bookAndPay $e");
+      return {"success": false, "message": "Failed to connect to server"};
+    }
+  }
+
+  // save_prescription
+  Future<Map<String, dynamic>> writePrescription({
+    required String patientId,
+    required String doctorId,
+    required String appointmentId,
+    required String extraDetail,
+    required List<Map<String, dynamic>> medicines,
+  }) async {
+    try {
+      final response = await http.post(Uri.parse('$url/save_prescription'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+           
+            "patient_id": patientId,
+            "doctor_id": doctorId,
+            "appointment_id": appointmentId,
+            "extra_detail": extraDetail,
+             "medicines": medicines,
+          }));
+          print("✅✅✅");
+          print(response.body);
+          print(response.statusCode);
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        return {
+          "success": responseBody['success'],
+          "message": responseBody['message']
+        };
+      } else {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        print("Response is not JSON: ${response.body}");
+        return {
+          "success": false,
+          "message": responseBody['message'] ?? "Unknown error occurred",
+        };
+      }
+    } catch (e) {
+      print("error from writePrescription $e");
       return {"success": false, "message": "Failed to connect to server"};
     }
   }

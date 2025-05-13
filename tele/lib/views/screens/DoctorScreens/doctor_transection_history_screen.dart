@@ -20,7 +20,6 @@ class _DoctorTransectionHistoryScreenState extends State<DoctorTransectionHistor
   final dcotroTransectionController = Get.put(DoctorTransectionController());
   final RxBool isBlurred = true.obs;
   final BiometricService biometricService = BiometricService();
-
   String userId = "Loading...";
 
   @override

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tele/DoctorPrescriptionScreen.dart';
 import 'package:tele/controllers/adds_controller.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/StorageService.dart';
@@ -106,7 +107,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     {
       "icon": Icons.healing,
       "text": "Prescription",
-      "route": null,
+      "route": DoctorPrescriptionScreen(),
       "color": Colors.green,
     },
     {

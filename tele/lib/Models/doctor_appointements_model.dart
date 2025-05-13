@@ -51,4 +51,6 @@ class DoctorAppointementsModel {
   String toString() {
     return 'Appointment(id: $id, status: $status, date: $appointmentDate, doctor: $patientName, time: $shiftTime, day: $shiftDay)';
   }
+
+  let(void Function(DoctorAppointementsModel user) fillUserInfo) {}
 }
