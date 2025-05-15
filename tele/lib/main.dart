@@ -39,10 +39,8 @@ void main() async {
     description: 'Channel used for incoming call notifications',
     importance: Importance.high,
   );
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
@@ -100,7 +98,6 @@ class MyApp extends StatelessWidget {
       return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

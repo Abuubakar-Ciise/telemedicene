@@ -24,9 +24,9 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> screens = [
     HomeScreen(),
     // Center(child: Text("Notification Screen")),
+     ChatsListScreenAppointment(),
     NotificationScreen(),
     TransactionHistoryScreen(),
-    ChatsListScreenAppointment(),
     ContactUsScreen(),
     
   ];
@@ -50,16 +50,16 @@ class _MainScreenState extends State<MainScreen> {
             label: "Home",
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: "Chat",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: "Notification",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.loop),
             label: "Transaction",
-          ),
-           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: "Chat",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.call),

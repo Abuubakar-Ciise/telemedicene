@@ -13,6 +13,8 @@ class DoctorAppointementsModel {
   final String patientPhone;
   final String doctorId;
   final String patientId;
+  final int patienAge;
+  final String patientGender;
 
   DoctorAppointementsModel({
     required this.id,
@@ -29,6 +31,8 @@ class DoctorAppointementsModel {
     required this.doctorPhone,
      required this.doctorId,
     required this.patientId,
+    required this.patienAge,
+    required this.patientGender,
   });
   factory DoctorAppointementsModel.fromJson(Map<String, dynamic> json) {
     return DoctorAppointementsModel(
@@ -46,6 +50,8 @@ class DoctorAppointementsModel {
         patientPhone: json['patient_phone'] ?? '',
         doctorId: json['doctor_id'] ?? '',
         patientId: json['patient_id'] ?? '',
+        patientGender: json['patient_Gender'] ?? '',
+        patienAge: json['patient_Age'] ?? 0,
         );
   }
   String toString() {

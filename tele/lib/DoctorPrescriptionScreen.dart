@@ -40,6 +40,7 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
   String? pateintId;
   String? appointmentId;
 
+
   @override
   void initState() {
     super.initState();
@@ -56,8 +57,8 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
 
   void fillUserInfo(DoctorAppointementsModel user) {
     patientName.text = user.patientName;
-    age.text = "20";
-    gender = "Male";
+    age.text = user.patienAge.toString();
+    gender = user.patientGender;
     setState(() {});
   }
 

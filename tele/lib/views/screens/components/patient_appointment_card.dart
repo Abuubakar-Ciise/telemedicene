@@ -6,6 +6,7 @@ import 'package:tele/controllers/re_appointment_controller.dart';
 import 'package:tele/views/screens/DoctorScreens/ReAppointmentScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_chat_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/patient/patient_appointment_chat_screen.dart';
 
 class PatientAppointmentCard extends StatelessWidget {
   final String appointmentTime;
@@ -87,7 +88,7 @@ class PatientAppointmentCard extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DoctorAppointmentChatScreen(
+                        builder: (context) => PatientAppointmentChatScreen(
                           patientName: doctorName,
                           doctorName: doctorName,
                           patientProfile: patientProfile,
@@ -95,6 +96,7 @@ class PatientAppointmentCard extends StatelessWidget {
                           patientToken: patientToken,
                           doctorPhone: doctorPhone,
                           patientPhone: patientPhone,
+                          doctorId:doctorId,
                         ),
                       ),
                     );

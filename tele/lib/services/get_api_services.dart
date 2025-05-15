@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/Models/adds_model.dart';
 import 'package:tele/Models/doctor_appointements_model.dart';
+import 'package:tele/Models/doctor_prescriptions_model.dart';
 import 'package:tele/Models/doctor_transection_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
@@ -14,7 +15,6 @@ import 'package:tele/Models/transection_model.dart';
 import 'package:tele/views/screens/components/config.dart';
 
 class ApiGetServices {
-
   static final url = Config.baseUrl;
 
   // get List of Hospitals
@@ -38,6 +38,7 @@ class ApiGetServices {
       return [];
     }
   }
+
   // get specialist
   Future<List<SpecialistModel>> fetchSpecialist() async {
     try {
@@ -59,6 +60,7 @@ class ApiGetServices {
       return [];
     }
   }
+
   // get list of dectors
   Future<List<DoctorList>> fechDoctorsList() async {
     try {
@@ -79,16 +81,15 @@ class ApiGetServices {
       return [];
     }
   }
+
   // get filter_Hospital;
   Future<List<DoctorList>> filterHospital(String hospitalId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$url/filter_Hospital'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "hospital_id":hospitalId,
-        })
-        );
+      final response = await http.post(Uri.parse('$url/filter_Hospital'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "hospital_id": hospitalId,
+          }));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
@@ -105,16 +106,15 @@ class ApiGetServices {
       return [];
     }
   }
+
   // get filter_Speciality
   Future<List<DoctorList>> filterSpeciality(String hospitalId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$url/filter_Speciality'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "speciality_id":hospitalId,
-        })
-        );
+      final response = await http.post(Uri.parse('$url/filter_Speciality'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "speciality_id": hospitalId,
+          }));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
@@ -143,7 +143,7 @@ class ApiGetServices {
   //       "appointment_date": appointmentDate
   //     }),
   //       );
-      
+
   //     if (response.statusCode == 200) {
   //       final data = json.decode(response.body);
 
@@ -172,187 +172,179 @@ class ApiGetServices {
   // }
 
   Future<Map<String, List<Shift>>> fetchShiftsEasy(
-    String doctorId, String appointmentDate, String dayName) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$url/${dayName}_Shifts'),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: json.encode({
-        "doctor_id": doctorId,
-        "appointment_date": appointmentDate,
-      }),
-    );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      if (data["success"] == true) {
-        Map<String, List<Shift>> shiftsByDay = {};
+      String doctorId, String appointmentDate, String dayName) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$url/${dayName}_Shifts'),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: json.encode({
+          "doctor_id": doctorId,
+          "appointment_date": appointmentDate,
+        }),
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data["success"] == true) {
+          Map<String, List<Shift>> shiftsByDay = {};
 
-        // Iterate over the 'shifts' object in the response
-        data["shifts"].forEach((key, value) {
-          if (value is List) {
-            // Process the shift data and map to Shift objects
-            shiftsByDay[key] = (value as List)
-                .map((shift) => Shift.fromJson(shift))
-                .toList();
-          } else {
-            print("Unexpected format for key $key: $value");
-          }
-        });
+          // Iterate over the 'shifts' object in the response
+          data["shifts"].forEach((key, value) {
+            if (value is List) {
+              // Process the shift data and map to Shift objects
+              shiftsByDay[key] = (value as List)
+                  .map((shift) => Shift.fromJson(shift))
+                  .toList();
+            } else {
+              print("Unexpected format for key $key: $value");
+            }
+          });
 
-        return shiftsByDay;
+          return shiftsByDay;
+        } else {
+          throw Exception("Failed to fetch shifts");
+        }
       } else {
-        throw Exception("Failed to fetch shifts");
+        throw Exception("Failed to load shifts: ${response.statusCode}");
       }
-    } else {
-      throw Exception("Failed to load shifts: ${response.statusCode}");
+    } catch (e) {
+      throw Exception("Error: $e");
     }
-  } catch (e) {
-    throw Exception("Error: $e");
   }
-}
-
-
 
   // check shifts
-  static Future<Map<String,dynamic>> checkShifts(String shiftsId, String appointmentDate) async {
+  static Future<Map<String, dynamic>> checkShifts(
+      String shiftsId, String appointmentDate) async {
     try {
       final response = await http.post(
         Uri.parse('$url/check_shifts'),
         headers: {'content-Type': 'application/json'},
-        body: jsonEncode({
-          'shifts_id':shiftsId,
-          'appointment_date': appointmentDate
-        }),
+        body: jsonEncode(
+            {'shifts_id': shiftsId, 'appointment_date': appointmentDate}),
       );
-      if (response.statusCode == 200){
-        final Map<String,dynamic> responseBody = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
         return {
           'success': responseBody['success'],
           'message': responseBody['message']
         };
-      }else{
-        final Map<String,dynamic> responseBody = jsonDecode(response.body);
+      } else {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
         return {
-          'success':false,
-          'message':responseBody['message'] ?? "unknow error occurred"
+          'success': false,
+          'message': responseBody['message'] ?? "unknow error occurred"
         };
       }
     } catch (e) {
       print('Error check shifts $e');
-      return {'success':false, 'message': "failed to connect to server"};
+      return {'success': false, 'message': "failed to connect to server"};
     }
   }
   // patient Appointements
 
-  static Future<List<PatientAppointementsModel>> patientAppointements(String patientId) async {
+  static Future<List<PatientAppointementsModel>> patientAppointements(
+      String patientId) async {
     try {
       final response = await http.post(
-        // Uri.parse('$url/patient_appointements'),
-        Uri.parse('$url/patient_appointements'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "patient_id": patientId
-        })
-      );
+          // Uri.parse('$url/patient_appointements'),
+          Uri.parse('$url/patient_appointements'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({"patient_id": patientId}));
 
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
-        if(record['success']){
+        if (record['success']) {
           return (record['record'] as List)
-          .map((appointments) => PatientAppointementsModel.fromJson(appointments)).toList();
-        }else {
+              .map((appointments) =>
+                  PatientAppointementsModel.fromJson(appointments))
+              .toList();
+        } else {
           throw Exception("API Error: ${record['message']}");
         }
       } else {
         throw Exception("Server Error: ${response.statusCode}");
       }
     } catch (e) {
-       
       return [];
     }
   }
 
   // doctor Appointements
-  static Future<List<DoctorAppointementsModel>> doctorAppointements(String doctorId) async {
+  static Future<List<DoctorAppointementsModel>> doctorAppointements(
+      String doctorId) async {
     try {
       final response = await http.post(
-        // Uri.parse('$url/patient_appointements'),
-        Uri.parse('$url/doctor_appointements'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "doctor_id": doctorId
-        })
-      );
-      if(response.statusCode == 200) {
+          // Uri.parse('$url/patient_appointements'),
+          Uri.parse('$url/doctor_appointements'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({"doctor_id": doctorId}));
+      if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
-        if(record['success']){
+        if (record['success']) {
           return (record['record'] as List)
-          .map((appointments) => DoctorAppointementsModel.fromJson(appointments)).toList();
-        }else {
+              .map((appointments) =>
+                  DoctorAppointementsModel.fromJson(appointments))
+              .toList();
+        } else {
           throw Exception("API Error: ${record['message']}");
         }
       } else {
         throw Exception("Server Error: ${response.statusCode}");
       }
     } catch (e) {
-       
       return [];
     }
   }
 
   // patient Transection
-  static Future<List<PatientTransectionModel>> patientTransection(String patientId) async {
+  static Future<List<PatientTransectionModel>> patientTransection(
+      String patientId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$url/patient_transection'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "patient_id": patientId
-        })
-      );
+      final response = await http.post(Uri.parse('$url/patient_transection'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({"patient_id": patientId}));
 
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
-        if(record['success']){
+        if (record['success']) {
           return (record['record'] as List)
-          .map((appointments) => PatientTransectionModel.fromJson(appointments)).toList();
-        }else {
+              .map((appointments) =>
+                  PatientTransectionModel.fromJson(appointments))
+              .toList();
+        } else {
           throw Exception("API Error: ${record['message']}");
         }
       } else {
         throw Exception("Server Error: ${response.statusCode}");
       }
     } catch (e) {
-       
       return [];
     }
   }
+
   // doctor Transection
-  static Future<List<DoctorTransectionModel>> doctorTransection(String patientId) async {
+  static Future<List<DoctorTransectionModel>> doctorTransection(
+      String patientId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$url/doctor_transection'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "doctor_id": patientId
-        })
-      );
-      
-      if(response.statusCode == 200) {
+      final response = await http.post(Uri.parse('$url/doctor_transection'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({"doctor_id": patientId}));
+
+      if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
-        if(record['success']){
+        if (record['success']) {
           return (record['record'] as List)
-          .map((appointments) => DoctorTransectionModel.fromJson(appointments)).toList();
-        }else {
+              .map((appointments) =>
+                  DoctorTransectionModel.fromJson(appointments))
+              .toList();
+        } else {
           throw Exception("API Error: ${record['message']}");
         }
       } else {
         throw Exception("Server Error: ${response.statusCode}");
       }
     } catch (e) {
-       
       return [];
     }
   }
@@ -361,18 +353,17 @@ class ApiGetServices {
   static Future<List<AddsModel>> adds() async {
     try {
       final response = await http.post(Uri.parse('$url/adds'));
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
-        if(data['success']){
+
+        if (data['success']) {
           return (data['record'] as List)
-          .map((adds) => AddsModel.fromJson(adds))
-          .toList();
-        }else{
+              .map((adds) => AddsModel.fromJson(adds))
+              .toList();
+        } else {
           final data = jsonDecode(response.body);
           throw Exception("API Error: ${data['message']}");
         }
-        
       }
       throw Exception("Server Error: ${response.statusCode}");
     } catch (e) {
@@ -381,22 +372,22 @@ class ApiGetServices {
   }
 
   // selfmanagment
-  
+
   Future<List<SelfManagmentModels>> selfManagment() async {
     try {
       final response = await http.post(Uri.parse('$url/selfmanagment'));
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if(data['success']){
+        if (data['success']) {
           return (data['record'] as List)
-          .map((self) => SelfManagmentModels.fromJson(self)).toList();
-        }else {
-          
+              .map((self) => SelfManagmentModels.fromJson(self))
+              .toList();
+        } else {
           throw Exception("API Error: ${data['message']}");
         }
       }
-       throw Exception("Server Error: ${response.statusCode}");
+      throw Exception("Server Error: ${response.statusCode}");
     } catch (e) {
       return [];
     }
@@ -413,7 +404,6 @@ class ApiGetServices {
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({"_id": userId, "token": token}),
         );
-    
 
         if (response.statusCode == 200) {
           print("✅ FCM TOKEN updated successfully");
@@ -425,6 +415,58 @@ class ApiGetServices {
       }
     } catch (e) {
       print('🔥 Error updating FCM token: $e');
+    }
+  }
+
+  //doctor Prescrptions reading
+  Future<List<DoctorPrescriptionModel>> getPrescriptions(String id) async {
+    try {
+      final response = await http.post(Uri.parse('$url/doctor_prescriptions'),
+          headers: {'content-Type': 'application/json'},
+          body: jsonEncode({"doctor_id": id}));
+          print("✅✅✅✅");
+          print(response.body);
+          print(response.statusCode);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((prescription) => DoctorPrescriptionModel.fromJson(prescription))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      }
+      throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      return [];
+    }
+  }
+  //doctor Prescrptions reading
+  Future<List<DoctorPrescriptionModel>> getPatientPrescriptions(String pateintId, String doctorId) async {
+    try {
+      final response = await http.post(Uri.parse('$url/patient_prescriptions'),
+          headers: {'content-Type': 'application/json'},
+          body: jsonEncode({
+            "patient_id": pateintId,
+            "doctor_id":doctorId
+            }));
+          print("✅✅✅✅");
+          print(response.body);
+          print(response.statusCode);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((prescription) => DoctorPrescriptionModel.fromJson(prescription))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      }
+      throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      return [];
     }
   }
 }
