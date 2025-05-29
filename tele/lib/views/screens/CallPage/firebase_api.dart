@@ -19,9 +19,6 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
       projectId: Config.firebaseprojectid,
     ),
   );
-  print('Background Notification - Title: ${message.notification?.title}');
-  print('Background Notification - Body: ${message.notification?.body}');
-  print('Background Notification - Data: ${message.data}');
 
   final data = message.data;
   if (data['type'] == 'call_invitation') {
@@ -31,11 +28,16 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
     final callerToken = data['callerToken'];
     final callerPhone = data['callerPhone'];
     final callType = data['callType'];
+    final doctorId = data['doctor_id'];
+    final patientId = data['patient_id'];
     await CallKitService.showCallkit(
-        callerName, roomId, picture, callerToken, callerPhone, callType);
+      callerName, roomId, picture, callerToken, callerPhone, callType, 
+      doctorId, patientId
+    );
   } else if (data['type'] == 'call_end') {
-    print('Received call_end message in background, ending all calls');
-    await CallKitService.endAllCalls();
+    final doctorId = data['doctor_id'];
+    final patientId = data['patient_id'];
+    await CallKitService.endAllCalls(doctorId, patientId);
   }
 }
 
@@ -45,99 +47,103 @@ class FirebaseNotification {
   Future<void> initNotification() async {
     await _firebaseMessaging.requestPermission();
     await _firebaseMessaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
+      alert: true, badge: true, sound: true,
     );
-
-    final token = await _firebaseMessaging.getToken();
-    print("FCM Token: $token");
 
     FirebaseMessaging.onMessage.listen(_handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
     await _checkInitialMessage();
 
-    FlutterCallkitIncoming.onEvent.listen((event) async {
-      print("CallKit Event Received: ${event?.event}");
-      print("Event Body: ${event?.body}");
+    _setupCallKitListeners();
+  }
 
+  void _setupCallKitListeners() {
+    FlutterCallkitIncoming.onEvent.listen((event) async {
       final eventType = event?.event;
 
       if (eventType == Event.actionCallAccept) {
-        print("Call accepted");
-        CallKitService.clearCallId();
-        final roomId = event?.body['extra']?['roomId'];
-        final callType = event?.body['extra']?['callType'];
-
-        if (roomId != null && callType != null) {
-          _navigateToCallScreen(roomId, callType);
-        } else {
-          print("❌ Missing roomId or callType in event body extra");
-        }
-      } else if (eventType == Event.actionCallDecline) {
-        print("Call declined");
-        final callerToken = event?.body['extra']?['callerToken'];
-
-        if (callerToken != null) {
-          try {
-            await FirebaseApis().sendCallEndFCM(callerToken);
-            print("Call end FCM sent to caller");
-          } catch (e) {
-            print("Error sending call end FCM: $e");
-          }
-        }
-
-        await CallKitService.endAllCalls();
-        CallKitService.clearCallId();
-      } else if (eventType == Event.actionCallEnded) {
-        print("Call ended");
-        final callerToken = event?.body['extra']?['callerToken'];
-
-        if (callerToken != null) {
-          await FirebaseApis().sendCallEndFCM(callerToken);
-        }
-
-        await CallKitService.endAllCalls();
-        CallKitService.clearCallId();
-      } else {
-        print("Unhandled CallKit event: ${event?.event}");
+        _handleCallAccept(event!);
+      } 
+      else if (eventType == Event.actionCallDecline) {
+        await _handleCallDecline(event!);
+      } 
+      else if (eventType == Event.actionCallEnded) {
+        await _handleCallEnded(event!);
+      } 
+      else {
+        print("Unhandled CallKit event: $eventType");
       }
     });
   }
 
-  // This handles the incoming messages while the app is in the foreground
+  void _handleCallAccept(CallEvent event) {
+    CallKitService.clearCallId();
+    final roomId = event.body['extra']?['roomId'];
+    final callType = event.body['extra']?['callType'];
+
+    if (roomId != null && callType != null) {
+      _navigateToCallScreen(roomId, callType);
+    }
+  }
+
+  Future<void> _handleCallDecline(CallEvent event) async {
+    final callerToken = event.body['extra']?['callerToken'];
+    if (callerToken != null) {
+      try {
+        await FirebaseApis().sendCallEndFCM(callerToken, '', '');
+      } catch (e) {
+        print("Error sending decline FCM: $e");
+      }
+    }
+    await CallKitService.endAllCalls('', ''); // Empty IDs prevent review
+    CallKitService.clearCallId();
+  }
+
+  Future<void> _handleCallEnded(CallEvent event) async {
+    final callerToken = event.body['extra']?['callerToken'];
+    final doctorId = event.body['extra']?['doctor_id'] ?? '';
+    final patientId = event.body['extra']?['patient_id'] ?? '';
+
+    if (callerToken != null) {
+      try {
+        await FirebaseApis().sendCallEndFCM(callerToken, doctorId, patientId);
+      } catch (e) {
+        print("Error sending ended FCM: $e");
+      }
+    }
+    await CallKitService.endAllCalls(doctorId, patientId);
+    CallKitService.clearCallId();
+  }
+
   void _handleMessage(RemoteMessage message) {
     final data = message.data;
-
     if (data['type'] == 'call_invitation') {
-      final callerName = data['callerName'];
-      final roomId = data['roomId'];
-      final picture = data['picture'];
-      final callerToken = data['callerToken'];
-      final callerPhone = data['callerPhone']; // Extract callerPhone
-      final callType = data['callType']; // Extract callType
       CallKitService.showCallkit(
-          callerName, roomId, picture, callerToken, callerPhone, callType);
+        data['callerName'],
+        data['roomId'],
+        data['picture'],
+        data['callerToken'],
+        data['callerPhone'],
+        data['callType'],
+        data['doctor_id'],
+        data['patient_id'],
+      );
     } else if (data['type'] == 'call_end') {
-      CallKitService.endAllCalls();
+      CallKitService.endAllCalls(data['doctor_id'], data['patient_id']);
     }
   }
 
   Future<void> _checkInitialMessage() async {
-    final initialMessage = await _firebaseMessaging.getInitialMessage();
-    if (initialMessage != null) {
-      _handleMessage(initialMessage);
-    }
+    final message = await _firebaseMessaging.getInitialMessage();
+    if (message != null) _handleMessage(message);
   }
 
   void _navigateToCallScreen(String roomId, String callType) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-            builder: (_) => CallPage(
-                  callId: roomId,
-                  callType: callType,
-                )),
+          builder: (_) => CallPage(callId: roomId, callType: callType),
+        ),
       );
     });
   }

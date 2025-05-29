@@ -65,7 +65,7 @@ dependencies:
   path_provider: ^2.1.5
   open_file: ^3.5.10
   permission_handler: ^11.3.1
-  screenshot: ^3.0.0
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3

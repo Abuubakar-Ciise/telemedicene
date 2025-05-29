@@ -64,7 +64,7 @@ class DoctorPrescriptionModel {
       patientAge: json['patient_Age'] ?? 0,
       shiftTime: json['shift_time'] ?? '',
       shiftDay: json['shift_day'] ?? '',
-      extraDetails: json['extra_Details']?? ''
+      extraDetails: json['extra_detail']?? ''
     );
   }}
 

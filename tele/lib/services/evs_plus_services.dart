@@ -12,7 +12,6 @@ class EvsPlusServices {
     if (countryCodeIncluded) return '252$phone';
     return phone;
   }
-
   Future<Map<String, dynamic>> payByWaafiPay({
     required String phone,
     required double amount,

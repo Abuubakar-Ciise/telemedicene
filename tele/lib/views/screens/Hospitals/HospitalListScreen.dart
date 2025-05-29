@@ -135,34 +135,44 @@ class _HospitalListScreenState extends State<HospitalListScreen>
   }
 
   Widget _buildHospitalGrid() {
-    return GridView.builder(
-      padding: const EdgeInsets.only(top: 8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.8,
-      ),
-      itemCount: hospitalController.filteredHospitals.length,
-      itemBuilder: (context, index) {
-        final hospital = hospitalController.filteredHospitals[index];
-        return HospitalCard(
-          name: hospital.name,
-          picture: hospital.picture,
-          hospitalId: hospital.id,
-        );
-      },
-    );
-  }
+  final screenWidth = MediaQuery.of(context).size.width;
+  final cardWidth = (screenWidth / 2) * 0.95; // match SpecialistCard width percentage
+
+  return GridView.builder(
+    padding: const EdgeInsets.only(top: 8),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: cardWidth / (cardWidth * 1), // same aspect ratio as SpecialistCard
+    ),
+    itemCount: hospitalController.filteredHospitals.length,
+    itemBuilder: (context, index) {
+      final hospital = hospitalController.filteredHospitals[index];
+      return Center(
+        child: SizedBox(
+          width: cardWidth,
+          child: HospitalCard(
+            name: hospital.name,
+            picture: hospital.picture,
+            hospitalId: hospital.id,
+          ),
+        ),
+      );
+    },
+  );
+}
 
   Widget _buildSpecialistGrid() {
+    final screenWidth = MediaQuery.of(context).size.width;
+  final cardWidth = (screenWidth / 2) * 0.95; // 85% of half screen width
     return GridView.builder(
       padding: const EdgeInsets.only(top: 8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.8,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: cardWidth / (cardWidth * 1), // height ~1.2x width
       ),
       itemCount: specialistController.filteredSpecialist.length,
       itemBuilder: (context, index) {
@@ -196,7 +206,7 @@ class SpecialistCard extends StatelessWidget {
         final specialistController = Get.find<SpecialistController>();
         await specialistController.fetchDoctorsList(specialistid);
         print("✅✅✅✅");
-        print(specialistController.doctorsList.first);
+        // print(specialistController.doctorsList.first);
         Get.to(() =>DoctorsListScreen(doctors:specialistController.doctorsList));
       },
       child: Container(
@@ -258,7 +268,7 @@ class HospitalCard extends StatelessWidget {
         final hospitalController = Get.find<HospitalController>();
         await hospitalController.fetchDoctorsList(hospitalId);
         print("✅✅✅✅");
-        print(hospitalController.doctorsList.first);
+        // print(hospitalController.doctorsList.first);
 
         Get.to(() =>DoctorsListScreen(doctors:hospitalController.doctorsList));
       },

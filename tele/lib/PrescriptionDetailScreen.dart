@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tele/Models/doctor_prescriptions_model.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:toastification/toastification.dart';
@@ -145,14 +146,10 @@ class PrescriptionDetailScreen extends StatelessWidget {
           File("${output.path}/prescription_${prescription.sequenceId}.pdf");
       await file.writeAsBytes(await pdf.save());
 
-      toastification.show(
-        context: context,
-        title: const Text('Download Successful'),
-        description: const Text('Prescription PDF downloaded.'),
-        type: ToastificationType.success,
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        text: 'Prescription PDF',
       );
-
-      await OpenFile.open(file.path);
     } catch (e) {
       toastification.show(
         context: context,
@@ -160,6 +157,7 @@ class PrescriptionDetailScreen extends StatelessWidget {
         description: Text('Error: $e'),
         type: ToastificationType.error,
       );
+      print("❌ $e");
     }
   }
 
@@ -265,9 +263,9 @@ class PrescriptionDetailScreen extends StatelessWidget {
                         },
                       ),
                 const SizedBox(height: 8),
-                 _sectionHeader(Icons.details, "Extra Details"),
+                _sectionHeader(Icons.details, "Extra Details"),
                 _buildInfoRow("Extra Details", prescription.extraDetails),
-                
+
                 const SizedBox(height: 32),
                 // Action Buttons
                 Row(
@@ -284,8 +282,8 @@ class PrescriptionDetailScreen extends StatelessWidget {
                         ),
                       ),
                       onPressed: () => _downloadPrescription(context),
-                      icon: const Icon(Icons.download),
-                      label: const Text("Download PDF"),
+                      icon: const Icon(Icons.share),
+                      label: const Text("Share as PDF"),
                     ),
                     const SizedBox(width: 16),
                     OutlinedButton.icon(

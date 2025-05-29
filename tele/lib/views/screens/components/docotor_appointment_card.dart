@@ -56,6 +56,7 @@ class DoctorAppointmentCard extends StatelessWidget {
     String formattedDate =
         DateFormat('EEE, dd MMM yyyy').format(appointmentDateTime);
     final url = Config.baseUrl;
+    print("STATUS: $status");
 
     return Stack(
       children: [
@@ -95,6 +96,8 @@ class DoctorAppointmentCard extends StatelessWidget {
                           patientToken: patientToken,
                           doctorPhone: doctorPhone,
                           patientPhone: patientPhone,
+                          pateintId: patientId,
+                          doctorId: doctorId,
                         ),
                       ),
                     );

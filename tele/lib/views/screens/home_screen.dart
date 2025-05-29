@@ -13,6 +13,7 @@ import 'package:tele/views/screens/components/reusable.card.dart';
 import 'package:tele/views/screens/components/reusable_card_for_patient.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/Video_Consultation_Screen.dart';
+import 'package:tele/views/screens/patient/chats_list_screen_appointment.dart';
 import 'package:tele/views/screens/patient/user_profile.dart';
 import 'package:tele/views/screens/selfManagement.dart';
 
@@ -107,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'route': HospitalListScreen()
     },
     {"icon": Icons.person_pin, "text": "self manage", 'route': Selfmanagement()},
-    {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': null},
+    {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': ChatsListScreenAppointment(),},
   ];
 
 

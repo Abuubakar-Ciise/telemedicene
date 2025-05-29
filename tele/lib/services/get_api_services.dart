@@ -251,7 +251,6 @@ class ApiGetServices {
           Uri.parse('$url/patient_appointements'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({"patient_id": patientId}));
-
       if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
         if (record['success']) {
@@ -443,7 +442,7 @@ class ApiGetServices {
     }
   }
   //doctor Prescrptions reading
-  Future<List<DoctorPrescriptionModel>> getPatientPrescriptions(String pateintId, String doctorId) async {
+  Future<List<DoctorPrescriptionModel>> getPatientPrescriptions(String pateintId, String doctorId ) async {
     try {
       final response = await http.post(Uri.parse('$url/patient_prescriptions'),
           headers: {'content-Type': 'application/json'},

@@ -14,6 +14,8 @@ class FirebaseApis {
     String picture,
     String callType,
     String callerToken,
+    String doctorId,
+    String pateintId,
   ) async {
     final accessToken = await AccessTokenService().getAccessToken();
     final projectId = Config.firebaseprojectid;
@@ -48,7 +50,9 @@ class FirebaseApis {
             "callerPhone": callerPhone,
             "picture": picture,
             "callType": callType,
-            "callerToken": callerToken
+            "callerToken": callerToken,
+            "patient_id":pateintId,
+            "doctor_id":doctorId
           }
         }
       }),
@@ -56,7 +60,11 @@ class FirebaseApis {
     print("FCM send response: ${response.statusCode} ${response.body}");
   }
 
-  Future<void> sendCallEndFCM(String token) async {
+  Future<void> sendCallEndFCM(
+    String token,
+    String doctorId,
+    String pateintId,
+    ) async {
     try {
       final accessToken = await AccessTokenService().getAccessToken();
       final projectId = Config.firebaseprojectid;
@@ -80,7 +88,9 @@ class FirebaseApis {
             },
             "data": {
               "type": "call_end",
-              "timestamp": DateTime.now().millisecondsSinceEpoch.toString()
+              "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
+              "patient_id":pateintId,
+            "doctor_id":doctorId
             },
             "android": {
               "priority": "high",

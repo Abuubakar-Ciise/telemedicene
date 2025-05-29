@@ -56,6 +56,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
               // final hasMultiple = appoinmentsController.hasMultipleAppointments(appointment.patientToken);
               print('for doctor ${appointment.doctorToken} -- ${appointment.id}');
               print('for pateint ${appointment.patientToken} -- ${appointment.id}');
+              print("APPOINTMENT STATUS: ${appointment.status}");
               return Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: PatientAppointmentCard(

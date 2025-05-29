@@ -14,7 +14,8 @@ class PrescriptionScreen extends StatefulWidget {
 }
 
 class _PrescriptionScreenState extends State<PrescriptionScreen> {
-  final DoctorPrescriptionController controller = Get.put(DoctorPrescriptionController());
+  final DoctorPrescriptionController controller =
+      Get.put(DoctorPrescriptionController());
   String? userId;
 
   @override
@@ -30,15 +31,16 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
       userId = userData["userId"] ?? "Unknown";
       controller.getPrescriptions(userId!);
       print("✅✅✅✅");
-          print(userId);
-
+      print(userId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Prescriptions")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+          backgroundColor: Colors.white, title: const Text("Prescriptions")),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -52,35 +54,110 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
           padding: const EdgeInsets.all(16),
           itemCount: controller.prescriptions.length,
           itemBuilder: (context, index) {
-            final DoctorPrescriptionModel prescription = controller.prescriptions[index];
-            final String doctorName = prescription.doctorName;
-            final String patientName = prescription.patientName;
-            final String date = DateFormat.yMMMMd().add_jm().format(prescription.createDate);
+            final item = controller.prescriptions[index];
+            final date = DateFormat.yMMMMd().add_jm().format(item.createDate);
+            final medicineCount = item.medicines?.length ?? 0;
+            final summary = medicineCount > 0
+                ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
+                : "No medicines listed";
 
             return GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PrescriptionDetailScreen(prescription: prescription),
+                    builder: (_) =>
+                        PrescriptionDetailScreen(prescription: item),
                   ),
                 );
               },
               child: Card(
+                color: Colors.white,
                 elevation: 3,
-                margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Prescription from Dr. $doctorName", style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Text("Patient: $patientName"),
-                      Text("Date: $date"),
+                      /// Header row: Icon + Doctor name + Arrow
+                      Row(
+                        children: [
+                          const Icon(Icons.medical_services,
+                              color: Colors.blue, size: 24),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Dr. ${item.doctorName}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios,
+                              size: 16, color: Colors.grey),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// Patient
+                      Row(
+                        children: [
+                          const Icon(Icons.person,
+                              size: 18, color: Colors.green),
+                          const SizedBox(width: 6),
+                          Text("Patient: ${item.patientName}",
+                              style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
+
+                      /// Date
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              size: 18, color: Colors.orange),
+                          const SizedBox(width: 6),
+                          Text("Date: $date",
+                              style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
+
+                      /// Medicine Summary
+                      Row(
+                        children: [
+                          const Icon(Icons.list_alt,
+                              size: 18, color: Colors.purple),
+                          const SizedBox(width: 6),
+                          Text(summary, style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
+
                       const SizedBox(height: 12),
-                      const Text("Tap for details...", style: TextStyle(color: Colors.blue)),
+
+                      /// Call-to-action
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Tap to view full prescription",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

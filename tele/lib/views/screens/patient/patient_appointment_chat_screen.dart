@@ -19,6 +19,7 @@ class PatientAppointmentChatScreen extends StatefulWidget {
   final String doctorPhone;
   final String patientPhone;
   final String doctorId;
+  final String patientId;
 
   const PatientAppointmentChatScreen(
       {super.key,
@@ -29,7 +30,8 @@ class PatientAppointmentChatScreen extends StatefulWidget {
       required this.patientToken,
       required this.doctorPhone,
       required this.patientPhone,
-      required this.doctorId});
+      required this.doctorId,
+      required this.patientId});
 
   @override
   State<PatientAppointmentChatScreen> createState() =>
@@ -60,7 +62,7 @@ class _PatientAppointmentChatScreenState
     picture = userData['picture'] ?? "N/A";
     userId = userData["userId"] ?? "Unknown";
     print("hhhhhhhhhhhh$userId");
-    await controller.getPatientPrescriptions(userId!,widget.doctorId);
+    await controller.getPatientPrescriptions(userId!,widget.doctorId,);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -181,6 +183,8 @@ class _PatientAppointmentChatScreenState
                             widget.patientProfile,
                             '0',
                             widget.doctorToken,
+                            widget.doctorId,
+                            widget.patientId
                           );
                           Navigator.push(
                             context,
@@ -207,6 +211,8 @@ class _PatientAppointmentChatScreenState
                             widget.patientProfile,
                             '1',
                             widget.doctorToken,
+                            widget.doctorId,
+                            widget.patientId
                           );
                           Navigator.push(
                             context,

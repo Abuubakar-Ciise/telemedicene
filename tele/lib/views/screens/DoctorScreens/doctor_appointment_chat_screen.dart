@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:tele/PrescriptionDetailScreen.dart';
+import 'package:tele/controllers/doctor_prescription_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/firebase_api.dart';
 import 'package:tele/views/screens/CallPage/call_page.dart';
@@ -12,6 +16,8 @@ class DoctorAppointmentChatScreen extends StatefulWidget {
   final String patientToken;
   final String doctorPhone;
   final String patientPhone;
+  final String doctorId;
+  final String pateintId;
 
   const DoctorAppointmentChatScreen({
     super.key,
@@ -22,6 +28,8 @@ class DoctorAppointmentChatScreen extends StatefulWidget {
     required this.patientToken,
     required this.doctorPhone,
     required this.patientPhone,
+    required this.doctorId,
+    required this.pateintId,
   });
 
   @override
@@ -36,22 +44,35 @@ class _DoctorAppointmentChatScreenState
   double _avatarSize = 40;
   bool _showFullAppBar = true;
   String? picture;
+  String? userId;
+  final DoctorPrescriptionController controller = Get.put(DoctorPrescriptionController());
 
   @override
   void initState() {
     super.initState();
     loadUserData();
+    initAsync();
     _scrollController.addListener(_handleScroll);
-    // Scroll to the bottom after the first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    // });
   }
+
+  Future<void> initAsync() async {
+  await controller.getPatientPrescriptions(widget.pateintId, widget.doctorId);
+  if (_scrollController.hasClients) {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
+}
+
 
   Future<void> loadUserData() async {
     Map<String, String?> userData = await StorageService.getUserData();
+    userId = userData["userId"] ?? "Unknown";
+    print("User ID: $userId");
     setState(() {
       picture = userData['picture'] ?? "N/A";
+      userId = userId;
     });
   }
 
@@ -167,7 +188,9 @@ class _DoctorAppointmentChatScreenState
                               widget.doctorPhone,
                               widget.patientProfile,
                               '0',
-                              widget.doctorToken);
+                              widget.doctorToken,
+                              widget.doctorId,
+                              widget.doctorId);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -188,7 +211,9 @@ class _DoctorAppointmentChatScreenState
                               widget.doctorPhone,
                               widget.patientProfile,
                               '1',
-                              widget.doctorToken);
+                              widget.doctorToken,
+                              widget.doctorId,
+                              widget.pateintId);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -207,31 +232,134 @@ class _DoctorAppointmentChatScreenState
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(12),
-              itemCount: 30,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Align(
-                    alignment: index % 2 == 0
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: index % 2 == 0
-                            ? Colors.teal.shade100
-                            : Colors.grey.shade200,
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (controller.patientPrescriptions.isEmpty) {
+                return const Center(child: Text("No prescriptions found."));
+              }
+
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: controller.patientPrescriptions.length,
+                itemBuilder: (context, index) {
+                  final item = controller.patientPrescriptions[index];
+                  final date =
+                      DateFormat.yMMMMd().add_jm().format(item.createDate);
+                  final medicineCount = item.medicines?.length ?? 0;
+                  final summary = medicineCount > 0
+                      ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
+                      : "No medicines listed";
+
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              PrescriptionDetailScreen(prescription: item),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 3,
+                      margin: const EdgeInsets.only(bottom: 14),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text('Message ${index + 1}'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// Header row: Icon + Doctor name + Arrow
+                            Row(
+                              children: [
+                                const Icon(Icons.medical_services,
+                                    color: Colors.blue, size: 24),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    "Dr. ${item.doctorName}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_forward_ios,
+                                    size: 16, color: Colors.grey),
+                              ],
+                            ),
+
+                            const SizedBox(height: 10),
+
+                            /// Patient
+                            Row(
+                              children: [
+                                const Icon(Icons.person,
+                                    size: 18, color: Colors.green),
+                                const SizedBox(width: 6),
+                                Text("Patient: ${item.patientName}",
+                                    style: const TextStyle(fontSize: 14)),
+                              ],
+                            ),
+
+                            /// Date
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today,
+                                    size: 18, color: Colors.orange),
+                                const SizedBox(width: 6),
+                                Text("Date: $date",
+                                    style: const TextStyle(fontSize: 14)),
+                              ],
+                            ),
+
+                            /// Medicine Summary
+                            Row(
+                              children: [
+                                const Icon(Icons.list_alt,
+                                    size: 18, color: Colors.purple),
+                                const SizedBox(width: 6),
+                                Text(summary,
+                                    style: const TextStyle(fontSize: 14)),
+                              ],
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            /// Call-to-action
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "Tap to view full prescription",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              );
+            }),
           ),
           // Message Input
           Container(

@@ -1,6 +1,8 @@
 import 'package:flutter_callkit_incoming_yoer/entities/entities.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
+import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/patient/ReviewsScreen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:tele/main.dart';
@@ -15,7 +17,8 @@ class CallKitService {
       String picture,
       String callerToken,
       String callerPhone,
-      String callType) async {
+      String callType
+      ,String doctorId, String patientId) async {
     if (_activeCallId != null) {
       print("Call already active with ID: $_activeCallId");
       return;
@@ -24,6 +27,7 @@ class CallKitService {
     final uuid = const Uuid().v4();
     _activeCallId = uuid;
     final avatarUrl = picture.startsWith('http') ? picture : '$url/$picture';
+
     final params = CallKitParams(
       id: uuid,
       nameCaller: callerName,
@@ -37,15 +41,18 @@ class CallKitService {
       extra: {
         'roomId': roomId,
         'callerToken': callerToken,
-        'callType': callType
+        'callType': callType,
+         'doctor_id': doctorId,  // Add these
+      'patient_id': patientId // Add these
       },
       headers: <String, dynamic>{'apiKey': 'Abc@123'},
     );
+
     await FlutterCallkitIncoming.showCallkitIncoming(params);
     print("CallKit incoming call shown with ID: $uuid");
   }
 
-  static Future<void> endAllCalls() async {
+  static Future<void> endAllCalls(String doctorId, String patientId) async {
     try {
       print('Ending all calls, activeCallId: $_activeCallId');
       if (_activeCallId != null) {
@@ -54,13 +61,30 @@ class CallKitService {
       await FlutterCallkitIncoming.endAllCalls();
       _activeCallId = null;
 
-      // Add delay to ensure callkit properly closes
       await Future.delayed(const Duration(milliseconds: 500));
 
-      // Close any open call screens
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (navigatorKey.currentState?.canPop() ?? false) {
-          navigatorKey.currentState?.pop(); // just pop the CallPage
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final navigator = navigatorKey.currentState;
+        if (navigator?.canPop() ?? false) {
+          navigator?.pop(); // Pop CallPage
+        }
+
+        final userData = await StorageService.getUserData();
+        if (userData['userType'] == '1') {
+          // Safe context handling
+          final context = navigator?.overlay?.context;
+          if (context != null) {
+            
+            await showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.white,
+              builder: (_) => ReviewsScreen(
+                doctorId: doctorId,
+                patientId: patientId,
+              ),
+            );
+          }
         }
       });
     } catch (e) {

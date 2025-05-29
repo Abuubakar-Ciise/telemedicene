@@ -6,6 +6,7 @@ import 'package:tele/controllers/re_appointment_controller.dart';
 import 'package:tele/views/screens/DoctorScreens/ReAppointmentScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_chat_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/patient/ReviewsScreen.dart';
 import 'package:tele/views/screens/patient/patient_appointment_chat_screen.dart';
 
 class PatientAppointmentCard extends StatelessWidget {
@@ -57,6 +58,7 @@ class PatientAppointmentCard extends StatelessWidget {
     String formattedDate =
         DateFormat('EEE, dd MMM yyyy').format(appointmentDateTime);
     final url = Config.baseUrl;
+    print("STATUS: $status");
 
     return Stack(
       children: [
@@ -96,7 +98,8 @@ class PatientAppointmentCard extends StatelessWidget {
                           patientToken: patientToken,
                           doctorPhone: doctorPhone,
                           patientPhone: patientPhone,
-                          doctorId:doctorId,
+                          doctorId: doctorId,
+                          patientId: patientId,
                         ),
                       ),
                     );
@@ -190,6 +193,7 @@ class PatientAppointmentCard extends StatelessWidget {
               ),
 
               const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+              const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
 
               // Buttons
               // Padding(
@@ -204,61 +208,15 @@ class PatientAppointmentCard extends StatelessWidget {
               //           child: InkWell(
               //             borderRadius: BorderRadius.circular(8),
               //             onTap: () {
-              //               showModalBottomSheet(
-              //                 context: context,
-              //                 shape: const RoundedRectangleBorder(
-              //                   borderRadius: BorderRadius.vertical(
-              //                       top: Radius.circular(16)),
-              //                 ),
-              //                 builder: (context) {
-              //                   return ConfirmCompleteBottomSheet(
-              //                     onConfirm: () async {
-              //                       await reAppointmentController.reAppointment(
-              //                         appointmentDate,
-              //                         patientId,
-              //                         id,
-              //                         2,
-              //                       );
-              //                     },
-              //                   );
-              //                 },
-              //               );
-              //             },
-              //             child: Container(
-              //               padding: const EdgeInsets.symmetric(vertical: 9),
-              //               decoration: BoxDecoration(
-              //                 color: Colors.blue,
-              //                 borderRadius: BorderRadius.circular(8),
-              //               ),
-              //               child: const Center(
-              //                 child: Text(
-              //                   'Complete',
-              //                   style: TextStyle(
-              //                     color: Colors.white,
-              //                     fontSize: 13,
-              //                     fontWeight: FontWeight.w500,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //       const SizedBox(width: 10),
-              //       Expanded(
-              //         child: Material(
-              //           color: Colors.transparent,
-              //           child: InkWell(
-              //             borderRadius: BorderRadius.circular(8),
-              //             onTap: () {
               //               print('Re-Appointment button clicked');
               //               showModalBottomSheet(
+                              
               //                 context: context,
-              //                 backgroundColor: Colors.transparent,
-              //                 builder: (context) => ReAppointmentScreen(
+              //                 isScrollControlled: true, // important
+              //                 // backgroundColor: Colors.transparent,
+              //                 backgroundColor: Colors.white,
+              //                 builder: (context) => ReviewsScreen(
               //                   doctorId: doctorId,
-              //                   appointmentDate: appointmentDate,
-              //                   appointmentId: id,
               //                   patientId: patientId,
               //                 ),
               //               );
@@ -291,6 +249,7 @@ class PatientAppointmentCard extends StatelessWidget {
         ),
 
         // --- This is the special "Re-Appointment" Badge ---
+
         if (status == 4)
           Positioned(
             right: 0,
@@ -364,7 +323,6 @@ class PatientAppointmentCard extends StatelessWidget {
 
 class ConfirmCompleteBottomSheet extends StatelessWidget {
   final VoidCallback onConfirm;
-
   const ConfirmCompleteBottomSheet({super.key, required this.onConfirm});
 
   @override
