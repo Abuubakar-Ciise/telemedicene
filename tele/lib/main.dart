@@ -71,7 +71,6 @@ void main() async {
   if (userId != null) {
     await ApiGetServices.updateFcmToken(userId);
   }
-
   // ✅ Listen for future token refresh
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     Map<String, String?> userData = await StorageService.getUserData();

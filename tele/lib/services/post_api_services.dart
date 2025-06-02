@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:tele/views/screens/components/config.dart';
@@ -140,7 +141,7 @@ class ApiPostServices {
             "patient_id": patientId,
             "rating": rating
           }));
-          if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
         return {
           "success": responseBody['success'],
@@ -157,6 +158,82 @@ class ApiPostServices {
     } catch (e) {
       print("error from writePrescription $e");
       return {"success": false, "message": "Failed to connect to server"};
+    }
+  }
+
+  // save_labs_record
+  // Future<Map<String, dynamic>> saveLabsRecord({
+  //   required String patientId,
+  //   required String doctorId,
+  //   required String appointmentId,
+  //   required String imagePath,
+  // }) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('$url/save_labs_record'),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode({
+  //         "patient_id": patientId,
+  //         "doctor_id": doctorId,
+  //         "appointment_id": appointmentId,
+  //         "report_url": imagePath,
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       return jsonDecode(response.body);
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': 'Failed to save labs record. Status: ${response.statusCode}'
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       'success': false,
+  //       'message': 'Error saving labs record: $e'
+  //     };
+  //   }
+  // }
+  Future<Map<String, dynamic>> saveLabsRecordWithFile({
+    required String patientId,
+    required String doctorId,
+    required String appointmentId,
+    required File imageFile,
+  }) async {
+    try {
+      final uri = Uri.parse('$url/save_labs_record');
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add file
+      request.files.add(
+        await http.MultipartFile.fromPath('file', imageFile.path),
+      );
+
+      // Add fields
+      request.fields['patient_id'] = patientId;
+      request.fields['doctor_id'] = doctorId;
+      request.fields['appointment_id'] = appointmentId;
+
+      final response = await request.send();
+      final resBody = await http.Response.fromStream(response);
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'body': resBody.body,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'HTTP ${response.statusCode}: ${resBody.body}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Exception: $e',
+      };
     }
   }
 }

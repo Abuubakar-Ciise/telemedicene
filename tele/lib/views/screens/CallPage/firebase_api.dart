@@ -21,23 +21,27 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
   );
 
   final data = message.data;
-  if (data['type'] == 'call_invitation') {
-    final callerName = data['callerName'];
-    final roomId = data['roomId'];
-    final picture = data['picture'];
-    final callerToken = data['callerToken'];
-    final callerPhone = data['callerPhone'];
-    final callType = data['callType'];
-    final doctorId = data['doctor_id'];
-    final patientId = data['patient_id'];
+  if (data['type'] == 'call_invitation' && !CallKitService.isCallActive) {
     await CallKitService.showCallkit(
-      callerName, roomId, picture, callerToken, callerPhone, callType, 
-      doctorId, patientId
+      data['callerName'],
+      data['roomId'],
+      data['picture'],
+      data['callerToken'],
+      data['calleeToken'],
+      data['callerPhone'],
+      data['callType'],
+      data['doctor_id'] ?? '',
+      data['patient_id'] ?? '',
+      isIncoming: true,
     );
   } else if (data['type'] == 'call_end') {
-    final doctorId = data['doctor_id'];
-    final patientId = data['patient_id'];
-    await CallKitService.endAllCalls(doctorId, patientId);
+    await CallKitService.endAllCalls(
+      data['doctor_id'] ?? '', 
+      data['patient_id'] ?? '',
+      callId: data['call_id'] ?? '',
+    );
+  } else if (data['type'] == 'call_accepted') {
+    CallKitService.setCallAccepted();
   }
 }
 
@@ -47,7 +51,9 @@ class FirebaseNotification {
   Future<void> initNotification() async {
     await _firebaseMessaging.requestPermission();
     await _firebaseMessaging.setForegroundNotificationPresentationOptions(
-      alert: true, badge: true, sound: true,
+      alert: true,
+      badge: true,
+      sound: true,
     );
 
     FirebaseMessaging.onMessage.listen(_handleMessage);
@@ -60,18 +66,30 @@ class FirebaseNotification {
   void _setupCallKitListeners() {
     FlutterCallkitIncoming.onEvent.listen((event) async {
       final eventType = event?.event;
+      final isIncoming = event?.body['extra']?['isIncoming'] == 'true';
+      final isCaller = event?.body['extra']?['isCaller'] == 'true';
 
-      if (eventType == Event.actionCallAccept) {
-        _handleCallAccept(event!);
-      } 
-      else if (eventType == Event.actionCallDecline) {
-        await _handleCallDecline(event!);
-      } 
-      else if (eventType == Event.actionCallEnded) {
-        await _handleCallEnded(event!);
-      } 
-      else {
-        print("Unhandled CallKit event: $eventType");
+      switch (eventType) {
+        case Event.actionCallAccept:
+          _handleCallAccept(event!);
+          break;
+
+        case Event.actionCallDecline:
+          await _handleCallDecline(event!);
+          break;
+
+        case Event.actionCallEnded:
+          if (isCaller) {
+            await _handleCallerCancellation(event!);
+          } else {
+            if (isIncoming && CallKitService.isCallActive) {
+              await _handleCallEnded(event!);
+            }
+          }
+          break;
+
+        default:
+          print("Unhandled CallKit event: $eventType");
       }
     });
   }
@@ -80,6 +98,13 @@ class FirebaseNotification {
     CallKitService.clearCallId();
     final roomId = event.body['extra']?['roomId'];
     final callType = event.body['extra']?['callType'];
+    final callerToken = event.body['extra']?['callerToken'];
+    final doctorId = event.body['extra']?['doctor_id'] ?? '';
+    final patientId = event.body['extra']?['patient_id'] ?? '';
+    
+    if (callerToken != null) {
+      FirebaseApis().sendCallAcceptedFCM(callerToken, doctorId, patientId);
+    }
 
     if (roomId != null && callType != null) {
       _navigateToCallScreen(roomId, callType);
@@ -88,48 +113,92 @@ class FirebaseNotification {
 
   Future<void> _handleCallDecline(CallEvent event) async {
     final callerToken = event.body['extra']?['callerToken'];
-    if (callerToken != null) {
+    final calleeToken = event.body['extra']?['calleeToken'];
+    final doctorId = event.body['extra']?['doctor_id'] ?? '';
+    final patientId = event.body['extra']?['patient_id'] ?? '';
+    final callId = event.body['id'];
+
+    if (callerToken != null && calleeToken != null) {
       try {
-        await FirebaseApis().sendCallEndFCM(callerToken, '', '');
+        await FirebaseApis().sendCallEndToBothFCM(
+          callerToken, 
+          calleeToken, 
+          doctorId, 
+          patientId,
+          callId,
+        );
       } catch (e) {
-        print("Error sending decline FCM: $e");
+        print("Error sending decline FCM to both: $e");
       }
     }
-    await CallKitService.endAllCalls('', ''); // Empty IDs prevent review
-    CallKitService.clearCallId();
+
+    await CallKitService.endAllCalls(doctorId, patientId, callId: callId);
   }
 
   Future<void> _handleCallEnded(CallEvent event) async {
     final callerToken = event.body['extra']?['callerToken'];
+    final calleeToken = event.body['extra']?['calleeToken'];
     final doctorId = event.body['extra']?['doctor_id'] ?? '';
     final patientId = event.body['extra']?['patient_id'] ?? '';
+    final callId = event.body['id'];
 
-    if (callerToken != null) {
+    if (callerToken != null && calleeToken != null && CallKitService.isIncoming) {
       try {
-        await FirebaseApis().sendCallEndFCM(callerToken, doctorId, patientId);
+        await FirebaseApis().sendCallEndToBothFCM(
+          callerToken, 
+          calleeToken, 
+          doctorId, 
+          patientId,
+          callId,
+        );
       } catch (e) {
-        print("Error sending ended FCM: $e");
+        print("Error sending ended FCM to both: $e");
       }
     }
-    await CallKitService.endAllCalls(doctorId, patientId);
-    CallKitService.clearCallId();
+
+    await CallKitService.endAllCalls(doctorId, patientId, callId: callId);
+  }
+
+  Future<void> _handleCallerCancellation(CallEvent event) async {
+    final calleeToken = event.body['extra']?['calleeToken'];
+    final doctorId = event.body['extra']?['doctor_id'] ?? '';
+    final patientId = event.body['extra']?['patient_id'] ?? '';
+    final callId = event.body['id'];
+
+    if (calleeToken != null) {
+      await FirebaseApis().sendCallEndFCM(
+        calleeToken, 
+        doctorId, 
+        patientId,
+        callId,
+      );
+    }
+    await CallKitService.endAllCalls(doctorId, patientId, callId: callId);
   }
 
   void _handleMessage(RemoteMessage message) {
     final data = message.data;
-    if (data['type'] == 'call_invitation') {
+    if (data['type'] == 'call_invitation' && !CallKitService.isCallActive) {
       CallKitService.showCallkit(
         data['callerName'],
         data['roomId'],
         data['picture'],
         data['callerToken'],
+        data['calleeToken'],
         data['callerPhone'],
         data['callType'],
-        data['doctor_id'],
-        data['patient_id'],
+        data['doctor_id'] ?? '',
+        data['patient_id'] ?? '',
+        isIncoming: true,
       );
     } else if (data['type'] == 'call_end') {
-      CallKitService.endAllCalls(data['doctor_id'], data['patient_id']);
+      CallKitService.endAllCalls(
+        data['doctor_id'] ?? '', 
+        data['patient_id'] ?? '',
+        callId: data['call_id'] ?? '',
+      );
+    } else if (data['type'] == 'call_accepted') {
+      CallKitService.setCallAccepted();
     }
   }
 

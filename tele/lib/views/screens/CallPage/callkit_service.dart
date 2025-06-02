@@ -10,22 +10,36 @@ import 'package:tele/main.dart';
 class CallKitService {
   static String? _activeCallId;
   static String? url = Config.baseUrl;
+  static bool _isCallActive = false;
+  static bool _isIncoming = false;
+  static bool _callAccepted = false;
+
+  static void setCallAccepted() {
+    _callAccepted = true;
+  }
 
   static Future<void> showCallkit(
-      String callerName,
-      String roomId,
-      String picture,
-      String callerToken,
-      String callerPhone,
-      String callType
-      ,String doctorId, String patientId) async {
-    if (_activeCallId != null) {
+    String callerName,
+    String roomId,
+    String picture,
+    String callerToken,
+    String calleeToken,
+    String callerPhone,
+    String callType,
+    String doctorId, 
+    String patientId,
+    {bool isIncoming = true, bool isCaller = false}
+  ) async {
+    if (_activeCallId != null && _isCallActive) {
       print("Call already active with ID: $_activeCallId");
       return;
     }
 
     final uuid = const Uuid().v4();
     _activeCallId = uuid;
+    _isCallActive = true;
+    _isIncoming = isIncoming;
+    _callAccepted = false;
     final avatarUrl = picture.startsWith('http') ? picture : '$url/$picture';
 
     final params = CallKitParams(
@@ -41,9 +55,12 @@ class CallKitService {
       extra: {
         'roomId': roomId,
         'callerToken': callerToken,
+        'calleeToken': calleeToken,
         'callType': callType,
-         'doctor_id': doctorId,  // Add these
-      'patient_id': patientId // Add these
+        'doctor_id': doctorId,
+        'patient_id': patientId,
+        'isIncoming': isIncoming.toString(),
+        'isCaller': isCaller.toString(),
       },
       headers: <String, dynamic>{'apiKey': 'Abc@123'},
     );
@@ -52,38 +69,42 @@ class CallKitService {
     print("CallKit incoming call shown with ID: $uuid");
   }
 
-  static Future<void> endAllCalls(String doctorId, String patientId) async {
+  static Future<void> endAllCalls(
+    String doctorId, 
+    String patientId, {
+    String callId = '',
+  }) async {
     try {
       print('Ending all calls, activeCallId: $_activeCallId');
       if (_activeCallId != null) {
         await FlutterCallkitIncoming.endCall(_activeCallId!);
       }
       await FlutterCallkitIncoming.endAllCalls();
-      _activeCallId = null;
+      _resetCallState();
 
       await Future.delayed(const Duration(milliseconds: 500));
 
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final navigator = navigatorKey.currentState;
         if (navigator?.canPop() ?? false) {
-          navigator?.pop(); // Pop CallPage
+          navigator?.pop();
         }
 
-        final userData = await StorageService.getUserData();
-        if (userData['userType'] == '1') {
-          // Safe context handling
-          final context = navigator?.overlay?.context;
-          if (context != null) {
-            
-            await showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.white,
-              builder: (_) => ReviewsScreen(
-                doctorId: doctorId,
-                patientId: patientId,
-              ),
-            );
+        if (_callAccepted && _isIncoming) {
+          final userData = await StorageService.getUserData();
+          if (userData['userType'] == '1') {
+            final context = navigator?.overlay?.context;
+            if (context != null) {
+              await showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.white,
+                builder: (_) => ReviewsScreen(
+                  doctorId: doctorId,
+                  patientId: patientId,
+                ),
+              );
+            }
           }
         }
       });
@@ -93,9 +114,18 @@ class CallKitService {
     }
   }
 
-  static void clearCallId() {
+  static void _resetCallState() {
     _activeCallId = null;
+    _isCallActive = false;
+    _isIncoming = false;
+    _callAccepted = false;
+  }
+
+  static void clearCallId() {
+    _resetCallState();
   }
 
   static String? get activeCallId => _activeCallId;
+  static bool get isCallActive => _isCallActive;
+  static bool get isIncoming => _isIncoming;
 }

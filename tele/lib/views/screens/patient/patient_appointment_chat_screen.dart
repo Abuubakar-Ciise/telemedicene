@@ -176,12 +176,13 @@ class _PatientAppointmentChatScreenState
                               "call_${DateTime.now().millisecondsSinceEpoch}";
 
                           await FirebaseApis().sendCallFCM(
-                            widget.patientToken,
+                            widget.doctorToken,
                             widget.doctorName,
                             roomId,
                             widget.doctorPhone,
                             widget.patientProfile,
                             '0',
+                            widget.patientToken,
                             widget.doctorToken,
                             widget.doctorId,
                             widget.patientId
@@ -204,12 +205,13 @@ class _PatientAppointmentChatScreenState
                               "call_${DateTime.now().millisecondsSinceEpoch}";
 
                           await FirebaseApis().sendCallFCM(
-                            widget.patientToken,
+                            widget.doctorToken,
                             widget.doctorName,
                             roomId,
                             widget.doctorPhone,
                             widget.patientProfile,
                             '1',
+                            widget.patientToken,
                             widget.doctorToken,
                             widget.doctorId,
                             widget.patientId

@@ -14,6 +14,7 @@ class FirebaseApis {
     String picture,
     String callType,
     String callerToken,
+    String calleeToken,
     String doctorId,
     String pateintId,
   ) async {
@@ -51,8 +52,9 @@ class FirebaseApis {
             "picture": picture,
             "callType": callType,
             "callerToken": callerToken,
-            "patient_id":pateintId,
-            "doctor_id":doctorId
+            "calleeToken": calleeToken,
+            "doctor_id": doctorId,
+            "patient_id": pateintId,
           }
         }
       }),
@@ -60,11 +62,49 @@ class FirebaseApis {
     print("FCM send response: ${response.statusCode} ${response.body}");
   }
 
+  Future<void> sendCallAcceptedFCM(
+    String token,
+    String doctorId,
+    String patientId,
+  ) async {
+    try {
+      final accessToken = await AccessTokenService().getAccessToken();
+      final projectId = Config.firebaseprojectid;
+
+      final url = Uri.parse(
+        'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+      );
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode({
+          "message": {
+            "token": token,
+            "data": {
+              "type": "call_accepted",
+              "doctor_id": doctorId,
+              "patient_id": patientId,
+            },
+          }
+        }),
+      );
+
+      print("FCM call_accepted response: ${response.statusCode} ${response.body}");
+    } catch (e) {
+      print('Error sending call_accepted FCM: $e');
+    }
+  }
+
   Future<void> sendCallEndFCM(
     String token,
     String doctorId,
-    String pateintId,
-    ) async {
+    String patientId,
+    String callId,
+  ) async {
     try {
       final accessToken = await AccessTokenService().getAccessToken();
       final projectId = Config.firebaseprojectid;
@@ -89,8 +129,9 @@ class FirebaseApis {
             "data": {
               "type": "call_end",
               "timestamp": DateTime.now().millisecondsSinceEpoch.toString(),
-              "patient_id":pateintId,
-            "doctor_id":doctorId
+              "patient_id": patientId,
+              "doctor_id": doctorId,
+              "call_id": callId,
             },
             "android": {
               "priority": "high",
@@ -100,19 +141,11 @@ class FirebaseApis {
                 "sound": "default"
               }
             },
-            // "apns": {
-            //   "payload": {
-            //     "aps": {
-            //       "sound": "default"
-            //     }
-            //   }
-            // }
           }
         }),
       );
 
-      print(
-          "FCM send call_end response: ${response.statusCode} ${response.body}");
+      print("FCM send call_end response: ${response.statusCode} ${response.body}");
       if (response.statusCode != 200) {
         throw Exception('Failed to send call end FCM');
       }
@@ -120,5 +153,18 @@ class FirebaseApis {
       print('Error sending call end FCM: $e');
       rethrow;
     }
+  }
+
+  Future<void> sendCallEndToBothFCM(
+    String callerToken,
+    String calleeToken,
+    String doctorId,
+    String patientId,
+    String callId,
+  ) async {
+    await Future.wait([
+      sendCallEndFCM(callerToken, doctorId, patientId, callId),
+      sendCallEndFCM(calleeToken, doctorId, patientId, callId),
+    ]);
   }
 }

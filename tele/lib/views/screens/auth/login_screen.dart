@@ -119,6 +119,7 @@ class LoginScreen extends StatelessWidget {
                                                 _emailController.text.trim(),
                                                 _passwordController.text
                                                     .trim(),token!);
+                                        
                                       }
                                     },
                                     child: const Text(

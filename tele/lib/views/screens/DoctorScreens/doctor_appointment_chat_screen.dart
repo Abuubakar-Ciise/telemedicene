@@ -189,8 +189,9 @@ class _DoctorAppointmentChatScreenState
                               widget.patientProfile,
                               '0',
                               widget.doctorToken,
+                              widget.patientToken,
                               widget.doctorId,
-                              widget.doctorId);
+                              widget.pateintId);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -212,6 +213,7 @@ class _DoctorAppointmentChatScreenState
                               widget.patientProfile,
                               '1',
                               widget.doctorToken,
+                              widget.patientToken,
                               widget.doctorId,
                               widget.pateintId);
                           Navigator.push(
