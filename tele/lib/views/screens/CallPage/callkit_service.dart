@@ -69,50 +69,99 @@ class CallKitService {
     print("CallKit incoming call shown with ID: $uuid");
   }
 
-  static Future<void> endAllCalls(
-    String doctorId, 
-    String patientId, {
-    String callId = '',
-  }) async {
-    try {
-      print('Ending all calls, activeCallId: $_activeCallId');
-      if (_activeCallId != null) {
-        await FlutterCallkitIncoming.endCall(_activeCallId!);
-      }
-      await FlutterCallkitIncoming.endAllCalls();
-      _resetCallState();
+  // static Future<void> endAllCalls(
+  //   String doctorId, 
+  //   String patientId, {
+  //   String callId = '',
+  // }) async {
+  //   try {
+  //     print('Ending all calls, activeCallId: $_activeCallId');
+  //     if (_activeCallId != null) {
+  //       await FlutterCallkitIncoming.endCall(_activeCallId!);
+  //     }
+  //     await FlutterCallkitIncoming.endAllCalls();
+  //     _resetCallState();
 
-      await Future.delayed(const Duration(milliseconds: 500));
+  //     await Future.delayed(const Duration(milliseconds: 500));
 
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final navigator = navigatorKey.currentState;
-        if (navigator?.canPop() ?? false) {
-          navigator?.pop();
-        }
+  //     WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //       final navigator = navigatorKey.currentState;
+  //       if (navigator?.canPop() ?? false) {
+  //         navigator?.pop();
+  //       }
 
-        if (_callAccepted && _isIncoming) {
-          final userData = await StorageService.getUserData();
-          if (userData['userType'] == '1') {
-            final context = navigator?.overlay?.context;
-            if (context != null) {
-              await showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.white,
-                builder: (_) => ReviewsScreen(
-                  doctorId: doctorId,
-                  patientId: patientId,
-                ),
-              );
-            }
-          }
+  //       if (_callAccepted && _isIncoming) {
+  //         final userData = await StorageService.getUserData();
+  //         if (userData['userType'] == '1') {
+  //           final context = navigator?.overlay?.context;
+  //           if (context != null) {
+  //             await showModalBottomSheet(
+  //               context: context,
+  //               isScrollControlled: true,
+  //               backgroundColor: Colors.white,
+  //               builder: (_) => ReviewsScreen(
+  //                 doctorId: doctorId,
+  //                 patientId: patientId,
+  //               ),
+  //             );
+  //           }
+  //         }
+  //       }
+  //     });
+  //   } catch (e) {
+  //     print('Error ending calls: $e');
+  //     rethrow;
+  //   }
+  // }
+ static Future<void> endAllCalls(
+  String doctorId, 
+  String patientId, {
+  String callId = '',
+}) async {
+  try {
+    print('Ending all calls, activeCallId: $_activeCallId');
+
+    if (_activeCallId != null) {
+      await FlutterCallkitIncoming.endCall(_activeCallId!);
+    }
+    await FlutterCallkitIncoming.endAllCalls();
+    _resetCallState();
+
+    final userData = await StorageService.getUserData();
+    final shouldShowReview = userData['userType'] == '1' && _callAccepted && _isIncoming;
+
+    final navigator = navigatorKey.currentState;
+    final context = navigatorKey.currentContext;
+
+    if (navigator?.canPop() ?? false) {
+      navigator?.pop();
+    }
+
+    if (shouldShowReview && context != null) {
+      // Delay to wait for navigation and avoid "context not mounted" error
+      Future.delayed(const Duration(milliseconds: 300), () {
+        final currentContext = navigatorKey.currentContext;
+        if (currentContext != null) {
+          showModalBottomSheet(
+            context: currentContext,
+            isScrollControlled: true,
+            backgroundColor: Colors.white,
+            builder: (_) => ReviewsScreen(
+              doctorId: doctorId,
+              patientId: patientId,
+            ),
+          );
+        } else {
+          print('❌ Could not get a valid context to show bottom sheet.');
         }
       });
-    } catch (e) {
-      print('Error ending calls: $e');
-      rethrow;
     }
+  } catch (e) {
+    print('❌ Error ending calls: $e');
+    rethrow;
   }
+}
+
 
   static void _resetCallState() {
     _activeCallId = null;

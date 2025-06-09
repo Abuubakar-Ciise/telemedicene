@@ -35,6 +35,7 @@ class ConfirmationScreen extends StatelessWidget {
   static final String api = dotenv.env['APIUSERID'] ?? '';
   static final String apikey = dotenv.env['APIKEY'] ?? '';
   // int doctorFee =  d
+  // You get doctor token by doctor.doctorToken
 
   @override
   Widget build(BuildContext context) {

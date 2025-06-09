@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:http/http.dart' as http;
 import 'package:tele/views/screens/components/config.dart';
 
@@ -229,6 +230,44 @@ class ApiPostServices {
           'message': 'HTTP ${response.statusCode}: ${resBody.body}',
         };
       }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Exception: $e',
+      };
+    }
+  }
+  
+  // updateProfilePicture
+  Future<Map<String, dynamic>> updateProfilePicture(
+      {required String id, required File imageFile}) async {
+    try {
+      final uri = Uri.parse('$url/updateProfile');
+      final request  = http.MultipartRequest("POST", uri);
+      // Add the image file
+      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+      request.fields['patient_id'] = id;
+      final response = await request.send();
+      final resBody = await http.Response.fromStream(response);
+      print("✅✅✅");
+      print("${resBody.body} && $response");
+      print("✅✅✅");
+
+      if(response.statusCode == 200) {
+        final data = jsonDecode(resBody.body);
+        return {
+          'success': data['success'],
+        'message': data['message'] ?? 'Profile picture updated.',
+        'picture': data['picture'] ?? '',
+        };
+      }else{
+        return {
+          'success': false,
+        'message': 'Server error: ${response.statusCode} – ${resBody.body}',
+        };
+      }
+      
     } catch (e) {
       return {
         'success': false,

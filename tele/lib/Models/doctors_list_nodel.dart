@@ -13,6 +13,7 @@ class DoctorList {
   final String createDate;
   final String hospitalname;
   final double rating;
+  final String doctorToken;
   DoctorList({
     required  this.id,
     required this.status,
@@ -28,6 +29,7 @@ class DoctorList {
     required this.createDate,
     required this.hospitalname,
     required this.rating,
+    required this.doctorToken,
   });
   factory DoctorList.fromJson(Map<String,dynamic> json) {
     return DoctorList(
@@ -45,6 +47,7 @@ class DoctorList {
       createDate: json['create_date'] ?? '', 
       hospitalname: json['hospital_name'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
+      doctorToken: json['token'] ?? ''
       );
   }
 }

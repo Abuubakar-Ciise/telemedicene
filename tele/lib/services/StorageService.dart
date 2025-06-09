@@ -50,4 +50,9 @@ class StorageService {
     await prefs.remove('picture');
     await prefs.remove('nickname');
   }
+  static Future<void> updateUserField(String key, String value) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(key, value);
+}
+
 }

@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/components/update_profile_picture_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,7 +14,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final url = Config.baseUrl;
-
+  String id = 'loading..';
   String name = 'loading..';
   String phone = 'loading..';
   String email = 'loading..';
@@ -32,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> loadUserData() async {
     Map<String, String?> userData = await StorageService.getUserData();
     setState(() {
+      id = userData['userId'] ?? '';
       name = userData['username'] ?? 'unknow';
       phone = userData['phone'] ?? 'N/A';
       address = userData['address'] ?? "N/A";
@@ -47,6 +49,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await StorageService.clearUserData(); // Clear saved user data
     Get.offAllNamed(
         '/login'); // Navigate to login screen & remove all previous screens
+  }
+  void updateProfileScreen(BuildContext context){
+    showModalBottomSheet (
+      context: context, 
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (_) => UpdateProfilePictureScreen(id: id),
+      );
   }
 
   @override
@@ -175,10 +185,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
+                            _buildSettingsRow(Icons.person, 'Change Profile Picture',onTap:() => updateProfileScreen(context)),
                             _buildSettingsRow(Icons.lock, 'Change Password'),
                             _buildSettingsRow(Icons.pin, 'Change Pin'),
-                            _buildSettingsRow(
-                                Icons.language, 'Change Language'),
+                            _buildSettingsRow(Icons.language, 'Change Language'),
+                            
                           ],
                         ),
                       ),

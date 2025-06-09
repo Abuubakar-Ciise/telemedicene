@@ -79,6 +79,7 @@ void main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
+  
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));

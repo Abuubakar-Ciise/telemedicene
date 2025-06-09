@@ -15,7 +15,8 @@ class LabsRecordScreen extends StatefulWidget {
 }
 
 class _LabsRecordScreenState extends State<LabsRecordScreen> {
-  final AppoinmentsController _appointmentController = Get.put(AppoinmentsController());
+  final AppoinmentsController _appointmentController =
+      Get.put(AppoinmentsController());
   final LabsController _labsController = Get.put(LabsController());
 
   File? _selectedImage;
@@ -24,16 +25,51 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
   String? _selectedAppointmentId;
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() {
-        _selectedImage = File(picked.path);
-      });
-    }
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Take a photo'),
+            onTap: () async {
+              Navigator.pop(context);
+              final picked =
+                  await ImagePicker().pickImage(source: ImageSource.camera);
+              if (picked != null) {
+                setState(() {
+                  _selectedImage = File(picked.path);
+                });
+              }
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.photo_library),
+            title: Text('Choose from gallery'),
+            onTap: () async {
+              Navigator.pop(context);
+              final picked =
+                  await ImagePicker().pickImage(source: ImageSource.gallery);
+              if (picked != null) {
+                setState(() {
+                  _selectedImage = File(picked.path);
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void _uploadRecord() async {
-    if (_selectedImage == null || _selectedAppointmentId == null || _selectedDoctorId == null || _selectedPatientId == null) {
+    if (_selectedImage == null ||
+        _selectedAppointmentId == null ||
+        _selectedDoctorId == null ||
+        _selectedPatientId == null) {
       toastification.show(
         context: context,
         title: const Text("Missing Info"),
@@ -62,18 +98,22 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Upload Lab Record")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text("Upload Lab Record")),
       body: Obx(() {
-        if (_appointmentController.isLoading.value || _labsController.isUploading.value) {
+        if (_appointmentController.isLoading.value ||
+            _labsController.isUploading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Doctor", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text("Doctor",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<PatientAppointementsModel>(
                 decoration: InputDecoration(
@@ -81,11 +121,14 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                 ),
                 hint: const Text("Select Doctor"),
-                value: _appointmentController.appointments.firstWhereOrNull((a) => a.id == _selectedAppointmentId),
+                value: _appointmentController.appointments
+                    .firstWhereOrNull((a) => a.id == _selectedAppointmentId),
                 items: _appointmentController.appointments
                     .map((a) => DropdownMenuItem(
                           value: a,
-                          child: a.doctorName.isNotEmpty ? Text(a.doctorName) : const Text('Unknown'),
+                          child: a.doctorName.isNotEmpty
+                              ? Text(a.doctorName)
+                              : const Text('Unknown'),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -101,7 +144,8 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
 
               const SizedBox(height: 20),
               if (_selectedDoctorId != null) ...[
-                const Text("Appointment", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Appointment",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
@@ -113,13 +157,15 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                       .where((a) => a.doctorId == _selectedDoctorId)
                       .map((a) => DropdownMenuItem(
                             value: a.id,
-                            child: Text("${a.shiftDay} - ${a.shiftTime} (${a.appointmentDate})"),
+                            child: Text(
+                                "${a.shiftDay} - ${a.shiftTime} (${a.appointmentDate})"),
                           ))
                       .toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedAppointmentId = value;
-                      final appointment = _appointmentController.appointments.firstWhereOrNull((a) => a.id == value);
+                      final appointment = _appointmentController.appointments
+                          .firstWhereOrNull((a) => a.id == value);
                       _selectedPatientId = appointment?.patientId;
                     });
                   },
@@ -127,16 +173,21 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
               ],
 
               const SizedBox(height: 30),
-              const Text("Lab Report Image", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text("Lab Report Image",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               InkWell(
                 onTap: _pickImage,
                 child: _selectedImage != null
                     ? Card(
                         elevation: 4,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         clipBehavior: Clip.antiAlias,
-                        child: Image.file(_selectedImage!, height: 220, width: double.infinity, fit: BoxFit.cover),
+                        child: Image.file(_selectedImage!,
+                            height: 220,
+                            width: double.infinity,
+                            fit: BoxFit.cover),
                       )
                     : const DottedBorderPlaceholder(),
               ),
@@ -147,10 +198,12 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                 child: TextButton.icon(
                   onPressed: _pickImage,
                   icon: const Icon(Icons.image_outlined, color: Colors.white),
-                  label: const Text("Pick / Change Image", style: TextStyle(color: Colors.white)),
+                  label: const Text("Pick / Change Image",
+                      style: TextStyle(color: Colors.white)),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                   ),
                 ),
               ),
@@ -160,16 +213,20 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
               // Green upload button
               Center(
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.cloud_upload_outlined, color: Colors.white),
-                  label: const Text("Upload & Save Record", style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.cloud_upload_outlined,
+                      color: Colors.white),
+                  label: const Text("Upload & Save Record",
+                      style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     minimumSize: const Size(double.infinity, 50),
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 5,
                   ),
-                  onPressed: _labsController.isUploading.value ? null : _uploadRecord,
+                  onPressed:
+                      _labsController.isUploading.value ? null : _uploadRecord,
                 ),
               ),
             ],
@@ -189,14 +246,16 @@ class DottedBorderPlaceholder extends StatelessWidget {
       height: 220,
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, style: BorderStyle.solid, width: 1),
+        border:
+            Border.all(color: Colors.grey, style: BorderStyle.solid, width: 1),
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.add_photo_alternate_outlined, size: 50, color: Colors.grey),
+          Icon(Icons.add_photo_alternate_outlined,
+              size: 50, color: Colors.grey),
           SizedBox(height: 10),
           Text("Tap to add lab image", style: TextStyle(color: Colors.grey)),
         ],
