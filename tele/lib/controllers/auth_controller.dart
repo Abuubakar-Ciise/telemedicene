@@ -65,6 +65,7 @@ class AuthController extends GetxController {
           if (userId != null) {
             await ApiGetServices.updateFcmToken(userId);
           }
+          
           Get.offNamed('/mainscreen');
         } else {
           Map<String, String?> userData = await StorageService.getUserData();

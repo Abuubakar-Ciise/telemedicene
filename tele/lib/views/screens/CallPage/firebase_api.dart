@@ -19,7 +19,6 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
       projectId: Config.firebaseprojectid,
     ),
   );
-
   final data = message.data;
   if (data['type'] == 'call_invitation' && !CallKitService.isCallActive) {
     await CallKitService.showCallkit(

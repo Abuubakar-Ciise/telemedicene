@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/controllers/re_appointment_controller.dart';
+import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/views/screens/DoctorScreens/ReAppointmentScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_chat_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
@@ -219,8 +220,15 @@ class DoctorAppointmentCard extends StatelessWidget {
                                       patientId,
                                       id,
                                       2,
+                                      doctorName,
+                                      appointmentTime
                                     );
                                   },
+                                  patientToken: patientToken,
+                                  doctorName: doctorName,
+                                  dcotorToken: doctorToken,
+                                  appointmentDate: appointmentDate,
+                                  appointmentTime: appointmentTime,
                                 );
                               },
                             );
@@ -251,18 +259,22 @@ class DoctorAppointmentCard extends StatelessWidget {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () {
+                          onTap: () async {
                             print('Re-Appointment button clicked');
                             showModalBottomSheet(
                               context: context,
                               backgroundColor: Colors.transparent,
                               builder: (context) => ReAppointmentScreen(
+                                doctorName: doctorName,
                                 doctorId: doctorId,
                                 appointmentDate: appointmentDate,
                                 appointmentId: id,
                                 patientId: patientId,
+                                appointmentTime: appointmentTime,
                               ),
+                               
                             );
+                            // NewFirebaseSendMessage().sendReAppointmentNotification(token: patientToken);
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 9),
@@ -365,8 +377,16 @@ class DoctorAppointmentCard extends StatelessWidget {
 
 class ConfirmCompleteBottomSheet extends StatelessWidget {
   final VoidCallback onConfirm;
+  final String patientToken;
+  final String dcotorToken;
+  final String doctorName;
+  final String appointmentTime;
+  final String appointmentDate;
 
-  const ConfirmCompleteBottomSheet({super.key, required this.onConfirm});
+  const ConfirmCompleteBottomSheet({
+    super.key, required this.onConfirm, required this.patientToken,required this.dcotorToken,
+    required this.doctorName ,required this.appointmentDate, required this.appointmentTime
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -448,9 +468,13 @@ class ConfirmCompleteBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: ()  async{
                     Navigator.pop(context); // Close bottom sheet
                     onConfirm(); // Call confirm function
+                    // await NewFirebaseSendMessage().sendAppointmentCompletedNotification(
+                    //   token: patientToken,
+                    //     body: "Your appointment with Dr. $doctorName on $appointmentDate at $appointmentTime has been completed.",
+                    //   );
                   },
                   child: const Text(
                     "Confirm",

@@ -12,6 +12,7 @@ import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
 import 'package:tele/Models/specialist_model.dart';
 import 'package:tele/Models/transection_model.dart';
+import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/config.dart';
 
 class ApiGetServices {
@@ -406,6 +407,11 @@ class ApiGetServices {
 
         if (response.statusCode == 200) {
           print("✅ FCM TOKEN updated successfully");
+          await StorageService.updateUserField('auth_token', token);
+          print("✅✅✅ $token");
+          print("--------");
+                 final userToken = await Config.getUserToken();
+       print("✅✅✅✅✅ $userToken");
         } else {
           print('❌ Failed to update token: ${response.statusCode}');
         }

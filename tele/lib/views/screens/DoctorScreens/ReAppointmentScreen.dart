@@ -6,22 +6,28 @@ import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/controllers/re_appointment_controller.dart';
 import 'package:tele/controllers/shift_controller.dart';
 import 'package:tele/services/get_api_services.dart';
+import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/views/screens/DoctorScreens/conseltaion_screen.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/PatientDetailsScreen.dart';
 import 'package:toastification/toastification.dart';
+import 'package:tele/services/StorageService.dart';
 
 class ReAppointmentScreen extends StatefulWidget {
   final String doctorId;
+  final String doctorName;
   final String patientId;
   final String appointmentDate;
+  final String appointmentTime;
   final String appointmentId;
 
   const ReAppointmentScreen({
     super.key,
     required this.doctorId,
+    required this.doctorName,
     required this.patientId,
     required this.appointmentDate,
+    required this.appointmentTime,
     required this.appointmentId,
   });
 
@@ -40,12 +46,13 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
   String? selectedTimeAsAppointment;
   String? currentDate;
   String? selectedTimeAsAppointemnt;
+  String? token;
   Map<String, bool> shiftAvailability = {};
-
 
   @override
   void initState() {
     super.initState();
+    loadUserData();
     daysOfWeek = getNextWeekDays();
     daysOfWeekList = getNextWeekDays();
     daysOfWeekList[0] = 'Today';
@@ -55,6 +62,13 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
     currentDate = getFormattedDate(selectedDayIndex!);
     shiftController.fetchShifts(
         widget.doctorId, currentDate!, daysOfWeek[selectedDayIndex!]);
+  }
+  Future<void> loadUserData() async {
+    Map<String, String?> userData = await StorageService.getUserData();
+    setState(() {
+      token = userData['auth_token'] ?? '';
+      
+    });
   }
 
   String getFormattedDate(int index) {
@@ -344,6 +358,8 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
                         selectedShiftId!,
                         widget.appointmentId,
                         4,
+                        widget.doctorName,
+                       widget.appointmentTime
                       );
                      
                     }

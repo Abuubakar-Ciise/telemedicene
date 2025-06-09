@@ -1,0 +1,133 @@
+import 'dart:convert';
+import 'package:tele/services/access_token_service.dart';
+import 'package:tele/views/screens/components/config.dart';
+import 'package:http/http.dart' as http;
+
+class NewFirebaseSendMessage {
+  Future<void> sendAppointmentNotificationToDoctor(
+    String token, {
+    String title = "Notification",
+    String body = "You have a new update.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
+          "notification": {
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "appointment_booking",
+          }
+        }
+      }),
+    );
+
+    print("FCM Response: ${response.statusCode} ${response.body}");
+  }
+
+  Future<void> sendAppointmentCompletedNotification({
+    required String token,
+    String title = "Appointment Completed",
+    String body = "Your appointment has been marked as completed.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
+          "notification": {
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "appointment_completed",
+          }
+        }
+      }),
+    );
+
+    print("FCM Completed Response: ${response.statusCode} ${response.body}");
+  }
+
+  Future<void> sendReAppointmentNotification({
+    required String token,
+    String title = "Re-Appointment",
+    String body = "The doctor has scheduled a re-appointment for you.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
+          "notification": {
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "re_appointment",
+          }
+        }
+      }),
+    );
+
+    print(
+        "FCM Re-Appointment Response: ${response.statusCode} ${response.body}");
+  }
+}

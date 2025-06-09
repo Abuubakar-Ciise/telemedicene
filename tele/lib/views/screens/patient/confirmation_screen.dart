@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/payment_controller.dart';
+import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/views/screens/PaymentStatusScreen.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
@@ -30,8 +31,7 @@ class ConfirmationScreen extends StatelessWidget {
   });
   final paymentController = Get.put(PaymentController());
   final url = Config.baseUrl;
-  static final String maer =
-      dotenv.env['MERCHANTUID'] ?? '';
+  static final String maer = dotenv.env['MERCHANTUID'] ?? '';
   static final String api = dotenv.env['APIUSERID'] ?? '';
   static final String apikey = dotenv.env['APIKEY'] ?? '';
   // int doctorFee =  d
@@ -225,41 +225,46 @@ class ConfirmationScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: () async {
-        
-
           await paymentController.pay(
               phone: patientData['phone']!,
               amount: doctor.consultationfee,
               merchantUid: maer,
               apiUserId: api,
               apiKey: apikey);
+              await NewFirebaseSendMessage().sendAppointmentNotificationToDoctor(
+              doctor.doctorToken,
+              title: "New Appointment",
+              body:
+                  "You have a new booking from ${patientData['name']} on $selectedDate at $selectedTime.",
+            );
           if (paymentController.isPaymentSuccessful.value) {
             await paymentController.bookAndPayController(
-              doctor.id,
-              patientId,
-              shifId!,
-              patientData['phone']!,
-              doctor.phone,
-              doctor.consultationfee,
-              // 0.01,
-              selectedDate,
-              patientData['problem']!);
+                doctor.id,
+                patientId,
+                shifId!,
+                patientData['phone']!,
+                doctor.phone,
+                doctor.consultationfee,
+                // 0.01,
+                selectedDate,
+                patientData['problem']!);
             Get.to(
               () => PaymentStatusScreen(
                 isSuccess: true,
                 paymentStatus: paymentController.paymentStatus.value,
                 errorMessage: '',
-                ),
-              transition: Transition.fadeIn, 
+              ),
+              transition: Transition.fadeIn,
             );
+            
           } else {
             Get.to(
               () => PaymentStatusScreen(
                 isSuccess: false,
                 paymentStatus: '',
                 errorMessage: paymentController.errorMessage.value,
-                ),
-              transition: Transition.fadeIn, 
+              ),
+              transition: Transition.fadeIn,
             );
           }
         },

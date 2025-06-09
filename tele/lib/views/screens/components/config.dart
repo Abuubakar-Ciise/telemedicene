@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tele/services/StorageService.dart';
 
 class Config {
@@ -16,5 +17,9 @@ class Config {
   static Future<String?> getUserType() async {
     Map<String, String?> userData = await StorageService.getUserData();
     return userData["userType"];
+  }
+   static Future<String?> getUserToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token'); // Not 'token'
   }
 }
