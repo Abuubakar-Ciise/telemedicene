@@ -4,53 +4,47 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseNotificationHandler {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static Future<void> initialize(BuildContext context) async {
-    // Request permission for iOS
-    if (Platform.isIOS) {
-      await _firebaseMessaging.requestPermission();
-    }
+  Future<void> initNotification(BuildContext context) async {
+    // iOS permission
+    await _firebaseMessaging.requestPermission();
 
-    // Foreground message handler
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print("🔔 Foreground notification received: ${message.notification?.title}");
-      _showLocalNotification(message);
-    });
-
-    // Background + Terminated tap
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("📲 Notification tapped: ${message.data}");
-      _handleNotificationNavigation(context, message.data);
-    });
-
-    // Setup local notification channel
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Initialize local notifications
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(android: androidSettings);
     await _localNotificationsPlugin.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
-        final payload = notificationResponse.payload;
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        final payload = response.payload;
         if (payload != null) {
           _handleNotificationNavigation(context, {'type': payload});
         }
       },
     );
+
+    // Foreground message listener
+    FirebaseMessaging.onMessage.listen((message) {
+      _showLocalNotification(message);
+    });
+
+    // Notification tap when app opened from background
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      _handleNotificationNavigation(context, message.data);
+    });
   }
 
-  static Future<void> _showLocalNotification(RemoteMessage message) async {
+  Future<void> _showLocalNotification(RemoteMessage message) async {
     const androidDetails = AndroidNotificationDetails(
       'default_channel',
       'Default',
-      channelDescription: 'Default notification channel',
       importance: Importance.max,
       priority: Priority.high,
     );
-
     const platformDetails = NotificationDetails(android: androidDetails);
-
     await _localNotificationsPlugin.show(
       0,
       message.notification?.title ?? '',
@@ -60,9 +54,9 @@ class FirebaseNotificationHandler {
     );
   }
 
-  static void _handleNotificationNavigation(BuildContext context, Map<String, dynamic> data) {
+  void _handleNotificationNavigation(
+      BuildContext context, Map<String, dynamic> data) {
     final type = data['type'];
-    // Example routes based on notification type
     switch (type) {
       case 'appointment_booking':
         Navigator.pushNamed(context, '/appointments');
@@ -73,8 +67,14 @@ class FirebaseNotificationHandler {
       case 're_appointment':
         Navigator.pushNamed(context, '/reschedule');
         break;
+      case 'new_prescription':
+        Navigator.pushNamed(context, '/prescriptions');
+        break;
+      case 'lab_upload':
+        Navigator.pushNamed(context, '/labs');
+        break;
       default:
-        print("⚠️ Unhandled notification type: $type");
+        print("Unhandled notification type: $type");
     }
   }
 }

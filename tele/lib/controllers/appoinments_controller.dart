@@ -6,6 +6,7 @@ import 'package:tele/services/get_api_services.dart';
 class AppoinmentsController extends GetxController {
   var isLoading = false.obs;
   var appointments = <PatientAppointementsModel>[].obs;
+  var labsAppointments = <PatientAppointementsModel>[].obs;
 
   Future<void> fechtAppointments(String patientId) async {
     // Change return type to Future<void>
@@ -14,6 +15,7 @@ class AppoinmentsController extends GetxController {
       final response = await ApiGetServices.patientAppointements(patientId);
       // appointmets.assignAll(response.where((st) => st.status == 1));
       appointments.assignAll(response.where((a) => a.status != 3 && a.status != 7).toList());
+      labsAppointments.assignAll(response.where((a) => a.status != 3 && a.status != 7 && a.status != 2).toList());
     } catch (e) {
       print("Error fetching hospitals: $e");
       //  return [];

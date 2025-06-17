@@ -18,8 +18,9 @@ class Config {
     Map<String, String?> userData = await StorageService.getUserData();
     return userData["userType"];
   }
-   static Future<String?> getUserToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token'); // Not 'token'
-  }
+ static Future<String?> getUserToken() async {
+  Map<String, String?> userData = await StorageService.getUserData();
+  return userData["token"];
+}
+
 }

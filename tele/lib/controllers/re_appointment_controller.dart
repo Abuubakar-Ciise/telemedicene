@@ -15,7 +15,9 @@ class ReAppointmentController extends GetxController {
   String appointmentId,
   int status,
   String doctorName,
-  String appointmentTime
+  String appointmentTime,
+  String patientToken,
+  String doctorToken
 ) async {
   try {
     isLoading.value = true;
@@ -41,18 +43,18 @@ class ReAppointmentController extends GetxController {
     final userToken = await Config.getUserToken();
     print("✅ Token: $userToken -- Doctor: $doctorName -- Date: $appointmentDate -- Time: $appointmentTime");
 
-    if (userToken != null && userToken.isNotEmpty) {
+    // if (userToken != null && userToken.isNotEmpty) {
       if (status == 2) {
         await NewFirebaseSendMessage().sendAppointmentCompletedNotification(
-          token: userToken,
+          token: patientToken,
           body: "Your appointment with Dr. $doctorName on $appointmentDate at $appointmentTime has been completed.",
         );
       } else if (status == 4) {
         await NewFirebaseSendMessage().sendReAppointmentNotification(
-          token: userToken,
+          token: patientToken,
           body: "You have a new re-appointment with Dr. $doctorName on $appointmentDate at $appointmentTime.",
         );
-      }
+      // }
       // Else: Do nothing.
     }
 

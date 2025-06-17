@@ -1,21 +1,215 @@
+// import 'package:flutter_callkit_incoming_yoer/entities/entities.dart';
+// import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
+// import 'package:tele/services/StorageService.dart';
+// import 'package:tele/views/screens/components/config.dart';
+// import 'package:tele/views/screens/patient/ReviewsScreen.dart';
+// import 'package:uuid/uuid.dart';
+// import 'package:flutter/material.dart';
+// import 'package:tele/main.dart';
+
+// class CallKitService {
+//   static String? _activeCallId;
+//   static String? url = Config.baseUrl;
+//   static bool _isCallActive = false;
+//   static bool _isIncoming = false;
+//   static bool _callAccepted = false;
+
+//   static void setCallAccepted() {
+//     _callAccepted = true;
+//   }
+
+//   static Future<void> showCallkit(
+//     String callerName,
+//     String roomId,
+//     String picture,
+//     String callerToken,
+//     String calleeToken,
+//     String callerPhone,
+//     String callType,
+//     String doctorId, 
+//     String patientId,
+//     {bool isIncoming = true, bool isCaller = false}
+//   ) async {
+//     if (_activeCallId != null && _isCallActive) {
+//       print("Call already active with ID: $_activeCallId");
+//       return;
+//     }
+
+//     final uuid = const Uuid().v4();
+//     _activeCallId = uuid;
+//     _isCallActive = true;
+//     _isIncoming = isIncoming;
+//     _callAccepted = false;
+//     final avatarUrl = picture.startsWith('http') ? picture : '$url/$picture';
+
+//     final params = CallKitParams(
+//       id: uuid,
+//       nameCaller: callerName,
+//       appName: 'Tayo healthcare',
+//       avatar: avatarUrl,
+//       handle: callerPhone,
+//       type: int.tryParse(callType) ?? 0,
+//       duration: 30000,
+//       textAccept: 'Accept',
+//       textDecline: 'Decline',
+//       extra: {
+//         'roomId': roomId,
+//         'callerToken': callerToken,
+//         'calleeToken': calleeToken,
+//         'callType': callType,
+//         'doctor_id': doctorId,
+//         'patient_id': patientId,
+//         'isIncoming': isIncoming.toString(),
+//         'isCaller': isCaller.toString(),
+//       },
+//       headers: <String, dynamic>{'apiKey': 'Abc@123'},
+//     );
+
+//     await FlutterCallkitIncoming.showCallkitIncoming(params);
+//     print("CallKit incoming call shown with ID: $uuid");
+//   }
+
+//   // static Future<void> endAllCalls(
+//   //   String doctorId, 
+//   //   String patientId, {
+//   //   String callId = '',
+//   // }) async {
+//   //   try {
+//   //     print('Ending all calls, activeCallId: $_activeCallId');
+//   //     if (_activeCallId != null) {
+//   //       await FlutterCallkitIncoming.endCall(_activeCallId!);
+//   //     }
+//   //     await FlutterCallkitIncoming.endAllCalls();
+//   //     _resetCallState();
+
+//   //     await Future.delayed(const Duration(milliseconds: 500));
+
+//   //     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//   //       final navigator = navigatorKey.currentState;
+//   //       if (navigator?.canPop() ?? false) {
+//   //         navigator?.pop();
+//   //       }
+
+//   //       if (_callAccepted && _isIncoming) {
+//   //         final userData = await StorageService.getUserData();
+//   //         if (userData['userType'] == '1') {
+//   //           final context = navigator?.overlay?.context;
+//   //           if (context != null) {
+//   //             await showModalBottomSheet(
+//   //               context: context,
+//   //               isScrollControlled: true,
+//   //               backgroundColor: Colors.white,
+//   //               builder: (_) => ReviewsScreen(
+//   //                 doctorId: doctorId,
+//   //                 patientId: patientId,
+//   //               ),
+//   //             );
+//   //           }
+//   //         }
+//   //       }
+//   //     });
+//   //   } catch (e) {
+//   //     print('Error ending calls: $e');
+//   //     rethrow;
+//   //   }
+//   // }
+//  static Future<void> endAllCalls(
+//   String doctorId, 
+//   String patientId, {
+//   String callId = '',
+// }) async {
+//   try {
+//     print('Ending all calls, activeCallId: $_activeCallId');
+
+//     if (_activeCallId != null) {
+//       await FlutterCallkitIncoming.endCall(_activeCallId!);
+//     }
+//     await FlutterCallkitIncoming.endAllCalls();
+//     _resetCallState();
+
+//     final userData = await StorageService.getUserData();
+//     final shouldShowReview = userData['userType'] == '1' && _callAccepted && _isIncoming;
+
+//     final navigator = navigatorKey.currentState;
+//     final context = navigatorKey.currentContext;
+
+//     if (navigator?.canPop() ?? false) {
+//       navigator?.pop();
+//     }
+
+//     if (shouldShowReview && context != null) {
+//       // Delay to wait for navigation and avoid "context not mounted" error
+//       Future.delayed(const Duration(milliseconds: 300), () {
+//         final currentContext = navigatorKey.currentContext;
+//         if (currentContext != null) {
+//           showModalBottomSheet(
+//             context: currentContext,
+//             isScrollControlled: true,
+//             backgroundColor: Colors.white,
+//             builder: (_) => ReviewsScreen(
+//               doctorId: doctorId,
+//               patientId: patientId,
+//             ),
+//           );
+//         } else {
+//           print('❌ Could not get a valid context to show bottom sheet.');
+//         }
+//       });
+//     }
+//   } catch (e) {
+//     print('❌ Error ending calls: $e');
+//     rethrow;
+//   }
+// }
+
+
+//   static void _resetCallState() {
+//     _activeCallId = null;
+//     _isCallActive = false;
+//     _isIncoming = false;
+//     _callAccepted = false;
+//   }
+
+//   static void clearCallId() {
+//     _resetCallState();
+//   }
+
+//   static String? get activeCallId => _activeCallId;
+//   static bool get isCallActive => _isCallActive;
+//   static bool get isIncoming => _isIncoming;
+// }
+import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/entities.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/patient/ReviewsScreen.dart';
-import 'package:uuid/uuid.dart';
-import 'package:flutter/material.dart';
 import 'package:tele/main.dart';
+import 'package:uuid/uuid.dart';
 
 class CallKitService {
   static String? _activeCallId;
-  static String? url = Config.baseUrl;
   static bool _isCallActive = false;
   static bool _isIncoming = false;
   static bool _callAccepted = false;
+  static String? url = Config.baseUrl;
+
+  static bool get isCallActive => _isCallActive;
+  static bool get isIncoming => _isIncoming;
 
   static void setCallAccepted() {
     _callAccepted = true;
+  }
+
+  static void clearCallId() {
+    _resetCallState();
+  }
+
+  static void _resetCallState() {
+    _activeCallId = null;
+    _isCallActive = false;
+    _isIncoming = false;
+    _callAccepted = false;
   }
 
   static Future<void> showCallkit(
@@ -26,20 +220,19 @@ class CallKitService {
     String calleeToken,
     String callerPhone,
     String callType,
-    String doctorId, 
-    String patientId,
-    {bool isIncoming = true, bool isCaller = false}
-  ) async {
-    if (_activeCallId != null && _isCallActive) {
-      print("Call already active with ID: $_activeCallId");
-      return;
-    }
+    String doctorId,
+    String patientId, {
+    bool isIncoming = true,
+    bool isCaller = false,
+  }) async {
+    if (_activeCallId != null && _isCallActive) return;
 
     final uuid = const Uuid().v4();
     _activeCallId = uuid;
     _isCallActive = true;
     _isIncoming = isIncoming;
     _callAccepted = false;
+
     final avatarUrl = picture.startsWith('http') ? picture : '$url/$picture';
 
     final params = CallKitParams(
@@ -66,115 +259,55 @@ class CallKitService {
     );
 
     await FlutterCallkitIncoming.showCallkitIncoming(params);
-    print("CallKit incoming call shown with ID: $uuid");
   }
 
-  // static Future<void> endAllCalls(
-  //   String doctorId, 
-  //   String patientId, {
-  //   String callId = '',
-  // }) async {
-  //   try {
-  //     print('Ending all calls, activeCallId: $_activeCallId');
-  //     if (_activeCallId != null) {
-  //       await FlutterCallkitIncoming.endCall(_activeCallId!);
-  //     }
-  //     await FlutterCallkitIncoming.endAllCalls();
-  //     _resetCallState();
+  static Future<void> endAllCalls(
+    String doctorId,
+    String patientId, {
+    String callId = '',
+  }) async {
+    try {
+      print('🛑 Ending all calls');
 
-  //     await Future.delayed(const Duration(milliseconds: 500));
+      if (_activeCallId != null) {
+        await FlutterCallkitIncoming.endCall(_activeCallId!);
+      }
+      await FlutterCallkitIncoming.endAllCalls();
+      _isCallActive = false;
 
-  //     WidgetsBinding.instance.addPostFrameCallback((_) async {
-  //       final navigator = navigatorKey.currentState;
-  //       if (navigator?.canPop() ?? false) {
-  //         navigator?.pop();
-  //       }
+      final userData = await StorageService.getUserData();
+      final shouldShowReview = _callAccepted &&
+          _isIncoming &&
+          userData['userType'] == '1';
 
-  //       if (_callAccepted && _isIncoming) {
-  //         final userData = await StorageService.getUserData();
-  //         if (userData['userType'] == '1') {
-  //           final context = navigator?.overlay?.context;
-  //           if (context != null) {
-  //             await showModalBottomSheet(
-  //               context: context,
-  //               isScrollControlled: true,
-  //               backgroundColor: Colors.white,
-  //               builder: (_) => ReviewsScreen(
-  //                 doctorId: doctorId,
-  //                 patientId: patientId,
-  //               ),
-  //             );
-  //           }
-  //         }
-  //       }
-  //     });
-  //   } catch (e) {
-  //     print('Error ending calls: $e');
-  //     rethrow;
-  //   }
-  // }
- static Future<void> endAllCalls(
-  String doctorId, 
-  String patientId, {
-  String callId = '',
-}) async {
-  try {
-    print('Ending all calls, activeCallId: $_activeCallId');
+      final navigator = navigatorKey.currentState;
+      final context = navigator?.overlay?.context;
 
-    if (_activeCallId != null) {
-      await FlutterCallkitIncoming.endCall(_activeCallId!);
+      if (navigator?.canPop() ?? false) navigator?.pop();
+
+      if (shouldShowReview && context != null) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          final currentContext = navigatorKey.currentContext;
+          if (currentContext != null) {
+            showModalBottomSheet(
+              context: currentContext,
+              isScrollControlled: true,
+              backgroundColor: Colors.white,
+              builder: (_) => ReviewsScreen(
+                doctorId: doctorId,
+                patientId: patientId,
+              ),
+            );
+          } else {
+            print('❌ No valid context to show ReviewsScreen.');
+          }
+        });
+      }
+
+      _resetCallState();
+    } catch (e) {
+      print('❌ Error ending call: $e');
+      rethrow;
     }
-    await FlutterCallkitIncoming.endAllCalls();
-    _resetCallState();
-
-    final userData = await StorageService.getUserData();
-    final shouldShowReview = userData['userType'] == '1' && _callAccepted && _isIncoming;
-
-    final navigator = navigatorKey.currentState;
-    final context = navigatorKey.currentContext;
-
-    if (navigator?.canPop() ?? false) {
-      navigator?.pop();
-    }
-
-    if (shouldShowReview && context != null) {
-      // Delay to wait for navigation and avoid "context not mounted" error
-      Future.delayed(const Duration(milliseconds: 300), () {
-        final currentContext = navigatorKey.currentContext;
-        if (currentContext != null) {
-          showModalBottomSheet(
-            context: currentContext,
-            isScrollControlled: true,
-            backgroundColor: Colors.white,
-            builder: (_) => ReviewsScreen(
-              doctorId: doctorId,
-              patientId: patientId,
-            ),
-          );
-        } else {
-          print('❌ Could not get a valid context to show bottom sheet.');
-        }
-      });
-    }
-  } catch (e) {
-    print('❌ Error ending calls: $e');
-    rethrow;
   }
-}
-
-
-  static void _resetCallState() {
-    _activeCallId = null;
-    _isCallActive = false;
-    _isIncoming = false;
-    _callAccepted = false;
-  }
-
-  static void clearCallId() {
-    _resetCallState();
-  }
-
-  static String? get activeCallId => _activeCallId;
-  static bool get isCallActive => _isCallActive;
-  static bool get isIncoming => _isIncoming;
 }

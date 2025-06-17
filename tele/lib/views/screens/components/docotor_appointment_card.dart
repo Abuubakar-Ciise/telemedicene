@@ -90,6 +90,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DoctorAppointmentChatScreen(
+                          id:id,
                           patientName: patientName,
                           doctorName: doctorName,
                           patientProfile: patientProfile,
@@ -97,7 +98,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                           patientToken: patientToken,
                           doctorPhone: doctorPhone,
                           patientPhone: patientPhone,
-                          pateintId: patientId,
+                          patientId: patientId,
                           doctorId: doctorId,
                         ),
                       ),
@@ -216,13 +217,14 @@ class DoctorAppointmentCard extends StatelessWidget {
                                 return ConfirmCompleteBottomSheet(
                                   onConfirm: () async {
                                     await reAppointmentController.reAppointment(
-                                      appointmentDate,
-                                      patientId,
-                                      id,
-                                      2,
-                                      doctorName,
-                                      appointmentTime
-                                    );
+                                        appointmentDate,
+                                        patientId,
+                                        id,
+                                        2,
+                                        doctorName,
+                                        appointmentTime,
+                                        patientToken,
+                                        doctorToken);
                                   },
                                   patientToken: patientToken,
                                   doctorName: doctorName,
@@ -271,8 +273,9 @@ class DoctorAppointmentCard extends StatelessWidget {
                                 appointmentId: id,
                                 patientId: patientId,
                                 appointmentTime: appointmentTime,
+                                patientToken: patientToken,
+                                doctorToken: doctorToken,
                               ),
-                               
                             );
                             // NewFirebaseSendMessage().sendReAppointmentNotification(token: patientToken);
                           },
@@ -383,10 +386,14 @@ class ConfirmCompleteBottomSheet extends StatelessWidget {
   final String appointmentTime;
   final String appointmentDate;
 
-  const ConfirmCompleteBottomSheet({
-    super.key, required this.onConfirm, required this.patientToken,required this.dcotorToken,
-    required this.doctorName ,required this.appointmentDate, required this.appointmentTime
-    });
+  const ConfirmCompleteBottomSheet(
+      {super.key,
+      required this.onConfirm,
+      required this.patientToken,
+      required this.dcotorToken,
+      required this.doctorName,
+      required this.appointmentDate,
+      required this.appointmentTime});
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +475,7 @@ class ConfirmCompleteBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: ()  async{
+                  onPressed: () async {
                     Navigator.pop(context); // Close bottom sheet
                     onConfirm(); // Call confirm function
                     // await NewFirebaseSendMessage().sendAppointmentCompletedNotification(

@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     },
     {"icon": Icons.person_pin, "text": "self manage", 'route': Selfmanagement()},
     {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': ChatsListScreenAppointment(),},
-    {"icon": Icons.science_outlined, "text": "Labarotary", 'route': LabsRecordScreen(),},
+    // {"icon": Icons.science_outlined, "text": "Labarotary", 'route': LabsRecordScreen(),},
   ];
 
 

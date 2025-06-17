@@ -105,12 +105,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       "route": DoctorAppointmentScreen(),
       "color": Colors.blue,
     },
-    {
-      "icon": Icons.healing,
-      "text": "Prescription",
-      "route": DoctorPrescriptionScreen(),
-      "color": Colors.green,
-    },
+    // {
+    //   "icon": Icons.healing,
+    //   "text": "Prescription",
+    //   "route": DoctorPrescriptionScreen(),
+    //   "color": Colors.green,
+    // },
     {
       "icon": Icons.local_hospital,
       "text": "Hospital",

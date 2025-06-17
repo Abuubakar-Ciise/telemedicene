@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tele/Models/adds_model.dart';
 import 'package:tele/Models/doctor_appointements_model.dart';
 import 'package:tele/Models/doctor_prescriptions_model.dart';
 import 'package:tele/Models/doctor_transection_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
+import 'package:tele/Models/lab_report_model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
 import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
@@ -407,11 +409,14 @@ class ApiGetServices {
 
         if (response.statusCode == 200) {
           print("✅ FCM TOKEN updated successfully");
-          await StorageService.updateUserField('auth_token', token);
+          // await StorageService.updateUserField('auth_token', token);
+          // Save token
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('auth_token', token);
           print("✅✅✅ $token");
           print("--------");
-                 final userToken = await Config.getUserToken();
-       print("✅✅✅✅✅ $userToken");
+          final userToken = await Config.getUserToken();
+          print("✅✅✅✅✅ $userToken");
         } else {
           print('❌ Failed to update token: ${response.statusCode}');
         }
@@ -429,14 +434,15 @@ class ApiGetServices {
       final response = await http.post(Uri.parse('$url/doctor_prescriptions'),
           headers: {'content-Type': 'application/json'},
           body: jsonEncode({"doctor_id": id}));
-          print("✅✅✅✅");
-          print(response.body);
-          print(response.statusCode);
+      print("✅✅✅✅ doctor_prescriptions");
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
           return (data['record'] as List)
-              .map((prescription) => DoctorPrescriptionModel.fromJson(prescription))
+              .map((prescription) =>
+                  DoctorPrescriptionModel.fromJson(prescription))
               .toList();
         } else {
           throw Exception("API Error: ${data['message']}");
@@ -447,23 +453,23 @@ class ApiGetServices {
       return [];
     }
   }
+
   //doctor Prescrptions reading
-  Future<List<DoctorPrescriptionModel>> getPatientPrescriptions(String pateintId, String doctorId ) async {
+  Future<List<DoctorPrescriptionModel>> getPatientPrescriptions(
+      String patientId, String doctorId) async {
     try {
       final response = await http.post(Uri.parse('$url/patient_prescriptions'),
           headers: {'content-Type': 'application/json'},
-          body: jsonEncode({
-            "patient_id": pateintId,
-            "doctor_id":doctorId
-            }));
-          print("✅✅✅✅");
-          print(response.body);
-          print(response.statusCode);
+          body: jsonEncode({"patient_id": patientId, "doctor_id": doctorId}));
+      print("✅✅✅✅");
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success']) {
           return (data['record'] as List)
-              .map((prescription) => DoctorPrescriptionModel.fromJson(prescription))
+              .map((prescription) =>
+                  DoctorPrescriptionModel.fromJson(prescription))
               .toList();
         } else {
           throw Exception("API Error: ${data['message']}");
@@ -472,6 +478,35 @@ class ApiGetServices {
       throw Exception("Server Error: ${response.statusCode}");
     } catch (e) {
       return [];
+    }
+  }
+
+  // LabReportModel APi
+  Future<List<LabReportModel>> labsReports(
+      String patientId, String doctorId, String appointmentId) async {
+    try {
+      final response = await http.post(Uri.parse('$url/patient_labs'),
+          headers: {'content-Type': 'application/json'},
+          body: jsonEncode({
+            "patient_id": patientId,
+            "doctor_id": doctorId,
+            "appointment_id": appointmentId
+          }));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['success'] == true && data['record'] != null) {
+          List records = data['record'];
+          return records.map((e) => LabReportModel.fromJson(e)).toList();
+        } else {
+          throw Exception('Failed to load lab reports: ${data['message']}');
+        }
+      } else {
+        throw Exception(
+            'Server error: ${response.statusCode} - ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching lab reports: $e');
     }
   }
 }

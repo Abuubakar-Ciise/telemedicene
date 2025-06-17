@@ -20,6 +20,7 @@ class CallPage extends StatelessWidget {
     callConfig.pip = ZegoCallPIPConfig(
       enableWhenBackground: true,
     );
+    
     return Scaffold(
       body: SafeArea(
         child: ZegoUIKitPrebuiltCall(

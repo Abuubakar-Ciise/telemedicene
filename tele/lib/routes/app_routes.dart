@@ -25,6 +25,6 @@ class AppRoutes{
     GetPage(name: '/shitsScreen', page: () => ShiftAppointmentScreen(doctor: Get.arguments,)),
     GetPage(name: '/testcall', page: () => Testcallscreen()),
     GetPage(name: '/prescriptionscreen', page: () => PrescriptionScreen()),
-    GetPage(name: '/doctorprescriptionscreen', page: () => DoctorPrescriptionScreen()),
+    // GetPage(name: '/doctorprescriptionscreen', page: () => DoctorPrescriptionScreen()),
   ];
 }

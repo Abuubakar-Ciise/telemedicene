@@ -2,39 +2,59 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tele/Models/patient_appointements_model.dart';
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/controllers/labs_controller.dart';
 import 'package:toastification/toastification.dart';
 
 class LabsRecordScreen extends StatefulWidget {
-  const LabsRecordScreen({super.key});
+  final String appointmentId;
+  final String patientId;
+  final String doctorId;
+  final String doctorToken;
+  final String patientToken;
+
+  const LabsRecordScreen({
+    super.key,
+    required this.appointmentId,
+    required this.patientId,
+    required this.doctorId,
+    required this.doctorToken,
+    required this.patientToken,
+  });
 
   @override
   _LabsRecordScreenState createState() => _LabsRecordScreenState();
 }
 
 class _LabsRecordScreenState extends State<LabsRecordScreen> {
-  final AppoinmentsController _appointmentController =
-      Get.put(AppoinmentsController());
+  // final AppoinmentsController _appointmentController = Get.find();
   final LabsController _labsController = Get.put(LabsController());
 
   File? _selectedImage;
-  String? _selectedPatientId;
-  String? _selectedDoctorId;
-  String? _selectedAppointmentId;
+  late String _selectedPatientId;
+  late String _selectedDoctorId;
+  late String _selectedAppointmentId;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedAppointmentId = widget.appointmentId;
+    _selectedDoctorId = widget.doctorId;
+    _selectedPatientId = widget.patientId;
+  }
 
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: Icon(Icons.camera_alt),
-            title: Text('Take a photo'),
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Take a photo'),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -47,8 +67,8 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.photo_library),
-            title: Text('Choose from gallery'),
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Choose from gallery'),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -66,14 +86,11 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
   }
 
   void _uploadRecord() async {
-    if (_selectedImage == null ||
-        _selectedAppointmentId == null ||
-        _selectedDoctorId == null ||
-        _selectedPatientId == null) {
+    if (_selectedImage == null) {
       toastification.show(
         context: context,
-        title: const Text("Missing Info"),
-        description: const Text("Please complete all fields."),
+        title: const Text("Missing Image"),
+        description: const Text("Please select a lab image."),
         type: ToastificationType.warning,
         autoCloseDuration: const Duration(seconds: 3),
       );
@@ -82,16 +99,15 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
 
     await _labsController.uploadLabRecord(
       imageFile: _selectedImage!,
-      patientId: _selectedPatientId!,
-      doctorId: _selectedDoctorId!,
-      appointmentId: _selectedAppointmentId!,
+      patientId: _selectedPatientId,
+      doctorId: _selectedDoctorId,
+      appointmentId: _selectedAppointmentId,
+      doctorToken: widget.doctorToken,
+      patientToken: widget.patientToken
     );
 
     setState(() {
       _selectedImage = null;
-      _selectedDoctorId = null;
-      _selectedAppointmentId = null;
-      _selectedPatientId = null;
     });
   }
 
@@ -100,79 +116,19 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text("Upload Lab Record")),
+        backgroundColor: Colors.white,
+        title: const Text("Upload Lab Record"),
+      ),
       body: Obx(() {
-        if (_appointmentController.isLoading.value ||
-            _labsController.isUploading.value) {
+        if (_labsController.isUploading.value) {
           return const Center(child: CircularProgressIndicator());
         }
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Doctor",
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<PatientAppointementsModel>(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                ),
-                hint: const Text("Select Doctor"),
-                value: _appointmentController.appointments
-                    .firstWhereOrNull((a) => a.id == _selectedAppointmentId),
-                items: _appointmentController.appointments
-                    .map((a) => DropdownMenuItem(
-                          value: a,
-                          child: a.doctorName.isNotEmpty
-                              ? Text(a.doctorName)
-                              : const Text('Unknown'),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _selectedDoctorId = value.doctorId;
-                      _selectedAppointmentId = value.id;
-                      _selectedPatientId = value.patientId;
-                    });
-                  }
-                },
-              ),
-
-              const SizedBox(height: 20),
-              if (_selectedDoctorId != null) ...[
-                const Text("Appointment",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                  ),
-                  value: _selectedAppointmentId,
-                  items: _appointmentController.appointments
-                      .where((a) => a.doctorId == _selectedDoctorId)
-                      .map((a) => DropdownMenuItem(
-                            value: a.id,
-                            child: Text(
-                                "${a.shiftDay} - ${a.shiftTime} (${a.appointmentDate})"),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedAppointmentId = value;
-                      final appointment = _appointmentController.appointments
-                          .firstWhereOrNull((a) => a.id == value);
-                      _selectedPatientId = appointment?.patientId;
-                    });
-                  },
-                ),
-              ],
-
-              const SizedBox(height: 30),
               const Text("Lab Report Image",
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
@@ -182,18 +138,19 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                     ? Card(
                         elevation: 4,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         clipBehavior: Clip.antiAlias,
-                        child: Image.file(_selectedImage!,
-                            height: 220,
-                            width: double.infinity,
-                            fit: BoxFit.cover),
+                        child: Image.file(
+                          _selectedImage!,
+                          height: 220,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : const DottedBorderPlaceholder(),
               ),
               const SizedBox(height: 10),
-
-              // Colored pick image button
               Center(
                 child: TextButton.icon(
                   onPressed: _pickImage,
@@ -207,10 +164,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // Green upload button
               Center(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.cloud_upload_outlined,
@@ -246,8 +200,7 @@ class DottedBorderPlaceholder extends StatelessWidget {
       height: 220,
       width: double.infinity,
       decoration: BoxDecoration(
-        border:
-            Border.all(color: Colors.grey, style: BorderStyle.solid, width: 1),
+        border: Border.all(color: Colors.grey, style: BorderStyle.solid),
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,

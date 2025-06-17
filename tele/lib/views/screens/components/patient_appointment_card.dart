@@ -91,6 +91,7 @@ class PatientAppointmentCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => PatientAppointmentChatScreen(
+                          id: id,
                           patientName: doctorName,
                           doctorName: doctorName,
                           patientProfile: patientProfile,
@@ -192,8 +193,8 @@ class PatientAppointmentCard extends StatelessWidget {
                 ),
               ),
 
-              const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
-              const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+              // const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
+              // const Divider(height: 0.5, thickness: 0.5, color: Colors.grey),
 
               // Buttons
               // Padding(

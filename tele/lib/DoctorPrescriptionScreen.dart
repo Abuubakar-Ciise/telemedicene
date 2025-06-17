@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tele/Models/doctor_appointements_model.dart';
-import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/controllers/write_prescription_controller.dart';
-import 'package:tele/services/StorageService.dart';
-import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:toastification/toastification.dart';
 
 class DoctorPrescriptionScreen extends StatefulWidget {
-  const DoctorPrescriptionScreen({super.key});
+  final String patientId;
+  final String doctorId;
+  final String appointmentId;
+  final String doctorToken;
+  final String patientToken;
+
+  const DoctorPrescriptionScreen({
+    super.key,
+    required this.patientId,
+    required this.doctorId,
+    required this.appointmentId,
+    required this.doctorToken,
+    required this.patientToken,
+  });
 
   @override
   State<DoctorPrescriptionScreen> createState() =>
@@ -17,15 +26,8 @@ class DoctorPrescriptionScreen extends StatefulWidget {
 
 class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
   final _formKey = GlobalKey<FormState>();
-  final doctorAppointmentController = Get.put(DoctorAppointmentController());
   final writePrescriptionController = Get.put(WritePrescriptionController());
-
-  final TextEditingController patientName = TextEditingController();
-  final TextEditingController age = TextEditingController();
   final TextEditingController advice = TextEditingController();
-  String gender = 'Male';
-
-  DoctorAppointementsModel? selectedUser;
 
   List<Map<String, TextEditingController>> medications = [
     {
@@ -35,32 +37,6 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
       "frequency": TextEditingController(),
     }
   ];
-
-  String? userId;
-  String? pateintId;
-  String? appointmentId;
-
-
-  @override
-  void initState() {
-    super.initState();
-    loadUserData();
-  }
-
-  Future<void> loadUserData() async {
-    Map<String, String?> userData = await StorageService.getUserData();
-    setState(() {
-      userId = userData["userId"] ?? "Unknown";
-      doctorAppointmentController.confimfechtAppointments(userId!);
-    });
-  }
-
-  void fillUserInfo(DoctorAppointementsModel user) {
-    patientName.text = user.patientName;
-    age.text = user.patienAge.toString();
-    gender = user.patientGender;
-    setState(() {});
-  }
 
   void addMedicationField() {
     setState(() {
@@ -80,26 +56,12 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
   }
 
   void onSendPressed() async {
-    if (selectedUser == null) {
-      toastification.show(
-        context: context,
-        title: const Text('No Patient Selected'),
-        description:
-            const Text('Please select a user before sending the prescription.'),
-        type: ToastificationType.warning,
-        style: ToastificationStyle.flat,
-        alignment: Alignment.topCenter,
-        autoCloseDuration: const Duration(seconds: 3),
-        icon: const Icon(Icons.warning_amber_rounded, color: Colors.orange),
-      );
-      return;
-    }
-
     if (!_formKey.currentState!.validate()) return;
+
     await writePrescriptionController.writePrescription(
-      patientId: pateintId!,
-      doctorId: userId!,
-      appointmentId: appointmentId!,
+      patientId: widget.patientId,
+      doctorId: widget.doctorId,
+      appointmentId: widget.appointmentId,
       extraDetail: advice.text.trim(),
       medicines: medications.map((med) {
         return {
@@ -109,25 +71,22 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
           "frequency": med["frequency"]!.text,
         };
       }).toList(),
+      doctorToken: widget.doctorToken,
+      patientToken: widget.patientToken
     );
 
-    setState(() {
-      selectedUser = null;
-      appointmentId = null;
-      pateintId = null;
-      patientName.clear();
-      age.clear();
-      advice.clear();
-      gender = 'Male';
-      medications = [
-        {
-          "medicine_name": TextEditingController(),
-          "dosage": TextEditingController(),
-          "duration": TextEditingController(),
-          "frequency": TextEditingController(),
-        }
-      ];
-    });
+    // Navigator.pop(context);
+    
+
+    // toastification.show(
+    //   context: context,
+    //   title: const Text('Prescription Sent'),
+    //   type: ToastificationType.success,
+    //   style: ToastificationStyle.flat,
+    //   alignment: Alignment.topCenter,
+    //   autoCloseDuration: const Duration(seconds: 3),
+    //   icon: const Icon(Icons.check_circle, color: Colors.green),
+    // );
   }
 
   @override
@@ -147,87 +106,6 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
           key: _formKey,
           child: Column(
             children: [
-              Obx(() {
-                if (doctorAppointmentController.isLoading.value) {
-                  return LoadingMessage();
-                }
-                if (doctorAppointmentController
-                    .allConfirmedAppointments.isEmpty) {
-                  return const Center(child: Text('No appointments found.'));
-                }
-                return DropdownButtonFormField<DoctorAppointementsModel>(
-                  decoration: const InputDecoration(
-                    labelText: "Select Patient",
-                    border: OutlineInputBorder(),
-                  ),
-                  items: doctorAppointmentController.allConfirmedAppointments
-                      .map((user) {
-                    return DropdownMenuItem(
-                      value: user,
-                      child: Text(user.patientName),
-                    );
-                  }).toList(),
-                  onChanged: (user) {
-                    if (user != null) {
-                      selectedUser = user;
-                      appointmentId = user.id;
-                      pateintId = user.patientId;
-                      fillUserInfo(user);
-                    }
-                  },
-                  validator: (value) =>
-                      value == null ? "Please select a patient" : null,
-                );
-              }),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: patientName,
-                decoration: const InputDecoration(
-                  labelText: "Patient Name",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (v) => v == null || v.trim().isEmpty
-                    ? "Patient name is required"
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: age,
-                      decoration: const InputDecoration(
-                        labelText: "Age",
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty)
-                          return "Age is required";
-                        if (int.tryParse(v) == null)
-                          return "Enter a valid number";
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: gender,
-                      items: ["Male", "Female"]
-                          .map(
-                              (g) => DropdownMenuItem(value: g, child: Text(g)))
-                          .toList(),
-                      onChanged: (value) => setState(() => gender = value!),
-                      decoration: const InputDecoration(
-                        labelText: "Gender",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text("Medications",

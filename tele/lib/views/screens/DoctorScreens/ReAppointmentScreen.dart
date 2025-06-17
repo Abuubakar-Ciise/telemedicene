@@ -20,6 +20,8 @@ class ReAppointmentScreen extends StatefulWidget {
   final String appointmentDate;
   final String appointmentTime;
   final String appointmentId;
+  final String patientToken;
+  final String doctorToken;
 
   const ReAppointmentScreen({
     super.key,
@@ -29,6 +31,8 @@ class ReAppointmentScreen extends StatefulWidget {
     required this.appointmentDate,
     required this.appointmentTime,
     required this.appointmentId,
+    required this.patientToken,
+    required this.doctorToken,
   });
 
   @override
@@ -359,7 +363,9 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
                         widget.appointmentId,
                         4,
                         widget.doctorName,
-                       widget.appointmentTime
+                       widget.appointmentTime,
+                       widget.patientToken,
+                       widget.doctorToken
                       );
                      
                     }
