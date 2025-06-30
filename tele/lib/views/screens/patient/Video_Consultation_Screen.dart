@@ -18,6 +18,20 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
   final doctorListController = Get.put(DoctorListController());
 
   @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      doctorListController.filterDoctors(_searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -32,7 +46,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
                   hintText: "Search doctor...",
                   border: InputBorder.none,
                 ),
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: const TextStyle(color: Colors.black, fontSize: 18),
               )
             : const Text("Search Doctor"),
         actions: [
@@ -64,13 +78,13 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
               );
             }
             return ListView.builder(
-              itemCount: doctorListController.doctorsList.length,
+              itemCount: doctorListController.filteredDoctorsList.length,
               itemBuilder: (context, index) {
-                // final doctorList = doctorListController.doctorsList[index];
+                // final doctorList = doctorListController.filteredDoctorsList[index];
                 return Padding(
                   padding: EdgeInsets.only(bottom: 10),
                   child: DoctorCard(
-                    doctor: doctorListController.doctorsList[index],
+                    doctor: doctorListController.filteredDoctorsList[index],
                   ),
                 );
               },

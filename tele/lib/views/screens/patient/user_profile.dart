@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/components/change_password_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/components/update_profile_picture_screen.dart';
 
@@ -58,6 +59,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (_) => UpdateProfilePictureScreen(id: id),
       );
   }
+  void changePassword(BuildContext context){
+    showModalBottomSheet (
+      context: context, 
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (_) => ChangePasswordScreen(id: id),
+      );
+  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -186,8 +196,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 10),
                             _buildSettingsRow(Icons.person, 'Change Profile Picture',onTap:() => updateProfileScreen(context)),
-                            _buildSettingsRow(Icons.lock, 'Change Password'),
-                            _buildSettingsRow(Icons.pin, 'Change Pin'),
+                            _buildSettingsRow(Icons.lock, 'Change Password',onTap: () => changePassword(context)),
+                            // _buildSettingsRow(Icons.pin, 'Change Pin'),
                             _buildSettingsRow(Icons.language, 'Change Language'),
                             
                           ],

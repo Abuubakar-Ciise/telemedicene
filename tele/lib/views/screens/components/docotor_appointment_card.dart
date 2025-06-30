@@ -7,6 +7,7 @@ import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/views/screens/DoctorScreens/ReAppointmentScreen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_appointment_chat_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:toastification/toastification.dart';
 
 class DoctorAppointmentCard extends StatelessWidget {
   final String appointmentTime;
@@ -90,7 +91,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DoctorAppointmentChatScreen(
-                          id:id,
+                          id: id,
                           patientName: patientName,
                           doctorName: doctorName,
                           patientProfile: patientProfile,
@@ -198,87 +199,135 @@ class DoctorAppointmentCard extends StatelessWidget {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16)),
-                              ),
-                              builder: (context) {
-                                return ConfirmCompleteBottomSheet(
-                                  onConfirm: () async {
-                                    await reAppointmentController.reAppointment(
-                                        appointmentDate,
-                                        patientId,
-                                        id,
-                                        2,
-                                        doctorName,
-                                        appointmentTime,
-                                        patientToken,
-                                        doctorToken);
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16)),
+                                  ),
+                                  builder: (context) {
+                                    return ConfirmCompleteBottomSheet(
+                                      onConfirm: () async {
+                                        await reAppointmentController
+                                            .reAppointment(
+                                                appointmentDate,
+                                                patientId,
+                                                id,
+                                                2,
+                                                doctorName,
+                                                appointmentTime,
+                                                patientToken,
+                                                doctorToken);
+                                      },
+                                      patientToken: patientToken,
+                                      doctorName: doctorName,
+                                      dcotorToken: doctorToken,
+                                      appointmentDate: appointmentDate,
+                                      appointmentTime: appointmentTime,
+                                    );
                                   },
-                                  patientToken: patientToken,
-                                  doctorName: doctorName,
-                                  dcotorToken: doctorToken,
-                                  appointmentDate: appointmentDate,
-                                  appointmentTime: appointmentTime,
                                 );
                               },
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Complete',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 9),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Complete',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () async {
-                            print('Re-Appointment button clicked');
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => ReAppointmentScreen(
-                                doctorName: doctorName,
-                                doctorId: doctorId,
-                                appointmentDate: appointmentDate,
-                                appointmentId: id,
-                                patientId: patientId,
-                                appointmentTime: appointmentTime,
-                                patientToken: patientToken,
-                                doctorToken: doctorToken,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () async {
+                                print('Re-Appointment button clicked');
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.transparent,
+                                  builder: (context) => ReAppointmentScreen(
+                                    doctorName: doctorName,
+                                    doctorId: doctorId,
+                                    appointmentDate: appointmentDate,
+                                    appointmentId: id,
+                                    patientId: patientId,
+                                    appointmentTime: appointmentTime,
+                                    patientToken: patientToken,
+                                    doctorToken: doctorToken,
+                                  ),
+                                );
+                                // NewFirebaseSendMessage().sendReAppointmentNotification(token: patientToken);
+                              },
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 9),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Re-Appointment',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            );
-                            // NewFirebaseSendMessage().sendReAppointmentNotification(token: patientToken);
+                            ),
+                          ),
+                        ),
+                        //here
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Material(
+                        child: InkWell(
+                          onTap: () {
+                            print("hi");
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return NotifyBottomSheet(
+                                      patientToken: patientToken,
+                                      appointmentDate: appointmentDate,
+                                      appointmentTime: appointmentTime,
+                                      doctorName: doctorName);
+                                });
                           },
+                          borderRadius: BorderRadius.circular(8),
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 9),
                             decoration: BoxDecoration(
@@ -287,7 +336,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                             ),
                             child: const Center(
                               child: Text(
-                                'Re-Appointment',
+                                'Notify',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 13,
@@ -298,7 +347,7 @@ class DoctorAppointmentCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -498,5 +547,148 @@ class ConfirmCompleteBottomSheet extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+class NotifyBottomSheet extends StatefulWidget {
+  final String patientToken;
+  final String appointmentTime;
+  final String appointmentDate;
+  final String doctorName;
+
+  const NotifyBottomSheet({
+    super.key,
+    required this.patientToken,
+    required this.appointmentDate,
+    required this.appointmentTime,
+    required this.doctorName,
+  });
+
+  @override
+  State<NotifyBottomSheet> createState() => _NotifyBottomSheetState();
+}
+
+class _NotifyBottomSheetState extends State<NotifyBottomSheet> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _bodyController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = "Reminder: Upcoming Appointment";
+    _bodyController.text =
+        "This is a reminder for your appointment with Dr. ${widget.doctorName} on ${widget.appointmentDate} at ${widget.appointmentTime}. Please be prepared and join on time.";
+  }
+
+  Future<void> _sendNotification() async {
+    setState(() => isLoading = true);
+
+    try {
+      await NewFirebaseSendMessage().NotifyPatient(
+        token: widget.patientToken,
+        title: _titleController.text.trim(),
+        body: _bodyController.text.trim(),
+      );
+
+      if (mounted) Navigator.pop(context); // Close bottom sheet safely
+
+      toastification.show(
+        type: ToastificationType.success,
+        style: ToastificationStyle.flat,
+        title: const Text('Success'),
+        description: const Text("Notification sent successfully"),
+        autoCloseDuration: const Duration(seconds: 3),
+        alignment: Alignment.topRight,
+        showProgressBar: true,
+      );
+    } catch (e) {
+      toastification.show(
+        type: ToastificationType.error,
+        style: ToastificationStyle.flat,
+        title: const Text('Error'),
+        description: Text("Failed to send notification: $e"),
+        autoCloseDuration: const Duration(seconds: 4),
+        alignment: Alignment.topRight,
+        showProgressBar: true,
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.3,
+        expand: false,
+        builder: (_, controllerScroll) => SingleChildScrollView(
+          controller: controllerScroll,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 5,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const Text("Title", style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
+                hintText: "Enter notification title",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 14),
+            const Text("Message Body", style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            TextField(
+              controller: _bodyController,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: "Enter notification message",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: isLoading ? null : _sendNotification,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(45),
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text('Notify Patient'),
+            ),
+          ],
+        ),
+      ),
+    )));
   }
 }

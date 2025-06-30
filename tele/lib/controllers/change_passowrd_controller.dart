@@ -3,18 +3,14 @@ import 'package:get/get.dart';
 import 'package:tele/services/post_api_services.dart';
 import 'package:toastification/toastification.dart';
 
-class ReviewsController extends GetxController{
+class ChangePassowrdController extends GetxController {
   var isLoading = false.obs;
 
-
-  Future<void> feedbackPatient(
-      String comments,
-      String doctorId,
-      String patientId,
-      double rating) async {
+  Future<void> changePassword(String id, String exPassWord, String newPassword,
+      String confirmPassword) async {
     try {
       isLoading.value = true;
-      final response = await ApiPostServices().feedbackPatient(comments, doctorId, patientId, rating);
+      final response = await ApiPostServices().changePassword(id, exPassWord, newPassword, confirmPassword);
       toastification.show(
         type: response['success']
             ? ToastificationType.success

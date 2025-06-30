@@ -15,6 +15,7 @@ import 'package:tele/services/access_token_service.dart';
 import 'package:tele/services/firebase_notification_handler.dart';
 import 'package:tele/services/get_api_services.dart';
 import 'package:tele/views/screens/CallPage/firebase_api.dart';
+import 'package:tele/views/screens/NoInternetConnection.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
@@ -23,7 +24,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  //hh 
   await dotenv.load(fileName: '.env');
 
   await Firebase.initializeApp(
@@ -86,7 +87,6 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
-
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));
@@ -119,6 +119,20 @@ class _MyAppState extends State<MyApp> {
   }
   @override
   Widget build(BuildContext context) {
+    // final internetController = Get.find<InternetController>();
+    // return Obx(() {
+    //       final internetController = Get.find<InternetController>();
+    //   if(!internetController.hasInternet.value){
+    //     return MaterialApp(
+    //       home:Scaffold(
+    //         appBar: AppBar(
+    //           title: const Text('Title'),
+    //         ),
+    //         body: NoInternetConnection(),
+    //       ),
+    //     );
+    //   }
+    
     return FutureBuilder(
       future: _isLoggedIn(),
       builder: (context, snapshot) {
@@ -154,8 +168,8 @@ class _MyAppState extends State<MyApp> {
         }
       },
     );
-  }
-}
+  // });
+}}
 /// 
 // import 'dart:convert';
 // import 'package:flutter/material.dart';

@@ -573,7 +573,7 @@ class _PatientAppointmentChatScreenState
         body: SafeArea(
           child: Column(
             children: [
-              _buildHeader(),
+              // _buildHeader(),
               const TabBar(
                 labelColor: Colors.teal,
                 unselectedLabelColor: Colors.grey,

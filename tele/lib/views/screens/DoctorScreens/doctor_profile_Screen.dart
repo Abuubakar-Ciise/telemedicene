@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/route_manager.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/views/screens/components/change_password_screen.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/components/update_profile_picture_screen.dart';
 
 class DoctorProfileScreenInmainScreen extends StatefulWidget {
   const DoctorProfileScreenInmainScreen({super.key});
@@ -14,6 +16,7 @@ class DoctorProfileScreenInmainScreen extends StatefulWidget {
 class _DoctorProfileScreenInmainScreenState extends State<DoctorProfileScreenInmainScreen> {
   final url = Config.baseUrl;
 
+  String id = 'loading..';
   String name = 'loading..';
   String phone = 'loading..';
   String email = 'loading..';
@@ -32,6 +35,7 @@ class _DoctorProfileScreenInmainScreenState extends State<DoctorProfileScreenInm
   Future<void> loadUserData() async {
     Map<String, String?> userData = await StorageService.getUserData();
     setState(() {
+      id = userData['userId'] ?? 'unknow';
       name = userData['username'] ?? 'unknow';
       phone = userData['phone'] ?? 'N/A';
       address = userData['address'] ?? "N/A";
@@ -48,7 +52,14 @@ class _DoctorProfileScreenInmainScreenState extends State<DoctorProfileScreenInm
     Get.offAllNamed(
         '/login'); // Navigate to login screen & remove all previous screens
   }
-
+  void changePassword(BuildContext context){
+    showModalBottomSheet (
+      context: context, 
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (_) => ChangePasswordScreen(id: id),
+      );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,8 +186,8 @@ class _DoctorProfileScreenInmainScreenState extends State<DoctorProfileScreenInm
                               ),
                             ),
                             const SizedBox(height: 10),
-                            _buildSettingsRow(Icons.lock, 'Change Password'),
-                            _buildSettingsRow(Icons.pin, 'Change Pin'),
+                            _buildSettingsRow(Icons.lock, 'Change Password', onTap:() => changePassword(context)),
+                            // _buildSettingsRow(Icons.pin, 'Change Pin'),
                             _buildSettingsRow(
                                 Icons.language, 'Change Language'),
                           ],

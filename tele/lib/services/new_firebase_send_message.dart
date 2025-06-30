@@ -130,88 +130,130 @@ class NewFirebaseSendMessage {
     print(
         "FCM Re-Appointment Response: ${response.statusCode} ${response.body}");
   }
+
   Future<void> sendPrescriptionNotificationToPatient({
-  required String token,
-  String title = "New Prescription",
-  String body = "Your doctor has written a new prescription.",
-}) async {
-  final accessToken = await AccessTokenService().getAccessToken();
-  final projectId = Config.firebaseprojectid;
+    required String token,
+    String title = "New Prescription",
+    String body = "Your doctor has written a new prescription.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
 
-  final url = Uri.parse(
-    'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
-  );
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
 
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    },
-    body: jsonEncode({
-      "message": {
-        "token": token,
-        "notification": {
-          "title": title,
-          "body": body,
-        },
-        "android": {
-          "priority": "high",
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
           "notification": {
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "channel_id": "default_channel",
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "new_prescription",
           }
-        },
-        "data": {
-          "type": "new_prescription",
         }
-      }
-    }),
-  );
+      }),
+    );
 
-  print("FCM Prescription to Patient: ${response.statusCode} ${response.body}");
-}
+    print(
+        "FCM Prescription to Patient: ${response.statusCode} ${response.body}");
+  }
 
-Future<void> sendLabUploadNotificationToDoctor({
-  required String token,
-  String title = "New Lab Record",
-  String body = "A patient has submitted a new lab report.",
-}) async {
-  final accessToken = await AccessTokenService().getAccessToken();
-  final projectId = Config.firebaseprojectid;
+  Future<void> sendLabUploadNotificationToDoctor({
+    required String token,
+    String title = "New Lab Record",
+    String body = "A patient has submitted a new lab report.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
 
-  final url = Uri.parse(
-    'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
-  );
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
 
-  final response = await http.post(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-    },
-    body: jsonEncode({
-      "message": {
-        "token": token,
-        "notification": {
-          "title": title,
-          "body": body,
-        },
-        "android": {
-          "priority": "high",
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
           "notification": {
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "channel_id": "default_channel",
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "lab_upload",
           }
-        },
-        "data": {
-          "type": "lab_upload",
         }
-      }
-    }),
-  );
+      }),
+    );
 
-  print("FCM Lab to Doctor: ${response.statusCode} ${response.body}");
-}
+    print("FCM Lab to Doctor: ${response.statusCode} ${response.body}");
+  }
 
+  Future<void> NotifyPatient({
+    required String token,
+    String title = "Remembaring For Appointment",
+    String body = "A patient has submitted a new lab report.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
+          "notification": {
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "remmembaring_appointment",
+          }
+        }
+      }),
+    );
+    print("FCM Lab to Doctor: ${response.statusCode} ${response.body}");
+  }
 }

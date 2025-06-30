@@ -73,6 +73,9 @@ class FirebaseNotificationHandler {
       case 'lab_upload':
         Navigator.pushNamed(context, '/labs');
         break;
+      case 'remmembaring_appointment':
+        Navigator.pushNamed(context, '/labs');
+        break;
       default:
         print("Unhandled notification type: $type");
     }

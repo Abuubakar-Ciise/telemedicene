@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/HospitalController.dart';
+import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/controllers/specialist_controller.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/components/doctor_card.dart';
@@ -207,6 +208,7 @@ class SpecialistCard extends StatelessWidget {
         await specialistController.fetchDoctorsList(specialistid);
         print("✅✅✅✅");
         // print(specialistController.doctorsList.first);
+        // Get.to(() =>DoctorsListScreen(doctors:specialistController.doctorsList));
         Get.to(() =>DoctorsListScreen(doctors:specialistController.doctorsList));
       },
       child: Container(
@@ -311,24 +313,170 @@ class HospitalCard extends StatelessWidget {
     );
   }
 }
-
-class DoctorsListScreen extends StatelessWidget {
+class DoctorsListScreen extends StatefulWidget {
   final List<DoctorList> doctors;
+
   const DoctorsListScreen({super.key, required this.doctors});
+
+  @override
+  _DoctorsListScreenState createState() => _DoctorsListScreenState();
+}
+
+class _DoctorsListScreenState extends State<DoctorsListScreen> {
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  late List<DoctorList> _filteredDoctors;
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredDoctors = widget.doctors;
+
+    _searchController.addListener(() {
+      final query = _searchController.text.toLowerCase().trim();
+      setState(() {
+        if (query.isEmpty) {
+          _filteredDoctors = widget.doctors;
+        } else {
+          _filteredDoctors = widget.doctors.where((doc) {
+            return doc.name.toLowerCase().contains(query) ||
+                   doc.speciality.toLowerCase().contains(query);
+          }).toList();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text('Doctors')),
-      body: ListView.builder(
-        itemCount: doctors.length,
-        itemBuilder: (context, index) {
-          return Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: DoctorCard(doctor: doctors[index]));
-        },
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: "Search doctor...",
+                  border: InputBorder.none,
+                ),
+                style: const TextStyle(color: Colors.black, fontSize: 18),
+              )
+            : const Text("Search Doctor",
+                style: TextStyle(color: Colors.black)),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSearching ? Icons.close : Icons.search,
+              size: 28,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  _searchController.clear();
+                  _filteredDoctors = widget.doctors;
+                }
+              });
+            },
+          ),
+        ],
       ),
+      body: _filteredDoctors.isEmpty
+          ? const Center(
+              child: Text(
+                "No doctors found.",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            )
+          : ListView.builder(
+              itemCount: _filteredDoctors.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: DoctorCard(doctor: _filteredDoctors[index]),
+                );
+              },
+            ),
     );
   }
 }
+
+// class DoctorsListScreen extends StatefulWidget {
+//   final List<DoctorList> doctors;
+//   const DoctorsListScreen({super.key, required this.doctors});
+
+//   @override
+//   _DoctorsListScreenState createState() => _DoctorsListScreenState();
+// }
+
+// class _DoctorsListScreenState extends State<DoctorsListScreen> {
+//   bool _isSearching = false;
+//   final TextEditingController _searchController = TextEditingController();
+//   final doctorListController = Get.put(DoctorListController());
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _searchController.addListener(() {
+//       doctorListController.filterDoctors(_searchController.text);
+//     });
+//   }
+
+//   @override
+//   void dispose() {
+//     _searchController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         centerTitle: true,
+//         backgroundColor: Colors.white,
+//         title: _isSearching
+//             ? TextField(
+//                 controller: _searchController,
+//                 autofocus: true,
+//                 decoration: const InputDecoration(
+//                   hintText: "Search doctor...",
+//                   border: InputBorder.none,
+//                 ),
+//                 style: const TextStyle(color: Colors.black, fontSize: 18),
+//               )
+//             : const Text("Search Doctor"),
+//         actions: [
+//           IconButton(
+//             icon: Icon(_isSearching ? Icons.close : Icons.search, size: 30),
+//             onPressed: () {
+//               setState(() {
+//                 _isSearching = !_isSearching;
+//                 if (!_isSearching) _searchController.clear();
+//               });
+//             },
+//           ),
+//           const SizedBox(width: 10),
+//         ],
+//       ),
+//       body: ListView.builder(
+//         itemCount: widget.doctors.length,
+//         itemBuilder: (context, index) {
+//           return Padding(
+//               padding: const EdgeInsets.only(bottom: 10),
+//               child: DoctorCard(doctor: widget.doctors[index]));
+//         },
+//       ),
+//     );
+//   }
+// }

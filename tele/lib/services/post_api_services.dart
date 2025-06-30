@@ -275,4 +275,39 @@ class ApiPostServices {
       };
     }
   }
+  //change Passowrd
+  Future<Map<String,dynamic>> changePassword(
+    String id, String exPassWord, String newPassword, String confirmPassword
+  ) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/changesPassword",),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "id": id,
+          "PassWord": exPassWord,
+          "newPassword": newPassword,
+          "confirmPassword": confirmPassword
+        })
+        );
+        print("${response.body}");
+        if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        return {
+          "success": responseBody['success'],
+          "message": responseBody['message']
+        };
+      } else {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        print("Response is not JSON: ${response.body}");
+        return {
+          "success": false,
+          "message": responseBody['message'] ?? "Unknown error occurred",
+        };
+      }
+    } catch (e) {
+      print("errror from changePassword $e");
+      return {"success": false, "message": "Failed to connect to server"};
+    }
+  }
 }
