@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tele/DoctorPrescriptionDetailScreen.dart';
 import 'package:tele/PrescriptionDetailScreen.dart';
 import 'package:tele/controllers/doctor_prescription_controller.dart';
 import 'package:tele/controllers/labs_report_controller.dart';
+import 'package:tele/controllers/labs_requested_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/firebase_api.dart';
 import 'package:tele/views/screens/CallPage/call_page.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/LabReportViewerScreen.dart';
 import 'package:tele/views/screens/patient/labs_records_screen.dart';
 
@@ -59,19 +62,33 @@ class _PatientAppointmentChatScreenState
   final DoctorPrescriptionController controller =
       Get.put(DoctorPrescriptionController());
   final LabsReportController labs = Get.put(LabsReportController());
+  final LabsRequestedController labsRequested =
+      Get.put(LabsRequestedController());
 
   @override
   void initState() {
     super.initState();
     loadUserData();
+    initAsync();
     _scrollController.addListener(_handleScroll);
+  }
+  Future<void> initAsync() async {
+    await controller.getPrescriptions(widget.doctorId, widget.patientId, widget.id,);
+    await labsRequested.getDoctorLabsRequest(
+        patientId: widget.patientId,
+        doctorId: widget.doctorId,
+        appointmentId: widget.id);
+    print("ddddddd ${widget.doctorId}");
+    await labs.labsReports(widget.patientId, widget.doctorId, widget.id);
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
   }
 
   Future<void> loadUserData() async {
     Map<String, String?> userData = await StorageService.getUserData();
     picture = userData['picture'] ?? "N/A";
     userId = userData["userId"] ?? "Unknown";
-
     await controller.getPatientPrescriptions(
       userId!,
       widget.doctorId,
@@ -108,155 +125,305 @@ class _PatientAppointmentChatScreenState
   }
 
   void _addLabs() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-    ),
-    builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.75,
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: LabsRecordScreen(patientId: widget.patientId,doctorId: widget.doctorId,appointmentId: widget.id,doctorToken: widget.doctorToken,patientToken: widget.patientToken,),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-      );
-    },
-  );
-}
-
+      ),
+      builder: (context) {
+        return FractionallySizedBox(
+          heightFactor: 0.75,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: LabsRecordScreen(
+              patientId: widget.patientId,
+              doctorId: widget.doctorId,
+              appointmentId: widget.id,
+              doctorToken: widget.doctorToken,
+              patientToken: widget.patientToken,
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: Colors.grey, width: 0.2),
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border(
+        bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 4,
+          offset: Offset(0, 2),
         ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.teal),
-            onPressed: () => Navigator.pop(context),
+      ],
+    ),
+    child: Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.teal),
+          onPressed: () => Navigator.pop(context),
+          tooltip: 'Back',
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: _avatarSize,
+          height: _avatarSize,
+          child: CircleAvatar(
+            backgroundColor: Colors.grey.shade200,
+            backgroundImage: (widget.patientProfile.isNotEmpty && widget.patientProfile != "N/A")
+                ? NetworkImage('$url/${widget.patientProfile}')
+                : const AssetImage('assets/default_image.png') as ImageProvider,
           ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
-            width: _avatarSize,
-            height: _avatarSize,
-            child: CircleAvatar(
-              backgroundColor: Colors.grey.shade200,
-              backgroundImage: (widget.patientProfile.isNotEmpty &&
-                      widget.patientProfile != "N/A")
-                  ? NetworkImage('$url/${widget.patientProfile}')
-                  : const AssetImage('assets/default_image.png')
-                      as ImageProvider,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.patientName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.patientName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
                 ),
-                if (_showFullAppBar) ...[
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (_showFullAppBar) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'Online',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Online',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ],
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            Tooltip(
+              message: "Only the doctor can call you.",
+              child: GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Only the doctor can call you."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                child: Icon(
+                  Icons.call,
+                  size: 28,
+                  color: Colors.teal.withOpacity(0.4),
+                ),
+              ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.call, color: Colors.teal),
-            onPressed: () async {
-              final roomId = "call_${DateTime.now().millisecondsSinceEpoch}";
-
-              await FirebaseApis().sendCallFCM(
-                widget.doctorToken,
-                widget.doctorName,
-                roomId,
-                widget.doctorPhone,
-                widget.patientProfile,
-                '0',
-                widget.patientToken,
-                widget.doctorToken,
-                widget.doctorId,
-                widget.patientId,
-              );
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CallPage(callId: roomId, callType: '0'),
+            const SizedBox(width: 16),
+            Tooltip(
+              message: "Only the doctor can video call you.",
+              child: GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Only the doctor can video call you."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                child: Icon(
+                  Icons.videocam,
+                  size: 28,
+                  color: Colors.teal.withOpacity(0.4),
                 ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.videocam, color: Colors.teal),
-            onPressed: () async {
-              final roomId = "call_${DateTime.now().millisecondsSinceEpoch}";
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+  Widget _buildLabRequestTab() {
+    return Column(
+      children: [
+        Expanded(child: Obx(() {
+          if (labsRequested.isLoading.value) {
+            return const Center(
+              child: LoadingMessage(),
+            );
+          }
+          if (labsRequested.patientLabsRequest.isEmpty) {
+            return const Center(
+              child: Text("No Lab Requested Found"),
+            );
+          }
+          return ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.all(15),
+              itemCount: labsRequested.patientLabsRequest.length,
+              itemBuilder: (context, index) {
+                final item = labsRequested.patientLabsRequest[index];
+                final date =
+                    DateFormat.yMMMMd().add_jm().format(item.createDate);
+                final labRequestCount = item.requestTests?.length ?? 0;
+                final summary = labRequestCount > 0
+                    ? "$labRequestCount lab request${labRequestCount > 1 ? 's' : ''} requested"
+                    : "No lab requests listed";
 
-              await FirebaseApis().sendCallFCM(
-                widget.doctorToken,
-                widget.doctorName,
-                roomId,
-                widget.doctorPhone,
-                widget.patientProfile,
-                '1',
-                widget.patientToken,
-                widget.doctorToken,
-                widget.doctorId,
-                widget.patientId,
-              );
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            LabRequestDetailScreen(labRequest: item),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    margin: const EdgeInsets.only(bottom: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Header row: Icon + Doctor name + Arrow
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.medical_services,
+                                color: Colors.blue,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text("${widget.doctorName}")
+                            ],
+                          ),
+                          const SizedBox(height: 10),
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CallPage(callId: roomId, callType: '1'),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+                          /// Patient
+                          Row(
+                            children: [
+                              const Icon(Icons.person,
+                                  size: 18, color: Colors.green),
+                              const SizedBox(width: 6),
+                              Text("Patient: ${item.patientName}",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Date
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 18, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text("Date: $date",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Medicine Summary
+                          Row(
+                            children: [
+                              const Icon(Icons.list_alt,
+                                  size: 18, color: Colors.purple),
+                              const SizedBox(width: 6),
+                              Text(summary,
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          /// Call-to-action
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Tap to view full prescription",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        })),
+        // Padding(
+        //   padding: const EdgeInsets.all(16.0),
+        //   child: SizedBox(
+        //     width: double.infinity,
+        //     child: ElevatedButton(
+        //       onPressed: () {
+        //         // TODO: Implement add prescription logic
+        //         print("appointmentId ${widget.id}");
+        //         print("pateintId ${widget.patientId}");
+        //         print("doctorId ${widget.doctorId}");
+        //         _addLabRequest();
+        //       },
+        //       style: ElevatedButton.styleFrom(
+        //         backgroundColor: Colors.blueAccent,
+        //         padding: const EdgeInsets.symmetric(vertical: 14),
+        //         shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(12)),
+        //       ),
+        //       child: const Text("Add Lab Request",
+        //           style: TextStyle(fontSize: 16, color: Colors.white)),
+        //     ),
+        //   ),
+        // ),
+      ],
     );
   }
 
@@ -268,18 +435,16 @@ class _PatientAppointmentChatScreenState
             if (controller.isLoading.value) {
               return const Center(child: CircularProgressIndicator());
             }
-
-            if (controller.patientPrescriptions.isEmpty) {
+            if (controller.prescriptions.isEmpty) {
               return const Center(child: Text("No prescriptions found."));
             }
-
             return ListView.builder(
               // controller: _scrollController,
               controller: _prescriptionScrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: controller.patientPrescriptions.length,
+              itemCount: controller.prescriptions.length,
               itemBuilder: (context, index) {
-                final item = controller.patientPrescriptions[index];
+                final item = controller.prescriptions[index];
                 final date =
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final medicineCount = item.medicines?.length ?? 0;
@@ -566,19 +731,21 @@ class _PatientAppointmentChatScreenState
 
   @override
   Widget build(BuildContext context) {
+    print("appoint id ,${widget.id}");
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
             children: [
-              // _buildHeader(),
+              _buildHeader(),
               const TabBar(
                 labelColor: Colors.teal,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
                 tabs: [
+                  Tab(text: "Lab Request",),
                   Tab(text: "Prescription"),
                   Tab(text: "Labs"),
                 ],
@@ -586,6 +753,7 @@ class _PatientAppointmentChatScreenState
               Expanded(
                 child: TabBarView(
                   children: [
+                    _buildLabRequestTab(),
                     _buildPrescriptionTab(),
                     _buildLabsTab(),
                     // Center(child: Text("labs")),

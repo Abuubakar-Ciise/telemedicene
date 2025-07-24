@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:printing/printing.dart';
 import 'package:tele/controllers/adds_controller.dart';
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/services/StorageService.dart';
@@ -25,7 +27,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
   final url = Config.baseUrl;
   final appoinmentsController = Get.put(AppoinmentsController());
   final addsController = Get.put(AddsController());
@@ -39,14 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startAutoScroll() {
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (!mounted || addsController.adds.isEmpty || !_scrollController.hasClients) return;
+      if (!mounted ||
+          addsController.adds.isEmpty ||
+          !_scrollController.hasClients) return;
       final screenWidth = MediaQuery.of(context).size.width;
       final itemWidth = screenWidth * 0.87;
       final margin = 10.0;
-      
 
       // final singleItemWidth = 350.0; // Adjust this to match AddsScreen width + margin
-      final singleItemWidth = itemWidth + margin; // Adjust this to match AddsScreen width + margin
+      final singleItemWidth =
+          itemWidth + margin; // Adjust this to match AddsScreen width + margin
       final targetPosition = _currentIndex * singleItemWidth;
 
       _scrollController.animateTo(
@@ -61,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (_currentIndex >= addsController.adds.length) {
         _currentIndex = 0; // Loop back to start
-        
       }
     });
   }
@@ -108,12 +110,18 @@ class _HomeScreenState extends State<HomeScreen> {
       "text": "Hospital",
       'route': HospitalListScreen()
     },
-    {"icon": Icons.person_pin, "text": "self manage", 'route': Selfmanagement()},
-    {"icon": Icons.health_and_safety, "text": "My Treatment", 'route': ChatsListScreenAppointment(),},
+    {
+      "icon": Icons.person_pin,
+      "text": "self manage",
+      'route': Selfmanagement()
+    },
+    {
+      "icon": Icons.health_and_safety,
+      "text": "My Treatment",
+      'route': ChatsListScreenAppointment(),
+    },
     // {"icon": Icons.science_outlined, "text": "Labarotary", 'route': LabsRecordScreen(),},
   ];
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -180,14 +188,55 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : AssetImage('assets/default_image.png')
                                     as ImageProvider,
                         backgroundColor: Colors.white,
-                        
                       ),
                     ),
                   )
                 ],
               ),
               const SizedBox(height: 20),
-              // ADDS Row - Only Pictures in Horizontal Scrollable Containers
+              // Obx(() {
+              //   if (addsController.isLoading.value) {
+              //     return LoadingMessage();
+              //   }
+              //   if (addsController.adds.isEmpty) {
+              //     return AddsScreen(imageUri: '');
+              //   }
+
+              //   return CarouselSlider.builder(
+              //     itemCount: addsController.adds.length,
+              //     itemBuilder:
+              //         (BuildContext context, int itemIndex, int pageViewIndex) {
+              //       final add = addsController.adds[itemIndex];
+              //       return SizedBox(
+              //         width: double.infinity, // or a fixed value like 300
+              //         height: 100, // match CarouselOptions height
+              //         child: ClipRRect(
+              //           borderRadius: BorderRadius.circular(12),
+              //           child: Image.network(
+              //             '$url/${add.picture}',
+              //             fit: BoxFit.cover, // or BoxFit.fill / BoxFit.contain
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //     options: CarouselOptions(
+              //       // height: 400,
+              //       aspectRatio: 16 / 9,
+              //       viewportFraction: 0.8,
+              //       initialPage: 0,
+              //       enableInfiniteScroll: true,
+              //       reverse: false,
+              //       autoPlay: true,
+              //       autoPlayInterval: Duration(seconds: 3),
+              //       autoPlayAnimationDuration: Duration(milliseconds: 800),
+              //       autoPlayCurve: Curves.fastOutSlowIn,
+              //       enlargeCenterPage: true,
+              //       enlargeFactor: 0.3,
+              //       scrollDirection: Axis.horizontal,
+              //     ),
+              //   );
+              // }),
+              //ADDS Row - Only Pictures in Horizontal Scrollable Containers
               Obx(() {
                 if (addsController.isLoading.value) {
                   return LoadingMessage();
@@ -217,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           controller: _scrollController,
                           child: Row(
                             children: addsController.adds.map((adds) {
-                            
                               return AddsScreen(imageUri: adds.picture);
                             }).toList(),
                           ),
@@ -231,10 +279,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         // children: addsController.adds.map((adds) {
                         children:
                             addsController.adds.asMap().entries.map((entry) {
-                          
                           int index = entry.key;
                           var adds = entry.value;
-                        
+
                           return Padding(
                             padding:
                                 const EdgeInsets.only(left: 10.0, bottom: 10),
@@ -261,16 +308,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   horizontal: 0,
                 ),
                 child: GridView.builder(
-                  shrinkWrap:
-                      true, 
-                  physics:
-                      const NeverScrollableScrollPhysics(), 
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: services.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, 
-                    crossAxisSpacing: 18, 
-                    mainAxisSpacing: 18, 
-                    childAspectRatio: 1, 
+                    crossAxisCount: 4,
+                    crossAxisSpacing: 18,
+                    mainAxisSpacing: 18,
+                    childAspectRatio: 1,
                   ),
                   itemBuilder: (context, index) {
                     return ReusableCardP(

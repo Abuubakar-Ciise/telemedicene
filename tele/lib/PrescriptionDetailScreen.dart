@@ -120,7 +120,7 @@ class PrescriptionDetailScreen extends StatelessWidget {
             pw.SizedBox(height: 8),
             pw.Text("Date: $date"),
             pw.Text("Prescription ID: ${prescription.sequenceId}"),
-            pw.Text("Appointment ID: ${prescription.appointmentId}"),
+            // pw.Text("Appointment ID: ${prescription.appointmentId}"),
             pw.Text(
                 "Shift: ${prescription.shiftDay}, ${prescription.shiftTime}"),
             pw.SizedBox(height: 16),

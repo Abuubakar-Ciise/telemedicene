@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tele/DoctorPrescriptionDetailScreen.dart';
 import 'package:tele/DoctorPrescriptionScreen.dart';
 import 'package:tele/PrescriptionDetailScreen.dart';
 import 'package:tele/controllers/doctor_prescription_controller.dart';
 import 'package:tele/controllers/labs_report_controller.dart';
+import 'package:tele/controllers/labs_requested_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/firebase_api.dart';
 import 'package:tele/views/screens/CallPage/call_page.dart';
 import 'package:tele/views/screens/components/config.dart';
+import 'package:tele/views/screens/components/doctor_lab_request.dart';
+import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/LabReportViewerScreen.dart';
 
 class DoctorAppointmentChatScreen extends StatefulWidget {
@@ -46,7 +50,7 @@ class _DoctorAppointmentChatScreenState
     extends State<DoctorAppointmentChatScreen> {
   final url = Config.baseUrl;
   final ScrollController _scrollController = ScrollController();
-   final ScrollController _prescriptionScrollController = ScrollController();
+  final ScrollController _prescriptionScrollController = ScrollController();
   final ScrollController _labsScrollController = ScrollController();
 
   double _avatarSize = 40;
@@ -56,6 +60,8 @@ class _DoctorAppointmentChatScreenState
   final DoctorPrescriptionController controller =
       Get.put(DoctorPrescriptionController());
   final LabsReportController labs = Get.put(LabsReportController());
+  final LabsRequestedController labsRequested =
+      Get.put(LabsRequestedController());
 
   @override
   void initState() {
@@ -69,7 +75,11 @@ class _DoctorAppointmentChatScreenState
   }
 
   Future<void> initAsync() async {
-    await controller.getPrescriptions(widget.doctorId);
+    await controller.getPrescriptions(widget.doctorId, widget.patientId, widget.id,);
+    await labsRequested.getDoctorLabsRequest(
+        patientId: widget.patientId,
+        doctorId: widget.doctorId,
+        appointmentId: widget.id);
     print("ddddddd ${widget.doctorId}");
     await labs.labsReports(widget.patientId, widget.doctorId, widget.id);
     if (_scrollController.hasClients) {
@@ -108,31 +118,64 @@ class _DoctorAppointmentChatScreenState
       });
     }
   }
+
   void _addPrescriptions() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-    ),
-    builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.75,
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: DoctorPrescriptionScreen(patientId: widget.patientId,doctorId: widget.doctorId,appointmentId: widget.id,doctorToken: widget.doctorToken,patientToken: widget.patientToken,),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-      );
-    },
-  );
-}
+      ),
+      builder: (context) {
+        return FractionallySizedBox(
+          heightFactor: 0.75,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            child: DoctorPrescriptionScreen(
+              patientId: widget.patientId,
+              doctorId: widget.doctorId,
+              appointmentId: widget.id,
+              doctorToken: widget.doctorToken,
+              patientToken: widget.patientToken,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _addLabRequest() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+        builder: (context) {
+          return FractionallySizedBox(
+            heightFactor: 0.75,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: DoctorLabRequest(
+                doctorId: widget.doctorId, 
+                patientId: widget.patientId, 
+                appointmentId: widget.id, 
+                doctorToken: widget.doctorToken, 
+                patientToken: widget.patientToken),
+            ),
+          );
+        });
+  }
 
   Widget _buildHeader() {
     return Container(
@@ -245,140 +288,291 @@ class _DoctorAppointmentChatScreenState
       ),
     );
   }
+
+  Widget _buildLabRequestTab() {
+    return Column(
+      children: [
+        Expanded(child: Obx(() {
+          if (labsRequested.isLoading.value) {
+            return const Center(
+              child: LoadingMessage(),
+            );
+          }
+          if (labsRequested.doctorLabsRequest.isEmpty) {
+            return const Center(
+              child: Text("No Lab Requested Found"),
+            );
+          }
+          return ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.all(15),
+              itemCount: labsRequested.doctorLabsRequest.length,
+              itemBuilder: (context, index) {
+                final item = labsRequested.doctorLabsRequest[index];
+                final date =
+                    DateFormat.yMMMMd().add_jm().format(item.createDate);
+                final labRequestCount = item.requestTests?.length ?? 0;
+                final summary = labRequestCount > 0
+                    ? "$labRequestCount lab request${labRequestCount > 1 ? 's' : ''} requested"
+                    : "No lab requests listed";
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            LabRequestDetailScreen(labRequest: item),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    margin: const EdgeInsets.only(bottom: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Header row: Icon + Doctor name + Arrow
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.medical_services,
+                                color: Colors.blue,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              Text("${widget.doctorName}")
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          /// Patient
+                          Row(
+                            children: [
+                              const Icon(Icons.person,
+                                  size: 18, color: Colors.green),
+                              const SizedBox(width: 6),
+                              Text("Patient: ${item.patientName}",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Date
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 18, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text("Date: $date",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Medicine Summary
+                          Row(
+                            children: [
+                              const Icon(Icons.list_alt,
+                                  size: 18, color: Colors.purple),
+                              const SizedBox(width: 6),
+                              Text(summary,
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          /// Call-to-action
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "Tap to view full prescription",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        })),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                // TODO: Implement add prescription logic
+                print("appointmentId ${widget.id}");
+                print("pateintId ${widget.patientId}");
+                print("doctorId ${widget.doctorId}");
+                _addLabRequest();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Add Lab Request",
+                  style: TextStyle(fontSize: 16, color: Colors.white)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPrescriptionTab() {
     return Column(
       children: [
         Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          child: Obx(() {
+            if (controller.isLoading.value) {
+              return const Center(child: LoadingMessage());
+            }
 
-              if (controller.prescriptions.isEmpty) {
-                return const Center(child: Text("No prescriptions found."));
-              }
+            if (controller.prescriptions.isEmpty) {
+              return const Center(child: Text("No prescriptions found."));
+            }
 
-              return ListView.builder(
-                controller: _prescriptionScrollController,
-                padding: const EdgeInsets.all(16),
-                itemCount: controller.prescriptions.length,
-                itemBuilder: (context, index) {
-                  final item = controller.prescriptions[index];
-                  final date =
-                      DateFormat.yMMMMd().add_jm().format(item.createDate);
-                  final medicineCount = item.medicines?.length ?? 0;
-                  final summary = medicineCount > 0
-                      ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
-                      : "No medicines listed";
+            return ListView.builder(
+              controller: _prescriptionScrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: controller.prescriptions.length,
+              itemBuilder: (context, index) {
+                final item = controller.prescriptions[index];
+                final date =
+                    DateFormat.yMMMMd().add_jm().format(item.createDate);
+                final medicineCount = item.medicines?.length ?? 0;
+                final summary = medicineCount > 0
+                    ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
+                    : "No medicines listed";
 
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              PrescriptionDetailScreen(prescription: item),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      color: Colors.white,
-                      elevation: 3,
-                      margin: const EdgeInsets.only(bottom: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            PrescriptionDetailScreen(prescription: item),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            /// Header row: Icon + Doctor name + Arrow
-                            Row(
-                              children: [
-                                const Icon(Icons.medical_services,
-                                    color: Colors.blue, size: 24),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    "Dr. ${item.doctorName}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios,
-                                    size: 16, color: Colors.grey),
-                              ],
-                            ),
-
-                            const SizedBox(height: 10),
-
-                            /// Patient
-                            Row(
-                              children: [
-                                const Icon(Icons.person,
-                                    size: 18, color: Colors.green),
-                                const SizedBox(width: 6),
-                                Text("Patient: ${item.patientName}",
-                                    style: const TextStyle(fontSize: 14)),
-                              ],
-                            ),
-
-                            /// Date
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today,
-                                    size: 18, color: Colors.orange),
-                                const SizedBox(width: 6),
-                                Text("Date: $date",
-                                    style: const TextStyle(fontSize: 14)),
-                              ],
-                            ),
-
-                            /// Medicine Summary
-                            Row(
-                              children: [
-                                const Icon(Icons.list_alt,
-                                    size: 18, color: Colors.purple),
-                                const SizedBox(width: 6),
-                                Text(summary,
-                                    style: const TextStyle(fontSize: 14)),
-                              ],
-                            ),
-
-                            const SizedBox(height: 12),
-
-                            /// Call-to-action
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Center(
+                    );
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 3,
+                    margin: const EdgeInsets.only(bottom: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Header row: Icon + Doctor name + Arrow
+                          Row(
+                            children: [
+                              const Icon(Icons.medical_services,
+                                  color: Colors.blue, size: 24),
+                              const SizedBox(width: 8),
+                              Expanded(
                                 child: Text(
-                                  "Tap to view full prescription",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
+                                  "Dr. ${item.doctorName}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
+                              // const Icon(Icons.arrow_forward_ios,
+                              //     size: 16, color: Colors.grey),
+                            ],
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          /// Patient
+                          Row(
+                            children: [
+                              const Icon(Icons.person,
+                                  size: 18, color: Colors.green),
+                              const SizedBox(width: 6),
+                              Text("Patient: ${item.patientName}",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Date
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 18, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text("Date: $date",
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          /// Medicine Summary
+                          Row(
+                            children: [
+                              const Icon(Icons.list_alt,
+                                  size: 18, color: Colors.purple),
+                              const SizedBox(width: 6),
+                              Text(summary,
+                                  style: const TextStyle(fontSize: 14)),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          /// Call-to-action
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                          ],
-                        ),
+                            child: const Center(
+                              child: Text(
+                                "Tap to view full prescription",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              );
-            }),
-          ),  
-          Padding(
+                  ),
+                );
+              },
+            );
+          }),
+        ),
+        Padding(
           padding: const EdgeInsets.all(16.0),
           child: SizedBox(
             width: double.infinity,
@@ -404,13 +598,14 @@ class _DoctorAppointmentChatScreenState
       ],
     );
   }
+
   Widget _buildLabsTab() {
     return Column(
       children: [
         Expanded(
           child: Obx(() {
             if (labs.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LoadingMessage());
             }
             if (labs.labsReport.isEmpty) {
               return const Center(child: Text("No lab reports found."));
@@ -563,7 +758,7 @@ class _DoctorAppointmentChatScreenState
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -575,6 +770,7 @@ class _DoctorAppointmentChatScreenState
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
                 tabs: [
+                  Tab(text: "Lab Request",),
                   Tab(text: "Prescription"),
                   Tab(text: "Labs"),
                 ],
@@ -582,6 +778,7 @@ class _DoctorAppointmentChatScreenState
               Expanded(
                 child: TabBarView(
                   children: [
+                    _buildLabRequestTab(),
                     _buildPrescriptionTab(),
                     _buildLabsTab()
                   ],

@@ -92,10 +92,11 @@ class _DoctorPrescriptionScreenState extends State<DoctorPrescriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
+        centerTitle: true,
         title: const Text("Write Prescription",
             style: TextStyle(color: Colors.black)),
         iconTheme: const IconThemeData(color: Colors.black),

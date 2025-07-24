@@ -9,6 +9,7 @@ import 'package:tele/Models/doctor_transection_model.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/lab_report_model.dart';
+import 'package:tele/Models/lab_request_Model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
 import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
@@ -429,12 +430,24 @@ class ApiGetServices {
   }
 
   //doctor Prescrptions reading
-  Future<List<DoctorPrescriptionModel>> getPrescriptions(String id) async {
+  Future<List<DoctorPrescriptionModel>> getPrescriptions(
+    String doctorId,
+    String pateintId,
+    String appointmentId
+    ) async {
     try {
       final response = await http.post(Uri.parse('$url/doctor_prescriptions'),
           headers: {'content-Type': 'application/json'},
-          body: jsonEncode({"doctor_id": id}));
+          body: jsonEncode(
+            {
+              "doctor_id": doctorId,
+              "patient_id": pateintId,
+              "appointment_id": appointmentId
+            }));
       print("✅✅✅✅ doctor_prescriptions");
+      print("$doctorId");
+      print("$pateintId");
+      print("$appointmentId");
       print(response.body);
       print(response.statusCode);
       if (response.statusCode == 200) {
@@ -462,6 +475,7 @@ class ApiGetServices {
           headers: {'content-Type': 'application/json'},
           body: jsonEncode({"patient_id": patientId, "doctor_id": doctorId}));
       print("✅✅✅✅");
+      print("dcotor x patient id ${doctorId}   --- ${patientId}");
       print(response.body);
       print(response.statusCode);
       if (response.statusCode == 200) {
@@ -480,6 +494,7 @@ class ApiGetServices {
       return [];
     }
   }
+
 
   // LabReportModel APi
   Future<List<LabReportModel>> labsReports(
@@ -507,6 +522,81 @@ class ApiGetServices {
       }
     } catch (e) {
       throw Exception('Error fetching lab reports: $e');
+    }
+  }
+
+  //patient_LabRequest
+  Future<List<LabRequestModel>> patientLabRequest({
+    required String patientId,
+    required String doctorId,
+    required String appointmentId
+  }) async {
+    try {
+      final response = await http.post(Uri.parse('$url/patient_LabRequest'),
+      headers: {'content-Type': 'application/json'},
+      body: jsonEncode({
+         "patient_id": patientId,
+        "doctor_id": doctorId,
+        "appointment_id": appointmentId
+      })
+      );
+      print("✅✅✅✅");
+      print("dcotor x patient x appioinment id ${doctorId}   --- ${patientId} -- ${appointmentId}");
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((prescription) =>
+                  LabRequestModel.fromJson(prescription))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      }
+      throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      print("error from patient_LabRequest $e");
+      return [];
+    }
+  }
+
+  ///doctor_LabRequest
+
+  Future<List<LabRequestModel>> doctorLabRequest({
+    required String patientId,
+    required String doctorId,
+    required String appointmentId
+  }) async {
+    try {
+      final response = await http.post(Uri.parse('$url/doctor_LabRequest'),
+      headers: {'content-Type': 'application/json'},
+      body: jsonEncode({
+         "patient_id": patientId,
+        "doctor_id": doctorId,
+        "appointment_id": appointmentId
+      })
+      );
+      print("✅✅✅✅");
+      print("dcotor x patient x appioinment id ${doctorId}   --- ${patientId} -- ${appointmentId}");
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List)
+              .map((prescription) =>
+                  LabRequestModel.fromJson(prescription))
+              .toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      }
+      throw Exception("Server Error: ${response.statusCode}");
+    } catch (e) {
+      print("error from patient_LabRequest $e");
+      return [];
     }
   }
 }

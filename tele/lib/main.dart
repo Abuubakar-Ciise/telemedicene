@@ -21,10 +21,16 @@ import 'package:toastification/toastification.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+@pragma('vm:entry-point') // required for background message handler
+Future<void> handleBackgroundMessage(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // Show basic debug output or do background logic here
+  print('Handling background message: ${message.messageId}');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //hh 
+  //hh
   await dotenv.load(fileName: '.env');
 
   await Firebase.initializeApp(
@@ -42,6 +48,12 @@ Future<void> main() async {
     description: 'Channel used for incoming call notifications',
     importance: Importance.high,
   );
+  const AndroidNotificationChannel defaultChannel = AndroidNotificationChannel(
+    'default_channel',
+    'Default',
+    description: 'General notifications', // optional description
+    importance: Importance.high,
+  );
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -50,6 +62,10 @@ Future<void> main() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(callChannel);
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(defaultChannel);
 
   final accessToken = await AccessTokenService().getAccessToken();
   final token = await FirebaseMessaging.instance.getToken();
@@ -61,8 +77,6 @@ Future<void> main() async {
 
   print("this Your accessToken  $accessToken");
   print("this Your token  $token");
-  
-  
 
   Get.put(UserController());
   Get.put(DoctorTransectionController());
@@ -70,7 +84,6 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   await FirebaseNotification().initNotification();
-
 
   ZegoUIKit().init(appID: Config.appId, appSign: Config.appSign);
 
@@ -87,25 +100,45 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
+  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   runApp(ToastificationWrapper(
     child: MyApp(),
   ));
 }
+
+void handleInitialNotification(FirebaseNotificationHandler handler) async {
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    print("App launched by notification");
+    await handler.handleNotificationNavigation(initialMessage.data);
+  }
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
     // Initialize Firebase notifications with a valid context
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   //  FirebaseNotificationHandler(navigatorKey).initNotification(context);
+    //    FirebaseNotificationHandler(navigatorKey).initNotification();
+    //    handleInitialNotification(navigatorKey).int;
+    // }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       FirebaseNotificationHandler().initNotification(context);
+      final handler = FirebaseNotificationHandler(navigatorKey);
+      handler.initNotification();
+      handleInitialNotification(handler); // ✅ Correct usage
     });
   }
+
   Future<String?> _isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('auth_token');
@@ -117,6 +150,7 @@ class _MyAppState extends State<MyApp> {
       return null;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // final internetController = Get.find<InternetController>();
@@ -132,7 +166,7 @@ class _MyAppState extends State<MyApp> {
     //       ),
     //     );
     //   }
-    
+
     return FutureBuilder(
       future: _isLoggedIn(),
       builder: (context, snapshot) {
@@ -163,13 +197,13 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             initialRoute: initialRoute,
             getPages: AppRoutes.routes,
-            
           );
         }
       },
     );
-  // });
-}}
+    // });
+  }
+}
 /// 
 // import 'dart:convert';
 // import 'package:flutter/material.dart';

@@ -237,15 +237,16 @@ class ApiPostServices {
       };
     }
   }
-  
+
   // updateProfilePicture
   Future<Map<String, dynamic>> updateProfilePicture(
       {required String id, required File imageFile}) async {
     try {
       final uri = Uri.parse('$url/updateProfile');
-      final request  = http.MultipartRequest("POST", uri);
+      final request = http.MultipartRequest("POST", uri);
       // Add the image file
-      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('file', imageFile.path));
 
       request.fields['patient_id'] = id;
       final response = await request.send();
@@ -254,20 +255,19 @@ class ApiPostServices {
       print("${resBody.body} && $response");
       print("✅✅✅");
 
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = jsonDecode(resBody.body);
         return {
           'success': data['success'],
-        'message': data['message'] ?? 'Profile picture updated.',
-        'picture': data['picture'] ?? '',
+          'message': data['message'] ?? 'Profile picture updated.',
+          'picture': data['picture'] ?? '',
         };
-      }else{
+      } else {
         return {
           'success': false,
-        'message': 'Server error: ${response.statusCode} – ${resBody.body}',
+          'message': 'Server error: ${response.statusCode} – ${resBody.body}',
         };
       }
-      
     } catch (e) {
       return {
         'success': false,
@@ -275,23 +275,24 @@ class ApiPostServices {
       };
     }
   }
+
   //change Passowrd
-  Future<Map<String,dynamic>> changePassword(
-    String id, String exPassWord, String newPassword, String confirmPassword
-  ) async {
+  Future<Map<String, dynamic>> changePassword(String id, String exPassWord,
+      String newPassword, String confirmPassword) async {
     try {
       final response = await http.post(
-        Uri.parse("$url/changesPassword",),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "id": id,
-          "PassWord": exPassWord,
-          "newPassword": newPassword,
-          "confirmPassword": confirmPassword
-        })
-        );
-        print("${response.body}");
-        if (response.statusCode == 200) {
+          Uri.parse(
+            "$url/changesPassword",
+          ),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            "id": id,
+            "PassWord": exPassWord,
+            "newPassword": newPassword,
+            "confirmPassword": confirmPassword
+          }));
+      print("${response.body}");
+      if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
         return {
           "success": responseBody['success'],
@@ -307,6 +308,49 @@ class ApiPostServices {
       }
     } catch (e) {
       print("errror from changePassword $e");
+      return {"success": false, "message": "Failed to connect to server"};
+    }
+  }
+
+  //save_LabRequest
+  Future<Map<String, dynamic>> writeLabRequest({
+    required List<Map<String, dynamic>> requestedLabs,
+    required String patientId,
+    required String doctorId,
+    required String appointmentId,
+    required String notes,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/save_LabRequest"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "requested_tests": requestedLabs,
+          "patient_id": patientId,
+          "doctor_id": doctorId,
+          "appointment_id": appointmentId,
+          "notes": notes
+        }),
+      );
+      print("✅✅✅ /save_LabRequest");
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        return {
+          "success": responseBody['success'],
+          "message": responseBody['message']
+        };
+      } else {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        print("Response is not JSON: ${response.body}");
+        return {
+          "success": false,
+          "message": responseBody['message'] ?? "Unknown error occurred",
+        };
+      }
+    } catch (e) {
+      print("error from save_labRequest $e");
       return {"success": false, "message": "Failed to connect to server"};
     }
   }

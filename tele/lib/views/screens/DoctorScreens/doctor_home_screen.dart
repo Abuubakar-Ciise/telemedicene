@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tele/DoctorPrescriptionScreen.dart';
@@ -132,7 +133,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     {
       "icon": Icons.child_care,
       "text": "Pediatrician",
-      "route": PrescriptionScreen(),
+      "route": PrescriptionScreen(patientId: '', doctorId: '', appointmentId: '',),
       "color": Colors.orange,
     },
   ];
@@ -235,6 +236,48 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
               ),
               const SizedBox(height: 20),
               // ADDS Row - Only Pictures in Horizontal Scrollable Containers
+              // Obx(() {
+              //   if (addsController.isLoading.value) {
+              //     return LoadingMessage();
+              //   }
+              //   if (addsController.adds.isEmpty) {
+              //     return AddsScreen(imageUri: '');
+              //   }
+
+              //   return CarouselSlider.builder(
+              //     itemCount: addsController.adds.length,
+              //     itemBuilder:
+              //         (BuildContext context, int itemIndex, int pageViewIndex) {
+              //       final add = addsController.adds[itemIndex];
+              //       return SizedBox(
+              //         width: double.infinity, // or a fixed value like 300
+              //         height: 200, // match CarouselOptions height
+              //         child: ClipRRect(
+              //           borderRadius: BorderRadius.circular(12),
+              //           child: Image.network(
+              //             '$url/${add.picture}',
+              //             fit: BoxFit.cover, // or BoxFit.fill / BoxFit.contain
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //     options: CarouselOptions(
+              //       // height: 400,
+              //       aspectRatio: 16 / 9,
+              //       viewportFraction: 0.8,
+              //       initialPage: 0,
+              //       enableInfiniteScroll: true,
+              //       reverse: false,
+              //       autoPlay: true,
+              //       autoPlayInterval: Duration(seconds: 3),
+              //       autoPlayAnimationDuration: Duration(milliseconds: 800),
+              //       autoPlayCurve: Curves.fastOutSlowIn,
+              //       enlargeCenterPage: true,
+              //       enlargeFactor: 0.3,
+              //       scrollDirection: Axis.horizontal,
+              //     ),
+              //   );
+              // }),
               Obx(() {
                 if (addsController.isLoading.value) {
                   return LoadingMessage();

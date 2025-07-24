@@ -256,4 +256,49 @@ class NewFirebaseSendMessage {
     );
     print("FCM Lab to Doctor: ${response.statusCode} ${response.body}");
   }
+
+  // lab request
+  Future<void> sendLabRequestNotificationToPatient({
+    required String token,
+    String title = "Lab Request Submitted",
+    String body = "Your doctor has submitted a new lab request.",
+  }) async {
+    final accessToken = await AccessTokenService().getAccessToken();
+    final projectId = Config.firebaseprojectid;
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$projectId/messages:send',
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+      body: jsonEncode({
+        "message": {
+          "token": token,
+          "notification": {
+            "title": title,
+            "body": body,
+          },
+          "android": {
+            "priority": "high",
+            "notification": {
+              "click_action": "FLUTTER_NOTIFICATION_CLICK",
+              "channel_id": "default_channel",
+            }
+          },
+          "data": {
+            "type": "lab_request",
+          }
+        }
+      }),
+    );
+
+    print(
+    "FCM Lab Request Notification: ${response.statusCode} ${response.body}",
+  );
+  }
 }

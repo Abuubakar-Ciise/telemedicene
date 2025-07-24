@@ -6,10 +6,10 @@ class DoctorPrescriptionController extends GetxController{
   var isLoading = false.obs;
   var prescriptions = <DoctorPrescriptionModel>[].obs;
   var patientPrescriptions = <DoctorPrescriptionModel>[].obs;
-  Future<void> getPrescriptions(String id)async {
+  Future<void> getPrescriptions(String doctorId, String patientId, String appointmentId)async {
     try {
       isLoading.value = true;
-      final response = await ApiGetServices().getPrescriptions(id);
+      final response = await ApiGetServices().getPrescriptions(doctorId, patientId, appointmentId);
       prescriptions.assignAll(response);
     } catch (e) {
       print("Error fetching hospitals: $e");

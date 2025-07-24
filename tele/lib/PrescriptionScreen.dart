@@ -7,7 +7,11 @@ import 'package:tele/controllers/doctor_prescription_controller.dart';
 import 'package:tele/services/StorageService.dart';
 
 class PrescriptionScreen extends StatefulWidget {
-  const PrescriptionScreen({super.key});
+  final String patientId; 
+  final String doctorId;
+  final String appointmentId;
+  const PrescriptionScreen({super.key,required this.patientId,required this.doctorId,required this.appointmentId});
+  
 
   @override
   State<PrescriptionScreen> createState() => _PrescriptionScreenState();
@@ -29,7 +33,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
     userId = userData["userId"];
     setState(() {
       userId = userData["userId"] ?? "Unknown";
-      controller.getPrescriptions(userId!);
+      controller.getPrescriptions(widget.doctorId,widget.appointmentId,widget.patientId);
       print("✅✅✅✅");
       print(userId);
     });
