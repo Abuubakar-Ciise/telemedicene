@@ -112,12 +112,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     //   "route": DoctorPrescriptionScreen(),
     //   "color": Colors.green,
     // },
-    {
-      "icon": Icons.local_hospital,
-      "text": "Hospital",
-      "route": HospitalListScreen(),
-      "olor": Colors.purple,
-    },
+    // {
+    //   "icon": Icons.local_hospital,
+    //   "text": "Hospital",
+    //   "route": HospitalListScreen(),
+    //   "olor": Colors.purple,
+    // },
     {
       "icon": Icons.medical_services,
       "text": "Consultation",
@@ -130,12 +130,12 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       "route": Selfmanagement(),
       "color": Colors.red,
     },
-    {
-      "icon": Icons.child_care,
-      "text": "Pediatrician",
-      "route": PrescriptionScreen(patientId: '', doctorId: '', appointmentId: '',),
-      "color": Colors.orange,
-    },
+    // {
+    //   "icon": Icons.child_care,
+    //   "text": "Pediatrician",
+    //   "route": PrescriptionScreen(patientId: '', doctorId: '', appointmentId: '',),
+    //   "color": Colors.orange,
+    // },
   ];
 
   String getGreeting() {
