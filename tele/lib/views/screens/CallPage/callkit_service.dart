@@ -288,19 +288,20 @@ class CallKitService {
       if (shouldShowReview && context != null) {
         Future.delayed(const Duration(milliseconds: 300), () {
           final currentContext = navigatorKey.currentContext;
-          if (currentContext != null) {
-            showModalBottomSheet(
-              context: currentContext,
-              isScrollControlled: true,
-              backgroundColor: Colors.white,
-              builder: (_) => ReviewsScreen(
-                doctorId: doctorId,
-                patientId: patientId,
-              ),
-            );
-          } else {
-            print('❌ No valid context to show ReviewsScreen.');
-          }
+          // if (currentContext != null) {
+          //   showModalBottomSheet(
+          //     context: currentContext,
+          //     isScrollControlled: true,
+          //     backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+          //     builder: (_) => ReviewsScreen(
+          //       doctorId: doctorId,
+          //       patientId: patientId,
+          //       appointmentId: appointmentId,
+          //     ),
+          //   );
+          // } else {
+          //   print('❌ No valid context to show ReviewsScreen.');
+          // }
         });
       }
 

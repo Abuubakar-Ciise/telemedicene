@@ -5,11 +5,13 @@ import 'package:tele/controllers/reviews_controller.dart';
 class ReviewsScreen extends StatefulWidget {
   final String doctorId;
   final String patientId;
+  final String appointmentId;
 
   const ReviewsScreen({
     super.key,
     required this.doctorId,
     required this.patientId,
+    required this.appointmentId,
   });
 
   @override
@@ -97,7 +99,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             comment,
                             widget.doctorId,
                             widget.patientId,
-                            rating,
+                            widget.appointmentId,
+                            rating
                           );
 
                           if (!controller.isLoading.value) {

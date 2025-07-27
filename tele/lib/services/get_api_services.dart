@@ -257,6 +257,7 @@ class ApiGetServices {
           body: jsonEncode({"patient_id": patientId}));
       if (response.statusCode == 200) {
         final record = jsonDecode(response.body);
+        print("✅✅✅ ${response.body}");
         if (record['success']) {
           return (record['record'] as List)
               .map((appointments) =>

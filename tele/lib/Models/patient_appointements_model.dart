@@ -13,6 +13,7 @@ class PatientAppointementsModel {
   final String patientPhone;
   final String doctorId;
   final String patientId;
+  final String isReviewed;
   PatientAppointementsModel({
     required this.id,
     required this.status,
@@ -28,6 +29,7 @@ class PatientAppointementsModel {
     required this.doctorPhone,
     required this.doctorId,
     required this.patientId,
+    required this.isReviewed,
   });
   factory PatientAppointementsModel.fromJson(Map<String, dynamic> json) {
     return PatientAppointementsModel(
@@ -45,6 +47,8 @@ class PatientAppointementsModel {
       patientPhone: json['patient_phone'] ?? '',
       doctorId: json['doctor_id'] ?? '',
       patientId: json['patient_id'] ?? '',
+      // isReviewed: json['is_reviewed'] ?? '',
+      isReviewed: json['is_reviewed']?.toString() ?? 'false',
     );
   }
   String toString() {

@@ -14,6 +14,7 @@ import 'package:tele/views/screens/CallPage/call_page.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/patient/LabReportViewerScreen.dart';
+import 'package:tele/views/screens/patient/ReviewsScreen.dart';
 import 'package:tele/views/screens/patient/labs_records_screen.dart';
 
 class PatientAppointmentChatScreen extends StatefulWidget {
@@ -27,6 +28,8 @@ class PatientAppointmentChatScreen extends StatefulWidget {
   final String patientPhone;
   final String doctorId;
   final String patientId;
+  final int status;
+  final String isReviewed;
 
   const PatientAppointmentChatScreen({
     super.key,
@@ -40,6 +43,8 @@ class PatientAppointmentChatScreen extends StatefulWidget {
     required this.patientPhone,
     required this.doctorId,
     required this.patientId,
+    required this.status,
+    required this.isReviewed,
   });
 
   @override
@@ -72,8 +77,13 @@ class _PatientAppointmentChatScreenState
     initAsync();
     _scrollController.addListener(_handleScroll);
   }
+
   Future<void> initAsync() async {
-    await controller.getPrescriptions(widget.doctorId, widget.patientId, widget.id,);
+    await controller.getPrescriptions(
+      widget.doctorId,
+      widget.patientId,
+      widget.id,
+    );
     await labsRequested.getDoctorLabsRequest(
         patientId: widget.patientId,
         doctorId: widget.doctorId,
@@ -156,127 +166,150 @@ class _PatientAppointmentChatScreenState
     );
   }
 
-  Widget _buildHeader() {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border(
-        bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
+  // feedback
+  void _feeback() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 4,
-          offset: Offset(0, 2),
+      builder: (context) => ReviewsScreen(
+        doctorId: widget.doctorId,
+        patientId: widget.patientId,
+        appointmentId: widget.id,
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
         ),
-      ],
-    ),
-    child: Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.teal),
-          onPressed: () => Navigator.pop(context),
-          tooltip: 'Back',
-        ),
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          width: _avatarSize,
-          height: _avatarSize,
-          child: CircleAvatar(
-            backgroundColor: Colors.grey.shade200,
-            backgroundImage: (widget.patientProfile.isNotEmpty && widget.patientProfile != "N/A")
-                ? NetworkImage('$url/${widget.patientProfile}')
-                : const AssetImage('assets/default_image.png') as ImageProvider,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.patientName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+        ],
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.teal),
+            onPressed: () => Navigator.pop(context),
+            tooltip: 'Back',
+          ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: _avatarSize,
+            height: _avatarSize,
+            child: CircleAvatar(
+              backgroundColor: Colors.grey.shade200,
+              backgroundImage: (widget.patientProfile.isNotEmpty &&
+                      widget.patientProfile != "N/A")
+                  ? NetworkImage('$url/${widget.patientProfile}')
+                  : const AssetImage('assets/default_image.png')
+                      as ImageProvider,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.patientName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (_showFullAppBar) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Container(
-                      width: 10,
-                      height: 10,
-                      decoration: const BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
+                if (_showFullAppBar) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Online',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey,
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Online',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ],
+            ),
+          ),
+          Row(
+            children: [
+              Tooltip(
+                message: "Only the doctor can call you.",
+                child: GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Only the doctor can call you."),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.call,
+                    size: 28,
+                    color: Colors.teal.withOpacity(0.4),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Tooltip(
+                message: "Only the doctor can video call you.",
+                child: GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Only the doctor can video call you."),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.videocam,
+                    size: 28,
+                    color: Colors.teal.withOpacity(0.4),
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
-        Row(
-          children: [
-            Tooltip(
-              message: "Only the doctor can call you.",
-              child: GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Only the doctor can call you."),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: Icon(
-                  Icons.call,
-                  size: 28,
-                  color: Colors.teal.withOpacity(0.4),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Tooltip(
-              message: "Only the doctor can video call you.",
-              child: GestureDetector(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Only the doctor can video call you."),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: Icon(
-                  Icons.videocam,
-                  size: 28,
-                  color: Colors.teal.withOpacity(0.4),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
+
   Widget _buildLabRequestTab() {
     return Column(
       children: [
@@ -286,7 +319,7 @@ class _PatientAppointmentChatScreenState
               child: LoadingMessage(),
             );
           }
-          if (labsRequested.patientLabsRequest.isEmpty) {
+          if (labsRequested.doctorLabsRequest.isEmpty) {
             return const Center(
               child: Text("No Lab Requested Found"),
             );
@@ -294,9 +327,9 @@ class _PatientAppointmentChatScreenState
           return ListView.builder(
               controller: _scrollController,
               padding: EdgeInsets.all(15),
-              itemCount: labsRequested.patientLabsRequest.length,
+              itemCount: labsRequested.doctorLabsRequest.length,
               itemBuilder: (context, index) {
-                final item = labsRequested.patientLabsRequest[index];
+                final item = labsRequested.doctorLabsRequest[index];
                 final date =
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final labRequestCount = item.requestTests?.length ?? 0;
@@ -542,6 +575,11 @@ class _PatientAppointmentChatScreenState
             );
           }),
         ),
+        // if(widget.isReviewed == 'false') _buildFeedbackButton(),
+
+        (widget.status == 2 && widget.isReviewed == 'false')
+            ? _buildFeedbackButton()
+            : SizedBox.shrink()
         // Padding(
         //   padding: const EdgeInsets.all(16.0),
         //   child: SizedBox(
@@ -552,19 +590,48 @@ class _PatientAppointmentChatScreenState
         //         print("appointmentId ${widget.id}");
         //         print("pateintId ${widget.patientId}");
         //         print("doctorId ${widget.doctorId}");
+        //         _feeback();
+
         //       },
         //       style: ElevatedButton.styleFrom(
-        //         backgroundColor: Colors.teal,
+        //         backgroundColor: Colors.green,
         //         padding: const EdgeInsets.symmetric(vertical: 14),
         //         shape: RoundedRectangleBorder(
         //             borderRadius: BorderRadius.circular(12)),
         //       ),
-        //       child: const Text("Add Prescription",
+        //       child: const Text("Feedback",
         //           style: TextStyle(fontSize: 16, color: Colors.white)),
         //     ),
         //   ),
         // ),
       ],
+    );
+  }
+
+  Widget _buildFeedbackButton() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            print("appointmentId ${widget.id}");
+            print("pateintId ${widget.patientId}");
+            print("doctorId ${widget.doctorId}");
+            _feeback();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: const Text(
+            "Feedback",
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
+        ),
+      ),
     );
   }
 
@@ -714,7 +781,7 @@ class _PatientAppointmentChatScreenState
                 _addLabs();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
+                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -745,7 +812,9 @@ class _PatientAppointmentChatScreenState
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
                 tabs: [
-                  Tab(text: "Lab Request",),
+                  Tab(
+                    text: "Lab Request",
+                  ),
                   Tab(text: "Prescription"),
                   Tab(text: "Labs"),
                 ],

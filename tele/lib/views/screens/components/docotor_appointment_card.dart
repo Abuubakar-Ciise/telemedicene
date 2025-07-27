@@ -310,44 +310,44 @@ class DoctorAppointmentCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        child: InkWell(
-                          onTap: () {
-                            print("hi");
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                                context: context,
-                                builder: (context) {
-                                  return NotifyBottomSheet(
-                                      patientToken: patientToken,
-                                      appointmentDate: appointmentDate,
-                                      appointmentTime: appointmentTime,
-                                      doctorName: doctorName);
-                                });
-                          },
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 9),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Notify',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: Material(
+                    //     child: InkWell(
+                    //       onTap: () {
+                    //         print("hi");
+                    //         showModalBottomSheet(
+                    //           isScrollControlled: true,
+                    //             context: context,
+                    //             builder: (context) {
+                    //               return NotifyBottomSheet(
+                    //                   patientToken: patientToken,
+                    //                   appointmentDate: appointmentDate,
+                    //                   appointmentTime: appointmentTime,
+                    //                   doctorName: doctorName);
+                    //             });
+                    //       },
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       child: Container(
+                    //         padding: const EdgeInsets.symmetric(vertical: 9),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.green,
+                    //           borderRadius: BorderRadius.circular(8),
+                    //         ),
+                    //         child: const Center(
+                    //           child: Text(
+                    //             'Notify',
+                    //             style: TextStyle(
+                    //               color: Colors.white,
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.w500,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
               ),

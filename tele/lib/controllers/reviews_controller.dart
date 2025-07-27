@@ -11,10 +11,11 @@ class ReviewsController extends GetxController{
       String comments,
       String doctorId,
       String patientId,
+      String appointmentId,
       double rating) async {
     try {
       isLoading.value = true;
-      final response = await ApiPostServices().feedbackPatient(comments, doctorId, patientId, rating);
+      final response = await ApiPostServices().feedbackPatient(comments, doctorId, patientId, rating,appointmentId);
       toastification.show(
         type: response['success']
             ? ToastificationType.success

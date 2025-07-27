@@ -180,32 +180,32 @@ class FirebaseNotificationHandler {
     switch (type) {
       case 'appointment_booking':
         route = userType == '0' 
-            ? '/doctor_appointments' 
-            : '/appointments';
+            ? '/doctormainscreen' 
+            : '/mainscreen';
         break;
         
       case 'appointment_completed':
         route = userType == '0' 
-            ? '/doctor_history' 
-            : '/history';
+            ? '/doctormainscreen' 
+            : '/mainscreen';
         break;
         
       case 're_appointment':
         route = userType == '0' 
-            ? '/doctor_reschedule' 
-            : '/reschedule';
+            ? '/doctormainscreen' 
+            : '/mainscreen';
         break;
         
       case 'new_prescription':
         route = userType == '0' 
-            ? '/doctor_prescriptions' 
-            : '/prescriptions';
+            ? '/doctormainscreen' 
+            : '/mainscreen';
         break;
         
       case 'lab_upload':
       route = userType == '0' 
           ? '/doctormainscreen'
-           : '/labs';
+           : '/mainscreen';
         break;
         case 'Test':
       route = userType == '0' 
@@ -214,7 +214,7 @@ class FirebaseNotificationHandler {
         break;
       case 'remmembaring_appointment':
         route = userType == '0' 
-            ? '/doctor_labs' 
+            ? '/doctormainscreen' 
             : '/labs';
         break;
         

@@ -92,7 +92,6 @@ Future<void> main() async {
   if (userId != null) {
     await ApiGetServices.updateFcmToken(userId);
   }
-
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
     final userData = await StorageService.getUserData();
     final userId = userData["userId"];
@@ -100,6 +99,7 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
+  
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   runApp(ToastificationWrapper(
     child: MyApp(),

@@ -132,7 +132,7 @@ class ApiPostServices {
 
   /// feedbackPatient
   Future<Map<String, dynamic>> feedbackPatient(
-      String comments, String doctorId, String patientId, double rating) async {
+      String comments, String doctorId, String patientId, double rating,String appointmentId ) async {
     try {
       final response = await http.post(Uri.parse('$url/feedbackPatient'),
           headers: {'Content-Type': 'application/json'},
@@ -140,6 +140,7 @@ class ApiPostServices {
             "comments": comments,
             "doctor_id": doctorId,
             "patient_id": patientId,
+            "appointment_id": appointmentId,
             "rating": rating
           }));
       if (response.statusCode == 200) {

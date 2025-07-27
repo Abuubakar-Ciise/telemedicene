@@ -37,7 +37,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Appointments'),
+        title: Text('My Treatment'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -73,6 +73,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
                   doctorId: appointment.doctorId,
                   patientId:appointment.patientId ,
                   status: appointment.status,
+                  isReviewed: appointment.isReviewed
                   // /status: appointment.status
                   ),
                 );

@@ -193,7 +193,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
 
 class DottedBorderPlaceholder extends StatelessWidget {
   const DottedBorderPlaceholder({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return Container(

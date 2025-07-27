@@ -24,6 +24,7 @@ class PatientAppointmentCard extends StatelessWidget {
   final String doctorId;
   final String patientId;
   final int status;
+  final String isReviewed;
 
   const PatientAppointmentCard({
     super.key,
@@ -41,6 +42,7 @@ class PatientAppointmentCard extends StatelessWidget {
     required this.doctorId,
     required this.patientId,
     required this.status,
+    required this.isReviewed,
   });
 
   @override
@@ -101,6 +103,8 @@ class PatientAppointmentCard extends StatelessWidget {
                           patientPhone: patientPhone,
                           doctorId: doctorId,
                           patientId: patientId,
+                          status: status,
+                          isReviewed: isReviewed,
                         ),
                       ),
                     );

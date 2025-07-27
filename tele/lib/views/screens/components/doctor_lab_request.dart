@@ -178,7 +178,7 @@ class _DoctorLabRequestState extends State<DoctorLabRequest> {
                   icon: const Icon(Icons.add),
                   label: const Text("Add Another Test"),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.blue,
+                    foregroundColor: Colors.green,
                     side: const BorderSide(color: Colors.blue),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     minimumSize: const Size.fromHeight(50),
@@ -198,11 +198,11 @@ class _DoctorLabRequestState extends State<DoctorLabRequest> {
         child: ElevatedButton(
           onPressed: submitLabRequests,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.green,
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
-          child: const Text("Submit Request", style: TextStyle(fontSize: 16)),
+          child: const Text("Submit Request", style: TextStyle(fontSize: 16,color: Colors.white),),
         ),
       ),
     );
