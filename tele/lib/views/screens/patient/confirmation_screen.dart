@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/payment_controller.dart';
 import 'package:tele/services/new_firebase_send_message.dart';
+import 'package:tele/services/post_api_services.dart';
 import 'package:tele/views/screens/PaymentStatusScreen.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
@@ -225,6 +227,8 @@ class ConfirmationScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: () async {
+          final String title = 'New Appointment';
+          final String body = "You have a new booking from ${patientData['name']} on $selectedDate at $selectedTime.";
           await paymentController.pay(
               phone: patientData['phone']!,
               amount: doctor.consultationfee,
@@ -233,10 +237,11 @@ class ConfirmationScreen extends StatelessWidget {
               apiKey: apikey);
               await NewFirebaseSendMessage().sendAppointmentNotificationToDoctor(
               doctor.doctorToken,
-              title: "New Appointment",
-              body:
-                  "You have a new booking from ${patientData['name']} on $selectedDate at $selectedTime.",
+              title: title,
+              body: body,
             );
+            await ApiPostServices()
+          .saveNotifcation(title, body, doctor.id, '');
           if (paymentController.isPaymentSuccessful.value) {
             await paymentController.bookAndPayController(
                 doctor.id,

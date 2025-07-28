@@ -1,6 +1,7 @@
 // controllers/labs_controller.dart
 import 'dart:io';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:tele/controllers/labs_report_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/new_firebase_send_message.dart';
@@ -31,16 +32,18 @@ class LabsController extends GetxController {
     isUploading.value = false;
 
     if (result['success'] == true) {
-       // ✅ Send FCM notification to doctor
+      final String title = "New Lab Report";
+      final String message =
+          "A patient uploaded a new lab result. Tap to review.";
+      // ✅ Send FCM notification to doctor
       await NewFirebaseSendMessage().sendLabUploadNotificationToDoctor(
-        token: doctorToken,
-        title: "New Lab Report",
-        body: "A patient uploaded a new lab result. Tap to review.",
-      );
+          token: doctorToken, title: title, body: message);
+      await ApiPostServices()
+          .saveNotifcation(title, message, doctorId, '');
       final labsReportController = Get.find<LabsReportController>();
-    await labsReportController.labsReports(patientId, doctorId, appointmentId);
+      await labsReportController.labsReports(
+          patientId, doctorId, appointmentId);
 
-    
       toastification.show(
         context: Get.context!,
         title: const Text("Success"),
@@ -59,6 +62,7 @@ class LabsController extends GetxController {
       );
     }
   }
+
   Future<void> uploadProfilePicture(
       {required String id, required File imageFile}) async {
     isUploading.value = true;

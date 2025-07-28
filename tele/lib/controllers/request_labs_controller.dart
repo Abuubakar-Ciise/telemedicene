@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:tele/controllers/labs_requested_controller.dart';
 import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/services/post_api_services.dart';
@@ -28,14 +29,17 @@ class RequestLabsController extends GetxController {
       notes: notes);
     
     isLoading.value = false;
-
+    final title = "New Lab Request Issued";
+    final body = "Your doctor has submitted a new lab request. Tap to view details.";
     // notify patient
     if(response['success'] == true){
       await NewFirebaseSendMessage().sendLabRequestNotificationToPatient(
        token: patientToken,
-       title: "New Lab Request Issued",
-       body: "Your doctor has submitted a new lab request. Tap to view details.",
+       title: title,
+       body: body
      );
+     await ApiPostServices()
+          .saveNotifcation(title, body, '', patientId);
      // Refresh the prescription list
      final labsRequestedController = Get.put(LabsRequestedController());
      await labsRequestedController.getDoctorLabsRequest(patientId: patientId, doctorId: doctorId, appointmentId: appointmentId);

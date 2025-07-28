@@ -365,7 +365,9 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
                         widget.doctorName,
                        widget.appointmentTime,
                        widget.patientToken,
-                       widget.doctorToken
+                       widget.doctorToken,
+                       widget.doctorId,
+                       widget.patientId
                       );
                      
                     }

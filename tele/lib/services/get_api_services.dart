@@ -11,6 +11,7 @@ import 'package:tele/Models/hospital_model.dart';
 import 'package:tele/Models/lab_report_model.dart';
 import 'package:tele/Models/lab_request_Model.dart';
 import 'package:tele/Models/patient_appointements_model.dart';
+import 'package:tele/Models/notifications_model.dart';
 import 'package:tele/Models/self_managment_models.dart';
 import 'package:tele/Models/shift_model.dart';
 import 'package:tele/Models/specialist_model.dart';
@@ -600,4 +601,94 @@ class ApiGetServices {
       return [];
     }
   }
+
+  // // get patient_notification
+  // Future<List<PatientNotification>> patientNotification(String patientId) async {
+  //   try {
+  //     final response = await http.post(Uri.parse('$url/patient_notification'),
+  //     headers: {'content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "patient_id": patientId
+  //     })
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       if (data['success']) {
+  //         return (data['record'] as List)
+  //             .map((hospital) => PatientNotification.fromJson(hospital))
+  //             .toList();
+  //       } else {
+  //         throw Exception("API Error: ${data['message']}");
+  //       }
+  //     } else {
+  //       throw Exception("Server Error: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print("Fetch Error: $e");
+  //     return [];
+  //   }
+  // }
+  //   // get doctor_notification
+  // Future<List<DoctorNotification>> doctorNotification(String doctorId) async {
+  //   try {
+  //     final response = await http.post(Uri.parse('$url/doctor_notification'),
+  //     headers: {'content-Type': 'application/json'},
+  //     body: jsonEncode({
+  //       "doctor_id": doctorId
+  //     })
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       if (data['success']) {
+  //         return (data['record'] as List)
+  //             .map((hospital) => DoctorNotification.fromJson(hospital))
+  //             .toList();
+  //       } else {
+  //         throw Exception("API Error: ${data['message']}");
+  //       }
+  //     } else {
+  //       throw Exception("Server Error: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print("Fetch Error: $e");
+  //     return [];
+  //   }
+  // }
+  // update way 
+  Future<List<T>> fetchNotification<T>({
+    required String userId,
+    required String userType, // 'doctor' or 'patient'
+    required T Function(Map<String, dynamic>) fromJson,
+  }) async {
+    final endpoint = userType == 'patient'
+        ? '$url/patient_notification'
+        : '$url/doctor_notification';
+
+    final body = userType == 'patient'
+        ? {'patient_id': userId}
+        : {'doctor_id': userId};
+
+    try {
+      final response = await http.post(
+        Uri.parse(endpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success']) {
+          return (data['record'] as List).map((e) => fromJson(e)).toList();
+        } else {
+          throw Exception("API Error: ${data['message']}");
+        }
+      } else {
+        throw Exception("Server Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Fetch Error: $e");
+      return [];
+    }
+  }
+
 }

@@ -99,7 +99,6 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
-  
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   runApp(ToastificationWrapper(
     child: MyApp(),

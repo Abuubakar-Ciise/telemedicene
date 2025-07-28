@@ -229,7 +229,9 @@ class DoctorAppointmentCard extends StatelessWidget {
                                                 doctorName,
                                                 appointmentTime,
                                                 patientToken,
-                                                doctorToken);
+                                                doctorToken,
+                                                doctorId,
+                                                patientId);
                                       },
                                       patientToken: patientToken,
                                       doctorName: doctorName,

@@ -29,12 +29,16 @@ class WritePrescriptionController extends GetxController {
     isLoading.value = false;
 
     if (response['success'] == true) {
+      final title = "New Prescription Issued";
+    final body = "Your doctor has written a new prescription. Tap to view it.";
        await NewFirebaseSendMessage().sendPrescriptionNotificationToPatient(
         token: patientToken,
-        title: "New Prescription Issued",
-        body: "Your doctor has written a new prescription. Tap to view it.",
+        title: title,
+        body: body
       );
       // Refresh the prescription list
+      await ApiPostServices()
+          .saveNotifcation(title, body, '', patientId);
       final prescriptionController = Get.find<DoctorPrescriptionController>();
       await prescriptionController.getPrescriptions(doctorId, patientId, appointmentId,);
 

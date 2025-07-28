@@ -131,8 +131,8 @@ class ApiPostServices {
   }
 
   /// feedbackPatient
-  Future<Map<String, dynamic>> feedbackPatient(
-      String comments, String doctorId, String patientId, double rating,String appointmentId ) async {
+  Future<Map<String, dynamic>> feedbackPatient(String comments, String doctorId,
+      String patientId, double rating, String appointmentId) async {
     try {
       final response = await http.post(Uri.parse('$url/feedbackPatient'),
           headers: {'Content-Type': 'application/json'},
@@ -196,48 +196,92 @@ class ApiPostServices {
   //       'message': 'Error saving labs record: $e'
   //     };
   //   }
+  // // }
+  // Future<Map<String, dynamic>> saveLabsRecordWithFile({
+  //   required String patientId,
+  //   required String doctorId,
+  //   required String appointmentId,
+  //   required File imageFile,
+  // }) async {
+  //   try {
+  //     final uri = Uri.parse('$url/save_labs_record');
+  //     final request = http.MultipartRequest('POST', uri);
+
+  //     // Add file
+  //     request.files.add(
+  //       await http.MultipartFile.fromPath('file', imageFile.path),
+  //     );
+
+  //     // Add fields
+  //     request.fields['patient_id'] = patientId;
+  //     request.fields['doctor_id'] = doctorId;
+  //     request.fields['appointment_id'] = appointmentId;
+
+  //     final response = await request.send();
+  //     final resBody = await http.Response.fromStream(response);
+
+  //     if (response.statusCode == 200) {
+  //       return {
+  //         'success': true,
+  //         'body': resBody.body,
+  //       };
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': 'HTTP ${response.statusCode}: ${resBody.body}',
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {
+  //       'success': false,
+  //       'message': 'Exception: $e',
+  //     };
+  //   }
   // }
   Future<Map<String, dynamic>> saveLabsRecordWithFile({
-    required String patientId,
-    required String doctorId,
-    required String appointmentId,
-    required File imageFile,
-  }) async {
-    try {
-      final uri = Uri.parse('$url/save_labs_record');
-      final request = http.MultipartRequest('POST', uri);
+  required String patientId,
+  required String doctorId,
+  required String appointmentId,
+  required File imageFile,
+}) async {
+  try {
+    final uri = Uri.parse('$url/save_labs_record');
+    final request = http.MultipartRequest('POST', uri);
 
-      // Add file
-      request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
+    request.files.add(
+      await http.MultipartFile.fromPath('file', imageFile.path), // Confirm key name with backend
+    );
 
-      // Add fields
-      request.fields['patient_id'] = patientId;
-      request.fields['doctor_id'] = doctorId;
-      request.fields['appointment_id'] = appointmentId;
+    request.fields['patient_id'] = patientId;
+    request.fields['doctor_id'] = doctorId;
+    request.fields['appointment_id'] = appointmentId;
 
-      final response = await request.send();
-      final resBody = await http.Response.fromStream(response);
+    final response = await request.send();
+    final resBody = await http.Response.fromStream(response);
+    final responseJson = jsonDecode(resBody.body);
 
-      if (response.statusCode == 200) {
-        return {
-          'success': true,
-          'body': resBody.body,
-        };
-      } else {
-        return {
-          'success': false,
-          'message': 'HTTP ${response.statusCode}: ${resBody.body}',
-        };
-      }
-    } catch (e) {
+    print("📦 Upload Response Body: ${resBody.body}");
+
+    if (response.statusCode == 200 && responseJson['success'] == true) {
+      return {
+        'success': true,
+        'data': responseJson['data'] ?? {},
+        'message': responseJson['message'] ?? 'Upload success',
+      };
+    } else {
       return {
         'success': false,
-        'message': 'Exception: $e',
+        'message': responseJson['message'] ?? 'Upload failed',
       };
     }
+  } catch (e) {
+    return {
+      'success': false,
+      'message': 'Exception: $e',
+    };
   }
+}
+
 
   // updateProfilePicture
   Future<Map<String, dynamic>> updateProfilePicture(
@@ -353,6 +397,88 @@ class ApiPostServices {
     } catch (e) {
       print("error from save_labRequest $e");
       return {"success": false, "message": "Failed to connect to server"};
+    }
+  }
+
+  //check---
+  // Map<String, dynamic> getNotificationBody(
+  //   String title,
+  //   String message,
+  //   String doctorId,
+  //   String patientId,
+  // ) {
+  //   if (doctorId.isNotEmpty) {
+  //     return {
+  //       "title": title,
+  //       "message": message,
+  //       "doctor_id": doctorId,
+  //     };
+  //   } else if (patientId.isNotEmpty) {
+  //     return {
+  //       "title": title,
+  //       "message": message,
+  //       "patient_id": patientId,
+  //     };
+  //   }
+  //   throw Exception('Both doctorId and patientId are empty');
+  // }
+  Map<String, dynamic> buildNotificationBody({
+  required String title,
+  required String message,
+  String? doctorId,
+  String? patientId,
+}) {
+  if (doctorId != null && doctorId.isNotEmpty) {
+     print("✅✅✅ i check doctor ");
+    return {
+      'title': title,
+      'message': message,
+      'doctor_id': doctorId,
+    };
+  } else if (patientId != null && patientId.isNotEmpty) {
+     print("✅✅✅ i check patient ");
+    return {
+      'title': title,
+      'message': message,
+      'patient_id': patientId,
+    };
+  }
+  throw Exception('Either doctorId or patientId must be provided.');
+}
+
+
+  //save_message
+  Future<Map<String, dynamic>> saveNotifcation(
+      String title, String message, String doctorId, String patientId) async {
+    try {
+      final body = buildNotificationBody(title: title,message:  message,doctorId:  doctorId,patientId:  patientId);
+      print("✅ body---$body");
+      final response = await http.post(
+        Uri.parse("$url/save_message"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+      print("✅✅✅ /save_message");
+      print(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        return {
+          "success": responseBody['success'],
+          // "message": responseBody['message']
+        };
+      } else {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        print("Response is not JSON: ${response.body}");
+        return {
+          "success": false,
+          // "message": responseBody['message'] ?? "Unknown error occurred",
+        };
+      }
+    } catch (e) {
+      print("error from save_labRequest $e");
+      // return {"success": false, "message": "Failed to connect to server"};
+      return {"success": false};
     }
   }
 }
