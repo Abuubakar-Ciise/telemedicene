@@ -54,7 +54,7 @@ Future<void> main() async {
     description: 'General notifications', // optional description
     importance: Importance.high,
   );
-
+  
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -99,23 +99,25 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
+  RemoteMessage? initialMessage  = await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   runApp(ToastificationWrapper(
-    child: MyApp(),
+    child: MyApp(initialMessage: initialMessage,),
   ));
 }
 
-void handleInitialNotification(FirebaseNotificationHandler handler) async {
-  RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
-  if (initialMessage != null) {
-    print("App launched by notification");
-    await handler.handleNotificationNavigation(initialMessage.data);
-  }
-}
+// void handleInitialNotification(FirebaseNotificationHandler handler) async {
+//   RemoteMessage? initialMessage =
+//       await FirebaseMessaging.instance.getInitialMessage();
+//   if (initialMessage != null) {
+//     print("App launched by notification");
+//     await handler.handleNotificationNavigation(initialMessage.data);
+//   }
+// }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final RemoteMessage? initialMessage ;
+  const MyApp({super.key, required this.initialMessage});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -131,11 +133,20 @@ class _MyAppState extends State<MyApp> {
     //    FirebaseNotificationHandler(navigatorKey).initNotification();
     //    handleInitialNotification(navigatorKey).int;
     // }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final handler = FirebaseNotificationHandler(navigatorKey);
-      handler.initNotification();
-      handleInitialNotification(handler); // ✅ Correct usage
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final handler = FirebaseNotificationHandler(navigatorKey);
+    //   handler.initNotification();
+    //   handleInitialNotification(handler); // ✅ Correct usage
+    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final handler = FirebaseNotificationHandler(navigatorKey);
+    await handler.initNotification();
+
+    if (widget.initialMessage != null) {
+      print("App launched via terminated notification.");
+      await handler.handleNotificationNavigation(widget.initialMessage!.data);
+    }
+  });
   }
 
   Future<String?> _isLoggedIn() async {

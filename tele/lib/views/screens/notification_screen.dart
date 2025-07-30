@@ -243,7 +243,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     return Icons.notifications_none;
   }
-
   Color _getColorForTitle(String title) {
     final t = title.toLowerCase();
 
