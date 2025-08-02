@@ -35,7 +35,26 @@ class _DoctorAppointmentScreenState extends State<ConseltaionScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('Appointments'),
+        title: Text(
+          'Consultation',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            // Use GetX navigation to go back
+            if (Navigator.canPop(context)) {
+              Get.back();
+            } else {
+              // If can't go back, navigate to home screen
+              Get.offAllNamed('/doctormainscreen');
+            }
+          },
+        ),
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

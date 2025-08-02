@@ -37,7 +37,26 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        title: Text('My Treatment'),
+        title: Text(
+          'My Treatment',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            // Use GetX navigation to go back
+            if (Navigator.canPop(context)) {
+              Get.back();
+            } else {
+              // If can't go back, navigate to home screen
+              Get.offAllNamed('/mainscreen');
+            }
+          },
+        ),
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -46,7 +65,36 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
             return LoadingMessage();
           }
           if(appoinmentsController.appointments.isEmpty){
-            return Center(child: Text("No Appointments Found"));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.medical_services_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    "No Appointments Found",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "You don't have any treatment appointments yet",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[500],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
           }
           return ListView.builder(
             itemCount: appoinmentsController.appointments.length,
