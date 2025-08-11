@@ -182,6 +182,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming_yoer/entities/entities.dart';
 import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
 import 'package:tele/services/StorageService.dart';
+import 'package:tele/services/background_call_handler.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/patient/ReviewsScreen.dart';
 import 'package:tele/main.dart';
@@ -194,7 +195,7 @@ class CallKitService {
   static bool _callAccepted = false;
   static String? url = Config.baseUrl;
 
-  static bool get isCallActive => _isCallActive;
+  static bool get isCallActive => _isCallActive || BackgroundCallHandler.isCallActive;
   static bool get isIncoming => _isIncoming;
 
   static void setCallAccepted() {
@@ -203,6 +204,7 @@ class CallKitService {
 
   static void clearCallId() {
     _resetCallState();
+    BackgroundCallHandler.clearCallState();
   }
 
   static void _resetCallState() {

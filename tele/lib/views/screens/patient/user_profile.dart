@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Map<String, String?> userData = await StorageService.getUserData();
     setState(() {
       id = userData['userId'] ?? '';
-      name = userData['username'] ?? 'unknow';
+      name = userData['username'] ?? 'unknown';
       phone = userData['phone'] ?? 'N/A';
       address = userData['address'] ?? "N/A";
       username = userData['nickname'] ?? "N/A";
@@ -51,23 +51,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Get.offAllNamed(
         '/login'); // Navigate to login screen & remove all previous screens
   }
-  void updateProfileScreen(BuildContext context){
-    showModalBottomSheet (
-      context: context, 
+
+  void updateProfileScreen(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
       builder: (_) => UpdateProfilePictureScreen(id: id),
-      );
+    );
   }
-  void changePassword(BuildContext context){
-    showModalBottomSheet (
-      context: context, 
+
+  void changePassword(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
       builder: (_) => ChangePasswordScreen(id: id),
-      );
+    );
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -195,14 +196,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            _buildSettingsRow(Icons.person, 'Change Profile Picture',onTap:() => updateProfileScreen(context)),
-                            _buildSettingsRow(Icons.lock, 'Change Password',onTap: () => changePassword(context)),
+                            _buildSettingsRow(
+                                Icons.person, 'Change Profile Picture',
+                                onTap: () => updateProfileScreen(context)),
+                            _buildSettingsRow(Icons.lock, 'Change Password',
+                                onTap: () => changePassword(context)),
                             // _buildSettingsRow(Icons.pin, 'Change Pin'),
-                            _buildSettingsRow(Icons.language, 'Change Language'),
-                            
+                            _buildSettingsRow(
+                                Icons.language, 'Change Language'),
                           ],
                         ),
                       ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
+                      // // downloads
+                      // Container(
+                      //   padding: const EdgeInsets.all(16),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(15),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //         color: Colors.black12,
+                      //         blurRadius: 5,
+                      //         spreadRadius: 2,
+                      //       ),
+                      //     ],
+                      //   ),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: [
+                      //       const Text(
+                      //         "Downloads",
+                      //         style: TextStyle(
+                      //           fontSize: 16,
+                      //           fontWeight: FontWeight.bold,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(height: 10),
+                      //       // _buildDownloadsRow(Icons.person, 'Downloads',onTap:() => updateProfileScreen(context)),
+                      //       _buildDownloadsRow(
+                      //           Icons.download, 'Offline Downloads', onTap: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (_) => OfflineSavedItemsScreen()),
+                      //         );
+                      //       }),
+                      //     ],
+                      //   ),
+                      // ),
                       SizedBox(
                         height: 20,
                       ),
@@ -323,4 +367,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-}
+
+//   // Helper widget to build each row in the Settings section
+//   Widget _buildDownloadsRow(IconData icon, String title,
+//       {VoidCallback? onTap}) {
+//     return InkWell(
+//       onTap: onTap,
+//       child: Padding(
+//         padding: const EdgeInsets.symmetric(vertical: 8),
+//         child: Row(
+//           children: [
+//             Icon(icon, color: Colors.black, size: 20),
+//             const SizedBox(width: 10),
+//             Text(title),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+ }

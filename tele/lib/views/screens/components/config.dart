@@ -18,6 +18,10 @@ class Config {
     Map<String, String?> userData = await StorageService.getUserData();
     return userData["userType"];
   }
+  static Future<String?> getUserName() async {
+    Map<String, String?> userData = await StorageService.getUserData();
+    return userData["username"];
+  }
  static Future<String?> getUserToken() async {
   Map<String, String?> userData = await StorageService.getUserData();
   return userData["token"];

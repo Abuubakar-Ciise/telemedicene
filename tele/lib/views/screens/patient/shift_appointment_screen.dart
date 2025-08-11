@@ -118,7 +118,8 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
         morning.add({'shiftId': shiftId, 'time': time});
       } else if (hour >= 12 && hour < 17) {
         afternoon.add({'shiftId': shiftId, 'time': time});
-      } else if (hour >= 17 && hour < 21) {
+      // } else if (hour >= 17 && hour < 21) {
+      } else {
         evening.add({'shiftId': shiftId, 'time': time});
       }
     }

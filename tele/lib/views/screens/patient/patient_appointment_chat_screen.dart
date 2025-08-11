@@ -417,7 +417,7 @@ class _PatientAppointmentChatScreenState
                             ),
                             child: const Center(
                               child: Text(
-                                "Tap to view full prescription",
+                                "Tap to view full lab request",
                                 style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w500,
@@ -425,6 +425,7 @@ class _PatientAppointmentChatScreenState
                                 ),
                               ),
                             ),
+                            
                           ),
                         ],
                       ),

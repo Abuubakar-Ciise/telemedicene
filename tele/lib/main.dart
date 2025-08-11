@@ -239,89 +239,26 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import 'package:tele/controllers/user_Controller.dart';
 import 'package:tele/controllers/internet_controller.dart';
 import 'package:tele/controllers/doctor_transection_controller.dart';
 import 'package:tele/routes/app_routes.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/access_token_service.dart';
-import 'package:tele/services/firebase_notification_handler.dart';
 import 'package:tele/services/get_api_services.dart';
+import 'package:tele/services/firebase_notification_handler.dart';
+import 'package:tele/services/background_message_handler.dart';
 import 'package:tele/views/screens/CallPage/firebase_api.dart';
-import 'package:tele/views/screens/NoInternetConnection.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-@pragma('vm:entry-point') // required for background message handler
-// Future<void> handleBackgroundMessage(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   // Show basic debug output or do background logic here
-//   print('Handling background message: ${message.messageId}');
-// }
-
-Future<void> handleBackgroundMessage(RemoteMessage message) async {
-  await Firebase.initializeApp();
-
-  print('Handling background message: ${message.messageId}');
-  print('Background message data: ${message.data}');
-
-  // Always show local notification for background messages
-  // This overrides any system notification from FCM
-  print('🔔 DEBUG: Background message received - showing local notification');
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
-    'call_channel',
-    'Call Notifications',
-    description: 'Channel used for incoming call notifications',
-    importance: Importance.high,
-  );
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-    'default_channel',
-    'Default',
-    channelDescription: 'General notifications',
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(callChannel);
-
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-
-  // await flutterLocalNotificationsPlugin.show(
-  //   message.hashCode,
-  //   message.notification?.title ?? 'New Appointment',
-  //   message.notification?.body ?? 'You have a new appointment update',
-  //   platformChannelSpecifics,
-  //   payload: jsonEncode(message.data),
-  // );
-  final title = message.data['title'] ?? 'New Appointment';
-  final body = message.data['body'] ?? 'You have a new appointment update';
-
-  await flutterLocalNotificationsPlugin.show(
-    message.hashCode,
-    title,
-    body,
-    platformChannelSpecifics,
-    payload: jsonEncode(message.data),
-  );
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //hh
   await dotenv.load(fileName: '.env');
-
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: Config.firebaseapkey,
@@ -330,7 +267,6 @@ Future<void> main() async {
       projectId: Config.firebaseprojectid,
     ),
   );
-
   const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
     'call_channel',
     'Call Notifications',
@@ -340,42 +276,31 @@ Future<void> main() async {
   const AndroidNotificationChannel defaultChannel = AndroidNotificationChannel(
     'default_channel',
     'Default',
-    description: 'General notifications', // optional description
+    description: 'General notifications',
     importance: Importance.high,
   );
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(callChannel);
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(defaultChannel);
-
   final accessToken = await AccessTokenService().getAccessToken();
   final token = await FirebaseMessaging.instance.getToken();
-
   if (accessToken == null) {
     print("Failed to get access token.");
     return;
   }
-
-  print("this Your accessToken  $accessToken");
-  print("this Your token  $token");
-
+  print("Your accessToken: $accessToken");
+  print("Your FCM token: $token");
   Get.put(UserController());
   Get.put(DoctorTransectionController());
   Get.put(InternetController(), permanent: true);
-
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   await FirebaseNotification().initNotification();
-
   ZegoUIKit().init(appID: Config.appId, appSign: Config.appSign);
-
   Map<String, String?> userData = await StorageService.getUserData();
   final userId = userData["userId"];
   if (userId != null) {
@@ -388,48 +313,26 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
-  RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
-  FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
-  runApp(ToastificationWrapper(
-    child: MyApp(
-      initialMessage: initialMessage,
+  
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  runApp(
+    ToastificationWrapper(
+      child: MyApp(initialMessage: initialMessage),
     ),
-  ));
+  );
 }
 
-// void handleInitialNotification(FirebaseNotificationHandler handler) async {
-//   RemoteMessage? initialMessage =
-//       await FirebaseMessaging.instance.getInitialMessage();
-//   if (initialMessage != null) {
-//     print("App launched by notification");
-//     await handler.handleNotificationNavigation(initialMessage.data);
-//   }
-// }
 
 class MyApp extends StatefulWidget {
   final RemoteMessage? initialMessage;
   const MyApp({super.key, required this.initialMessage});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize Firebase notifications with a valid context
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   //  FirebaseNotificationHandler(navigatorKey).initNotification(context);
-    //    FirebaseNotificationHandler(navigatorKey).initNotification();
-    //    handleInitialNotification(navigatorKey).int;
-    // }
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   final handler = FirebaseNotificationHandler(navigatorKey);
-    //   handler.initNotification();
-    //   handleInitialNotification(handler); // ✅ Correct usage
-    // });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final handler = FirebaseNotificationHandler(navigatorKey);
       await handler.initNotification();
@@ -440,36 +343,19 @@ class _MyAppState extends State<MyApp> {
       }
     });
   }
-
   Future<String?> _isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('auth_token');
     String? userType = prefs.getString('userType');
-
     if (token != null && token.isNotEmpty) {
       return userType;
     } else {
       return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
-    // final internetController = Get.find<InternetController>();
-    // return Obx(() {
-    //       final internetController = Get.find<InternetController>();
-    //   if(!internetController.hasInternet.value){
-    //     return MaterialApp(
-    //       home:Scaffold(
-    //         appBar: AppBar(
-    //           title: const Text('Title'),
-    //         ),
-    //         body: NoInternetConnection(),
-    //       ),
-    //     );
-    //   }
-
-    return FutureBuilder(
+    return FutureBuilder<String?>(
       future: _isLoggedIn(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -487,13 +373,11 @@ class _MyAppState extends State<MyApp> {
         } else {
           String? userType = snapshot.data;
           String initialRoute = '/login';
-
           if (userType == "0") {
             initialRoute = '/doctormainscreen';
           } else if (userType == "1") {
             initialRoute = '/mainscreen';
           }
-
           return GetMaterialApp(
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
@@ -503,6 +387,5 @@ class _MyAppState extends State<MyApp> {
         }
       },
     );
-    // });
   }
 }

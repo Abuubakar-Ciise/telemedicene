@@ -33,15 +33,14 @@ class FirebaseApis {
       body: jsonEncode({
         "message": {
           "token": token,
-          "notification": {
-            "title": "Incoming Call",
-            "body": "$callerName is calling you",
-          },
           "android": {
             "priority": "high",
             "notification": {
               "click_action": "FLUTTER_NOTIFICATION_CLICK",
               "channel_id": "call_channel",
+              "sound": "default",
+              "tag": "call_invitation",
+              "sticky": false,
             }
           },
           "data": {
@@ -55,6 +54,8 @@ class FirebaseApis {
             "calleeToken": calleeToken,
             "doctor_id": doctorId,
             "patient_id": pateintId,
+            "title": "Incoming Call",
+            "body": "$callerName is calling you",
           }
         }
       }),

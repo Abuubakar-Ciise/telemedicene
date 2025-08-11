@@ -16,6 +16,7 @@ class LabRequestModel {
   final String doctorPhone;
   final String doctorName;
   final String patientName;
+
   LabRequestModel({
     required this.status,
     required this.id,
@@ -35,6 +36,7 @@ class LabRequestModel {
     required this.doctorName,
     required this.patientName,
   });
+
   factory LabRequestModel.fromJson(Map<String, dynamic> json) {
     return LabRequestModel(
       status: json['status'] ?? '',
@@ -48,7 +50,8 @@ class LabRequestModel {
       appointmentId: json['appointment_id'] ?? '',
       notes: json['notes'] ?? '',
       createDate: DateTime.parse(
-          json['create_date'] ?? DateTime.now().toIso8601String()),
+        json['create_date'] ?? DateTime.now().toIso8601String(),
+      ),
       patientGender: json['patient_Gender'] ?? '',
       patientAge: json['patient_Age'] ?? 0,
       shiftTime: json['shift_time'] ?? '',
@@ -59,6 +62,28 @@ class LabRequestModel {
       patientName: json['patient_name'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': status,
+      '_id': id,
+      'requested_tests': requestTests.map((e) => e.toJson()).toList(),
+      'sequence_id': sequenceId,
+      'patient_id': patientId,
+      'doctor_id': doctorId,
+      'appointment_id': appointmentId,
+      'notes': notes,
+      'create_date': createDate.toIso8601String(),
+      'patient_Gender': patientGender,
+      'patient_Age': patientAge,
+      'shift_time': shiftTime,
+      'shift_day': shiftDay,
+      'patient_phone': patientPhone,
+      'doctor_phone': doctorPhone,
+      'doctor_name': doctorName,
+      'patient_name': patientName,
+    };
+  }
 }
 
 class RequestedTests {
@@ -66,17 +91,29 @@ class RequestedTests {
   final String id;
   final String testName;
   final String description;
+
   RequestedTests({
     required this.priority,
     required this.id,
     required this.testName,
     required this.description,
   });
+
   factory RequestedTests.fromJson(Map<String, dynamic> json) {
     return RequestedTests(
-        priority: json['priority'] ?? '',
-        id: json['_id'] ?? '',
-        testName: json['test_name'] ?? '',
-        description: json['description'] ?? '');
+      priority: json['priority'] ?? '',
+      id: json['_id'] ?? '',
+      testName: json['test_name'] ?? '',
+      description: json['description'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'priority': priority,
+      '_id': id,
+      'test_name': testName,
+      'description': description,
+    };
   }
 }

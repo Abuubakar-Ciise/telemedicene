@@ -398,8 +398,16 @@ class FirebaseNotificationHandler {
         message.data,
       );
 
+      // Skip showing foreground notifications for call-related messages
+      // These are handled by the CallKit service
+      final messageType = message.data['type'];
+      if (messageType == 'call_invitation' || messageType == 'call_end' || messageType == 'call_accepted') {
+        print("🔔 DEBUG: Skipping foreground notification for call-related message: $messageType");
+        return;
+      }
+
       if (_isAppInForeground) {
-        print("🔔 DEBUG: App is in foreground - showing local notification");
+        print("🔔 DEBUG: App is in foreground - showing local notification for: $messageType");
         _showLocalNotification(message);
       } else {
         print("🔔 DEBUG: App is in background - skipping local notification (system will show)");
