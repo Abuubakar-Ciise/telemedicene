@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/Models/shift_model.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
@@ -59,8 +60,8 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
     loadUserData();
     daysOfWeek = getNextWeekDays();
     daysOfWeekList = getNextWeekDays();
-    daysOfWeekList[0] = 'Today';
-    daysOfWeekList[1] = 'Tomorrow';
+    daysOfWeekList[0] = 'Today'.tr();
+    daysOfWeekList[1] = 'Tomorrow'.tr();
 
     shiftController.currentDay.value = daysOfWeek[selectedDayIndex!];
     currentDate = getFormattedDate(selectedDayIndex!);
@@ -132,7 +133,7 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
         // : ToastificationType.error,
         type: ToastificationType.error,
         style: ToastificationStyle.flat,
-        title: Text('Error'),
+        title: Text('Error'.tr()),
         description: Text(test['message']),
         autoCloseDuration: const Duration(seconds: 3),
         // animationDuration: const Duration(microseconds: 300),
@@ -326,9 +327,9 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
                       toastification.show(
                         type: ToastificationType.error,
                         style: ToastificationStyle.flat,
-                        title: const Text('Error'),
+                        title: Text('Error'.tr()),
                         description:
-                            const Text('Please select an available time slot'),
+                            Text('Please select an available time slot'.tr()),
                         autoCloseDuration: const Duration(seconds: 3),
                         alignment: Alignment.topRight,
                         showProgressBar: true,
@@ -378,9 +379,9 @@ class _ReAppointmentScreenState extends State<ReAppointmentScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
                   ),
-                  child: const Text(
-                    "Set Appointment",
-                    style: TextStyle(
+                  child: Text(
+                    "Set Appointment".tr(),
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),

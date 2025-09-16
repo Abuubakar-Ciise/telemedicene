@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/views/screens/components/config.dart';
 
 class AppointmentCard extends StatefulWidget {
@@ -37,13 +38,13 @@ class _AppointmentCardState extends State<AppointmentCard> {
     String formattedDate = DateFormat('EEE MMMM yy').format(appointmentDate);
     // Determine status text and color
     Map<int, Map<String, dynamic>> statusInfo = {
-      0: {"text": "Pending", "color": Colors.orange},
-      1: {"text": "Confirmed", "color": Colors.green},
-      2: {"text": "Completed", "color": Colors.blue},
-      4: {"text": "Re Appointment", "color": Colors.green},
+      0: {"text": "pending".tr(), "color": Colors.orange},
+      1: {"text": "confirmed".tr(), "color": Colors.green},
+      2: {"text": "completed".tr(), "color": Colors.blue},
+      4: {"text": "re_appointment".tr(), "color": Colors.green},
     };
 
-    final statusText = statusInfo[widget.status]?["text"] ?? "Cancelled";
+    final statusText = statusInfo[widget.status]?["text"] ?? "cancelled".tr();
     final statusColor = statusInfo[widget.status]?["color"] ?? Colors.red;
     final url = Config.baseUrl;
 
@@ -62,8 +63,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Appointment date",
+                Text(
+                  "appointment_date".tr(),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.black54,

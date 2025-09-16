@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/controllers/re_appointment_controller.dart';
@@ -173,10 +174,10 @@ class DoctorAppointmentCard extends StatelessWidget {
                                 ],
                               ),
                               if (hasMultipleAppointments)
-                                const Padding(
+                                 Padding(
                                   padding: EdgeInsets.only(top: 4),
                                   child: Text(
-                                    "Multiple Appointments",
+                                    "multiple_appointments".tr(),
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.orange,
@@ -249,9 +250,9 @@ class DoctorAppointmentCard extends StatelessWidget {
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: Text(
-                                    'Complete',
+                                    'complete'.tr(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -294,9 +295,9 @@ class DoctorAppointmentCard extends StatelessWidget {
                                   color: Colors.green,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: Text(
-                                    'Re-Appointment',
+                                    're_appointment'.tr(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -370,8 +371,8 @@ class DoctorAppointmentCard extends StatelessWidget {
                 ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              child: const Text(
-                "Re-Appointment",
+              child: Text(
+                "re_appointment".tr(),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -392,8 +393,8 @@ class DoctorAppointmentCard extends StatelessWidget {
                 ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              child: const Text(
-                "In Progress",
+              child: Text(
+                "in_progress".tr(),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

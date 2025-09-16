@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/DoctorPrescriptionScreen.dart';
 import 'package:tele/PrescriptionScreen.dart';
 import 'package:tele/controllers/adds_controller.dart';
@@ -99,40 +100,40 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
     });
   }
 
-  final List<Map<String, dynamic>> doctorCategories = [
+  List<Map<String, dynamic>> get doctorCategories => [
     {
       "icon": Icons.healing,
-      "text": "Appointment",
+      "text": "appointments".tr(),
       "route": DoctorAppointmentScreen(),
       "color": Colors.blue,
     },
     // {
     //   "icon": Icons.healing,
-    //   "text": "Prescription",
+    //   "text": "prescription".tr(),
     //   "route": DoctorPrescriptionScreen(),
     //   "color": Colors.green,
     // },
     // {
     //   "icon": Icons.local_hospital,
-    //   "text": "Hospital",
+    //   "text": "hospital".tr(),
     //   "route": HospitalListScreen(),
-    //   "olor": Colors.purple,
+    //   "color": Colors.purple,
     // },
     {
       "icon": Icons.medical_services,
-      "text": "Consultation",
+      "text": "consultation".tr(),
       "route": ConseltaionScreen(),
       "color": Colors.pink,
     },
     {
       "icon": Icons.self_improvement,
-      "text": "Self-Management",
+      "text": "self_management".tr(),
       "route": Selfmanagement(),
       "color": Colors.red,
     },
     // {
     //   "icon": Icons.child_care,
-    //   "text": "Pediatrician",
+    //   "text": "pediatrician".tr(),
     //   "route": PrescriptionScreen(patientId: '', doctorId: '', appointmentId: '',),
     //   "color": Colors.orange,
     // },
@@ -141,11 +142,11 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   String getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good Morning,';
+      return 'good_morning'.tr();
     } else if (hour < 17) {
-      return 'Good Afternoon,';
+      return 'good_afternoon'.tr();
     } else {
-      return 'Good Evening,';
+      return 'good_evening'.tr();
     }
   }
   final List<String> quotes = [
@@ -372,9 +373,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                                 content: Text(
-                                    "No screen available for this service")),
+                                    "no_screen_available".tr())),
                           );
                         }
                       },

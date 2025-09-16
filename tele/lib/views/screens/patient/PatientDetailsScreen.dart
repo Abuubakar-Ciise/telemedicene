@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/patient/confirmation_screen.dart';
@@ -90,9 +91,9 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             Navigator.pop(context); // Navigates back to the previous screen
           },
         ),
-        title: const Text(
-          "Patient Details",
-          style: TextStyle(
+        title: Text(
+          "patient_details".tr(),
+          style: const TextStyle(
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -103,14 +104,14 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Full Name Input
-            const Text("Full name",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text("full_name".tr(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             TextField(
               readOnly: true,
               controller: nameController,
               decoration: InputDecoration(
-                hintText: "Enter your name",
+                hintText: "enter_your_name".tr(),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -120,15 +121,15 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             ),
 
             const SizedBox(height: 16),
-            const Text("Phone Number",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text("phone_number".tr(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             // Text("${DateFormat('MMM d, yyyy').format(widget.selectedDay)}"),
             TextField(
                keyboardType: TextInputType.number,
               controller: phoneController,
               decoration: InputDecoration(
-                hintText: "Enter your Number",
+                hintText: "enter_your_number".tr(),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -140,15 +141,15 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             const SizedBox(height: 16),
 
             // Age Input
-            const Text("Age",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text("age".tr(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             TextField(
               readOnly: true,
               controller: ageController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                hintText: "Enter your age",
+                hintText: "enter_your_age".tr(),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -160,8 +161,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
             const SizedBox(height: 16),
 
             // Gender Selection
-            const Text("Gender",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text("gender".tr(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             
             ToggleButtons(
@@ -175,24 +176,24 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
               children: [
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Text("Male")),
+                    child: Text("male".tr())),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Text("Female")),
+                    child: Text("female".tr())),
               ],
             ),
 
             const SizedBox(height: 16),
 
             // Problem Input
-            const Text("Write your problem",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            Text("write_your_problem".tr(),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             const SizedBox(height: 8),
             TextField(
               controller: problemController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: "Write your problem",
+                hintText: "write_your_problem".tr(),
                 filled: true,
                 fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
@@ -210,8 +211,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                 toastification.show(
                   type: ToastificationType.error,
                   style: ToastificationStyle.flat,
-                  title: const Text('Error'),
-                  description: const Text('Please tell us your problem'),
+                  title: Text('error'.tr()),
+                  description: Text('please_tell_us_your_problem'.tr()),
                   autoCloseDuration: const Duration(seconds: 3),
                   alignment: Alignment.topRight,
                   showProgressBar: true,
@@ -250,8 +251,8 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
                     borderRadius: BorderRadius.circular(10)),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: const Text("Next",
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text("next".tr(),
+                  style: const TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ],
         ),

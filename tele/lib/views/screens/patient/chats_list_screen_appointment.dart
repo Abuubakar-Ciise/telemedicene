@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/StorageService.dart';
@@ -38,7 +39,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'My Treatment',
+          'My Treatment'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -76,7 +77,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    "No Appointments Found",
+                    "No Appointments Found".tr(),
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.grey[600],
@@ -85,7 +86,7 @@ class _DoctorAppointmentScreenState extends State<ChatsListScreenAppointment> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "You don't have any treatment appointments yet",
+                    "You don't have any treatment appointments yet".tr(),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[500],

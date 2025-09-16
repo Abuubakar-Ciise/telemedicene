@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/Models/notifications_model.dart';
 import 'package:tele/controllers/notification_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
+
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -45,8 +47,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Scaffold(
-          body: Center(child: LoadingMessage(message: "Loading Notifications",)),
+        return Scaffold(
+          body: Center(child: LoadingMessage(message: "loading_notifications".tr(),)),
         );
       }
 
@@ -69,8 +71,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        title: const Text(
-          "Notifications",
+        title: Text(
+          "notifications".tr(),
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -123,8 +125,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
             // TODO: Add clear all notifications logic here
           },
           icon: const Icon(Icons.clear_all, color: Colors.white),
-          label: const Text(
-            "Clear All Notifications",
+          label: Text(
+            "clear_all_notifications".tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -204,11 +206,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Icon(Icons.notifications_off, size: 80, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              "No notifications yet.",
+              "no_notifications_yet".tr(),
               style: TextStyle(fontSize: 20, color: Colors.grey),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/DoctorPrescriptionDetailScreen.dart';
 import 'package:tele/DoctorPrescriptionScreen.dart';
@@ -299,9 +300,9 @@ class _DoctorAppointmentChatScreenState
             );
           }
           if (labsRequested.doctorLabsRequest.isEmpty) {
-            return const Center(
-              child: Text("No Lab Requested Found"),
-            );
+                          return Center(
+                child: Text("No Lab Requested Found".tr()),
+              );
           }
           return ListView.builder(
               controller: _scrollController,
@@ -313,8 +314,8 @@ class _DoctorAppointmentChatScreenState
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final labRequestCount = item.requestTests?.length ?? 0;
                 final summary = labRequestCount > 0
-                    ? "$labRequestCount lab request${labRequestCount > 1 ? 's' : ''} requested"
-                    : "No lab requests listed";
+                                         ? "${labRequestCount} lab request${labRequestCount > 1 ? 's' : ''} requested"
+                     : "No lab requests listed";
 
                 return GestureDetector(
                   onTap: () {
@@ -346,7 +347,10 @@ class _DoctorAppointmentChatScreenState
                                 size: 24,
                               ),
                               const SizedBox(width: 8),
-                              Text("${widget.doctorName}")
+                              Expanded(
+                                child: Text("${widget.doctorName}",
+                                    overflow: TextOverflow.ellipsis),
+                              )
                             ],
                           ),
                           const SizedBox(height: 10),
@@ -357,7 +361,7 @@ class _DoctorAppointmentChatScreenState
                               const Icon(Icons.person,
                                   size: 18, color: Colors.green),
                               const SizedBox(width: 6),
-                              Text("Patient: ${item.patientName}",
+                              Text("${'patient'.tr()}: ${item.patientName}",
                                   style: const TextStyle(fontSize: 14)),
                             ],
                           ),
@@ -368,7 +372,7 @@ class _DoctorAppointmentChatScreenState
                               const Icon(Icons.calendar_today,
                                   size: 18, color: Colors.orange),
                               const SizedBox(width: 6),
-                              Text("Date: $date",
+                              Text("${'date'.tr()}: $date",
                                   style: const TextStyle(fontSize: 14)),
                             ],
                           ),
@@ -430,8 +434,8 @@ class _DoctorAppointmentChatScreenState
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Add Lab Request",
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text("Add_Lab_Request".tr(),
+                  style: const TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ),
         ),
@@ -445,11 +449,11 @@ class _DoctorAppointmentChatScreenState
         Expanded(
           child: Obx(() {
             if (controller.isLoading.value) {
-              return const Center(child: LoadingMessage());
+              return  Center(child: LoadingMessage());
             }
 
             if (controller.prescriptions.isEmpty) {
-              return const Center(child: Text("No prescriptions found."));
+              return  Center(child: Text("No_prescriptions_found.".tr()));
             }
 
             return ListView.builder(
@@ -462,8 +466,8 @@ class _DoctorAppointmentChatScreenState
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final medicineCount = item.medicines?.length ?? 0;
                 final summary = medicineCount > 0
-                    ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
-                    : "No medicines listed";
+                    ? "${medicineCount} ${'medicine'.tr()}${medicineCount > 1 ? 's'.tr() : ''} ${'prescribed'.tr()}"
+                    : 'no_medicines_listed'.tr();
 
                 return GestureDetector(
                   onTap: () {
@@ -515,7 +519,7 @@ class _DoctorAppointmentChatScreenState
                               const Icon(Icons.person,
                                   size: 18, color: Colors.green),
                               const SizedBox(width: 6),
-                              Text("Patient: ${item.patientName}",
+                              Text("${'patient'.tr()}: ${item.patientName}",
                                   style: const TextStyle(fontSize: 14)),
                             ],
                           ),
@@ -526,7 +530,7 @@ class _DoctorAppointmentChatScreenState
                               const Icon(Icons.calendar_today,
                                   size: 18, color: Colors.orange),
                               const SizedBox(width: 6),
-                              Text("Date: $date",
+                              Text("${'date'.tr()}: $date",
                                   style: const TextStyle(fontSize: 14)),
                             ],
                           ),
@@ -590,8 +594,8 @@ class _DoctorAppointmentChatScreenState
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text("Add Prescription",
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text("Add_Prescription".tr(),
+                  style: const TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ),
         ),
@@ -608,7 +612,7 @@ class _DoctorAppointmentChatScreenState
               return const Center(child: LoadingMessage());
             }
             if (labs.labsReport.isEmpty) {
-              return const Center(child: Text("No lab reports found."));
+              return  Center(child: Text("No_lab_reports_found.".tr()));
             }
 
             return ListView.builder(
@@ -657,7 +661,7 @@ class _DoctorAppointmentChatScreenState
                             const Icon(Icons.person,
                                 size: 18, color: Colors.green),
                             const SizedBox(width: 6),
-                            Text("Patient: ${report.patientName}",
+                            Text("${'patient'.tr()}: ${report.patientName}",
                                 style: const TextStyle(fontSize: 14)),
                           ],
                         ),
@@ -666,7 +670,7 @@ class _DoctorAppointmentChatScreenState
                             const Icon(Icons.calendar_today,
                                 size: 18, color: Colors.orange),
                             const SizedBox(width: 6),
-                            Text("Date: $date",
+                            Text("${'date'.tr}: $date",
                                 style: const TextStyle(fontSize: 14)),
                           ],
                         ),
@@ -675,7 +679,7 @@ class _DoctorAppointmentChatScreenState
                             const Icon(Icons.insert_drive_file,
                                 size: 18, color: Colors.blue),
                             const SizedBox(width: 6),
-                            Text("Report ID: ${report.sequenceId}",
+                            Text("${'report_id'.tr()}: ${report.sequenceId}",
                                 style: const TextStyle(fontSize: 14)),
                           ],
                         ),
@@ -765,14 +769,14 @@ class _DoctorAppointmentChatScreenState
           child: Column(
             children: [
               _buildHeader(),
-              const TabBar(
+               TabBar(
                 labelColor: Colors.teal,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
                 tabs: [
-                  Tab(text: "Lab Request",),
-                  Tab(text: "Prescription"),
-                  Tab(text: "Labs"),
+                  Tab(text: "Lab_Request".tr()),
+                  Tab(text: "Prescription".tr()),
+                  Tab(text: "Labs".tr()),
                 ],
               ),
               Expanded(
@@ -791,3 +795,20 @@ class _DoctorAppointmentChatScreenState
     );
   }
 }
+
+  // Helper method to create Row widgets that handle text overflow
+  Widget _buildInfoRow(IconData icon, Color iconColor, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: iconColor),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 14),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NoInternetConnection extends StatelessWidget {
   const NoInternetConnection({super.key});
@@ -42,14 +43,14 @@ class NoInternetConnection extends StatelessWidget {
                 ),
               ),
             ),
-            const Positioned(
+            Positioned(
               top: 130,
               left: 0,
               right: 0,
               child: Column(
                 children: [
                   Text(
-                    'Whoops!',
+                    'whoops'.tr(),
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -57,7 +58,7 @@ class NoInternetConnection extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'No Internet Connection found.',
+                    'no_internet_connection_found'.tr(),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.grey,
@@ -66,7 +67,7 @@ class NoInternetConnection extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Check your connection & try again.',
+                    'check_connection_try_again'.tr(),
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.grey,

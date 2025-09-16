@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/Models/shift_model.dart';
@@ -40,8 +41,8 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
     super.initState();
     daysOfWeek = getNextWeekDays();
     daysOfWeekList = getNextWeekDays();
-    daysOfWeekList[0] = 'Today';
-    daysOfWeekList[1] = 'Tommorrow';
+    daysOfWeekList[0] = 'Today'.tr();
+    daysOfWeekList[1] = 'Tommorrow'.tr();
     dayNameCurrent = daysOfWeek[selectedDayIndex!];
     // updateDayName();
     shiftController.currentDay.value = daysOfWeek[selectedDayIndex!];
@@ -75,7 +76,7 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
           // : ToastificationType.error,
       type: ToastificationType.error,
       style: ToastificationStyle.flat,
-      title: Text('Error' ),
+      title: Text('Error'.tr() ),
       description: Text(test['message']),
       autoCloseDuration: const Duration(seconds: 3),
       // animationDuration: const Duration(microseconds: 300),
@@ -149,9 +150,9 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          "Book Appointment",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Text(
+          "Book Appointment".tr(),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -283,8 +284,8 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
                     ),
                     const SizedBox(height: 10),
                     if (shifts.isEmpty)
-                      const Center(
-                          child: Text("No slots available",
+                       Center(
+                          child: Text("no_slots_available".tr(),
                               style: TextStyle(color: Colors.grey)))
                     else
                       SingleChildScrollView(
@@ -348,8 +349,8 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
                 toastification.show(
                   type: ToastificationType.error,
                   style: ToastificationStyle.flat,
-                  title: const Text('Error'),
-                  description: const Text('Please select an available time slot'),
+                  title: Text('Error'.tr()),
+                  description: Text('Please select an available time slot'.tr()),
                   autoCloseDuration: const Duration(seconds: 3),
                   alignment: Alignment.topRight,
                   showProgressBar: true,
@@ -358,9 +359,9 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
                 toastification.show(
                   type: ToastificationType.error,
                   style: ToastificationStyle.flat,
-                  title: const Text('Error'),
-                  description: const Text(
-                      'Please check the availability of your selected time'),
+                  title: Text('Error'.tr()),
+                  description: Text(
+                      'Please check the availability of your selected time'.tr()),
                   autoCloseDuration: const Duration(seconds: 3),
                   alignment: Alignment.topRight,
                   showProgressBar: true,
@@ -386,9 +387,9 @@ class _ShiftAppointmentScreenState extends State<ShiftAppointmentScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ), 
-            child: const Text(
-              "Set Appointment",
-              style: TextStyle(
+            child: Text(
+              "Set Appointment".tr(),
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

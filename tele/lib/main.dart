@@ -234,7 +234,6 @@
 //     );
 //   }
 // }
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -242,9 +241,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tele/controllers/user_Controller.dart';
 import 'package:tele/controllers/internet_controller.dart';
 import 'package:tele/controllers/doctor_transection_controller.dart';
+import 'package:tele/controllers/language_controller.dart';
 import 'package:tele/routes/app_routes.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/services/access_token_service.dart';
@@ -255,6 +257,7 @@ import 'package:tele/views/screens/CallPage/firebase_api.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:toastification/toastification.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -282,10 +285,12 @@ Future<void> main() async {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(callChannel);
   await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(defaultChannel);
   final accessToken = await AccessTokenService().getAccessToken();
   final token = await FirebaseMessaging.instance.getToken();
@@ -297,7 +302,8 @@ Future<void> main() async {
   print("Your FCM token: $token");
   Get.put(UserController());
   Get.put(DoctorTransectionController());
-  Get.put(InternetController(), permanent: true);
+  // Get.put(InternetController(), permanent: true);
+  Get.put(LanguageController(), permanent: true);
   FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   await FirebaseNotification().initNotification();
   ZegoUIKit().init(appID: Config.appId, appSign: Config.appSign);
@@ -313,46 +319,152 @@ Future<void> main() async {
       await ApiGetServices.updateFcmToken(userId);
     }
   });
+
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  // // Clear old EasyLocalization cache to fix locale issues
+  // final prefs = await SharedPreferences.getInstance();
+  // await prefs.remove('locale');
+  // await prefs.remove('codegen_loader.locale');
+
+  // Initialize EasyLocalization
+  await EasyLocalization.ensureInitialized();
+
+  // Load saved language
+  String savedLanguage = await StorageService.getLanguage();
   
-  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
   runApp(
-    ToastificationWrapper(
-      child: MyApp(initialMessage: initialMessage),
+    EasyLocalization(
+      supportedLocales: [Locale('en'), Locale('so')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en'),
+      // startLocale: savedLanguage == 'so' ? Locale('so') : Locale('en'),
+      saveLocale: true,
+      child: ToastificationWrapper(
+        child: MyApp(initialMessage: initialMessage),
+      ),
     ),
   );
 }
 
+// class MyApp extends StatefulWidget {
+//   final RemoteMessage? initialMessage;
+//   const MyApp({super.key, required this.initialMessage});
+//   @override
+//   State<MyApp> createState() => _MyAppState();
+// }
 
+// class _MyAppState extends State<MyApp> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       final handler = FirebaseNotificationHandler(navigatorKey);
+//       await handler.initNotification();
+
+//       if (widget.initialMessage != null) {
+//         print("App launched via terminated notification.");
+//         await handler.handleNotificationNavigation(widget.initialMessage!.data);
+//       }
+//     });
+//   }
+  
+//   Future<String?> _isLoggedIn() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? token = prefs.getString('auth_token');
+//     String? userType = prefs.getString('userType');
+//     if (token != null && token.isNotEmpty) {
+//       return userType;
+//     } else {
+//       return null;
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<String?>(
+//       future: _isLoggedIn(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return MaterialApp(
+//             home: Scaffold(
+//               body: Center(
+//                 child: CircularProgressIndicator(
+//                   valueColor: AlwaysStoppedAnimation<Color>(
+//                     Color.fromARGB(255, 9, 130, 13),
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           );
+//         } else {
+//           String? userType = snapshot.data;
+//           String initialRoute = '/login';
+//           if (userType == "0") {
+//             initialRoute = '/doctormainscreen';
+//           } else if (userType == "1") {
+//             initialRoute = '/mainscreen';
+//           }
+//           return GetMaterialApp(
+//             navigatorKey: navigatorKey,
+//             debugShowCheckedModeBanner: false,
+//             initialRoute: initialRoute,
+//             getPages: AppRoutes.routes,
+//             localizationsDelegates: [
+//               GlobalMaterialLocalizations.delegate,
+//               GlobalWidgetsLocalizations.delegate,
+//               GlobalCupertinoLocalizations.delegate,
+//               ...context.localizationDelegates,
+//             ],
+//             supportedLocales: context.supportedLocales,
+//             locale: context.locale,
+//             localeResolutionCallback: (locale, supportedLocales) {
+//               // If the current locale is Somali but Material doesn't support it,
+//               // fall back to English for Material components while keeping Somali for our translations
+//               if (locale?.languageCode == 'so') {
+//                 return Locale('en'); // Use English for Material components
+//               }
+//               return locale;
+//             },
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
 class MyApp extends StatefulWidget {
   final RemoteMessage? initialMessage;
   const MyApp({super.key, required this.initialMessage});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final handler = FirebaseNotificationHandler(navigatorKey);
       await handler.initNotification();
 
       if (widget.initialMessage != null) {
-        print("App launched via terminated notification.");
+        // Ensure widget is still in tree before using context
+        if (!mounted) return;
         await handler.handleNotificationNavigation(widget.initialMessage!.data);
       }
     });
   }
+
   Future<String?> _isLoggedIn() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('auth_token');
-    String? userType = prefs.getString('userType');
-    if (token != null && token.isNotEmpty) {
-      return userType;
-    } else {
-      return null;
-    }
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    final userType = prefs.getString('userType');
+    return (token != null && token.isNotEmpty) ? userType : null;
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String?>(
@@ -364,27 +476,43 @@ class _MyAppState extends State<MyApp> {
               body: Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    Color.fromARGB(255, 9, 130, 13),
+                    const Color.fromARGB(255, 9, 130, 13),
                   ),
                 ),
               ),
             ),
           );
-        } else {
-          String? userType = snapshot.data;
-          String initialRoute = '/login';
-          if (userType == "0") {
-            initialRoute = '/doctormainscreen';
-          } else if (userType == "1") {
-            initialRoute = '/mainscreen';
-          }
-          return GetMaterialApp(
-            navigatorKey: navigatorKey,
-            debugShowCheckedModeBanner: false,
-            initialRoute: initialRoute,
-            getPages: AppRoutes.routes,
-          );
         }
+
+        String? userType = snapshot.data;
+        String initialRoute = '/login';
+        if (userType == "0") {
+          initialRoute = '/doctormainscreen';
+        } else if (userType == "1") {
+          initialRoute = '/mainscreen';
+        }
+
+        return GetMaterialApp(
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          initialRoute: initialRoute,
+          getPages: AppRoutes.routes,
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            ...context.localizationDelegates,
+          ],
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          localeResolutionCallback: (locale, supportedLocales) {
+            // Somali not supported by Material → fallback to English
+            if (locale?.languageCode == 'so') {
+              return const Locale('en');
+            }
+            return locale;
+          },
+        );
       },
     );
   }

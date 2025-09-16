@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/auth_controller.dart';
 import 'package:tele/views/screens/auth/login_screen.dart';
+import 'package:tele/views/screens/auth/register_doctor_screen.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -40,8 +42,8 @@ class RegisterScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Text(
-                    "Don't have an account yet?",
+                  Text(
+                    "dont_have_account".tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -90,10 +92,10 @@ class RegisterScreen extends StatelessWidget {
                         children: [
                           // Full Name
                           buildTextField(
-                              Icons.person, "Full Name", _fullNameController),
+                              Icons.person, "full_name".tr(), _fullNameController),
                           buildPhoneField(_phoneController),
                           buildEmailField(_emailController),
-                          buildTextField(Icons.location_on_outlined, "Address",
+                          buildTextField(Icons.location_on_outlined, "address".tr(),
                               _addressController),
 
                           // Gender Dropdown
@@ -109,9 +111,9 @@ class RegisterScreen extends StatelessWidget {
                               value: _genderController.text.isEmpty
                                   ? null
                                   : _genderController.text,
-                              hint: const Text('Select Gender'),
+                              hint: Text('select_gender'.tr()),
                               dropdownColor: Colors.white,
-                              items: ['Male', 'Female'].map((String gender) {
+                              items: ['male'.tr(), 'female'.tr()].map((String gender) {
                                 return DropdownMenuItem<String>(
                                   value: gender,
                                   child: Text(gender),
@@ -121,23 +123,23 @@ class RegisterScreen extends StatelessWidget {
                                 _genderController.text = value!;
                               },
                               validator: (value) => value == null
-                                  ? "Please select a gender"
+                                  ? "please_select_gender".tr()
                                   : null,
                             ),
                           ),
                           // Other Fields
-                          buildAgeField(Icons.cake, "Age", _ageController),
+                          buildAgeField(Icons.cake, "age".tr(), _ageController),
 
-                          buildTextField(Icons.account_circle, "Username",
+                          buildTextField(Icons.account_circle, "username".tr(),
                               _usernameController),
 
                           // buildPasswordField("Password", _passwordController),
                           // buildConfirmPasswordField("Confirm Password", _confirmPasswordController),
                           PasswordField(
-                              hint: "Password",
+                              hint: "password".tr(),
                               controller: _passwordController),
                           ConfirmPasswordField(
-                              hint: "Confirm Password",
+                              hint: "confirm_password".tr(),
                               controller: _confirmPasswordController,
                               passwordController: _passwordController),
 
@@ -166,9 +168,9 @@ class RegisterScreen extends StatelessWidget {
                                       if (_formKey.currentState!.validate()) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                               content: Text(
-                                                  "Registration Successful!")),
+                                                  "registration_successful".tr())),
                                         );
                                         await authController.registerPatient(
                                           _fullNameController.text.trim(),
@@ -182,8 +184,8 @@ class RegisterScreen extends StatelessWidget {
                                         );
                                       }
                                     },
-                                    child: const Text(
-                                      "Sign Up",
+                                    child: Text(
+                                      "sign_up".tr(),
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -196,7 +198,7 @@ class RegisterScreen extends StatelessWidget {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Already have an account?"),
+                              Text("already_have_account".tr()),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pushReplacement(
@@ -205,8 +207,32 @@ class RegisterScreen extends StatelessWidget {
                                         builder: (context) => LoginScreen()),
                                   );
                                 },
-                                child: const Text(
-                                  "Sign in",
+                                child: Text(
+                                  "sign_in".tr(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 9, 130, 13),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Sign Up Us Doctor Link
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Sign Up As Doctor".tr()),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RegisterDoctorScreen()),
+                                  );
+                                },
+                                child: Text(
+                                  "sign_up".tr(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color.fromARGB(255, 9, 130, 13),
@@ -247,7 +273,7 @@ class RegisterScreen extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.green, width: 2),
           ),
         ),
-        validator: (value) => value!.isEmpty ? "Please enter $hint" : null,
+        validator: (value) => value!.isEmpty ? "${"please_enter".tr()} $hint" : null,
       ),
     );
   }
@@ -272,7 +298,7 @@ class RegisterScreen extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.green, width: 2),
           ),
         ),
-        validator: (value) => value!.isEmpty ? "Please enter $hint" : null,
+        validator: (value) => value!.isEmpty ? "${"please_enter".tr()} $hint" : null,
       ),
     );
   }
@@ -287,7 +313,7 @@ class RegisterScreen extends StatelessWidget {
         decoration: InputDecoration(
           // prefixIcon: const Icon(Icons.email, color: Color.fromARGB(255, 9, 130, 13)),
           prefixIcon: const Icon(Icons.email, color: Colors.black),
-          hintText: "Email",
+          hintText: "email".tr(),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -296,10 +322,10 @@ class RegisterScreen extends StatelessWidget {
         ),
         validator: (value) {
           if (value!.isEmpty) {
-            return "Please enter your email";
+            return "please_enter_email".tr();
           } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA0-9.-]+\.[a-zA-Z]{2,}$")
               .hasMatch(value)) {
-            return "Enter a valid email address";
+            return "enter_valid_email".tr();
           }
           return null;
         },
@@ -335,7 +361,7 @@ class RegisterScreen extends StatelessWidget {
               ],
             ),
           ),
-          hintText: "Enter phone number",
+          hintText: "enter_phone_number".tr(),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           border: OutlineInputBorder(
@@ -356,9 +382,9 @@ class RegisterScreen extends StatelessWidget {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please enter your phone number";
+            return "please_enter_phone".tr();
           } else if (value.length < 9 || value.length > 12) {
-            return "Enter a valid phone number";
+            return "enter_valid_phone".tr();
           }
           return null;
         },
@@ -410,9 +436,9 @@ class _PasswordFieldState extends State<PasswordField> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please enter your password";
+            return "please_enter_password".tr();
           } else if (value.length < 6) {
-            return "Password must be at least 6 characters";
+            return "password_must_be_6_characters".tr();
           }
           return null;
         },
@@ -469,9 +495,9 @@ class _ConfirmPasswordFieldState extends State<ConfirmPasswordField> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please confirm your password";
+            return "please_confirm_password".tr();
           } else if (value != widget.passwordController.text) {
-            return "Passwords do not match";
+            return "passwords_do_not_match".tr();
           }
           return null;
         },

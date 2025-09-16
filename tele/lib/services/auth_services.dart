@@ -136,4 +136,120 @@ class AuthServices {
     }
   }
 
+   Future<Map<String, dynamic>> registerDoctor({
+    required String name,
+    required String email,
+    required String phone,
+    required String username,
+    required String password,
+    required String consultationFee,
+    required String experienceYears,
+    required String specialityId,
+    required String hospitalId,
+    required String extraDetail,
+    required String countries,
+  }) async {
+    try {
+      final uri = Uri.parse("$url/register_Doctor");
+
+      var request = http.MultipartRequest("POST", uri);
+
+      // body params
+      request.fields['name'] = name;
+      request.fields['email'] = email;
+      request.fields['phone'] = phone;
+      request.fields['user_name'] = username;
+      request.fields['PassWord'] = password;
+      request.fields['consultation_fee'] = consultationFee;
+      request.fields['experience_years'] = experienceYears;
+      request.fields['speciality_id'] = specialityId;
+      request.fields['hospital_id'] = hospitalId;
+      request.fields['extra_detail'] = extraDetail;
+
+      // if you want to upload picture, use:
+      // request.files.add(await http.MultipartFile.fromPath("picture", imagePath));
+      request.fields['countries'] = countries;  // Added countries field
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      return jsonDecode(response.body);
+    } catch (e) {
+      return {
+        "success": false,
+        "message": "Error: $e",
+      };
+    }
+  }
+
+
+   // Forget Password - Send OTP
+  static Future<Map<String, dynamic>> forgetPassword(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/forget_Password"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email}),
+      );
+
+      final body = jsonDecode(response.body);
+      return {
+        "success": body['success'] ?? false,
+        "message": body['message'] ?? "Something went wrong",
+      };
+    } catch (e) {
+      print("Forget Password Error: $e");
+      return {"success": false, "message": "Server connection failed"};
+    }
+  }
+
+  // Verify OTP
+  static Future<Map<String, dynamic>> verifyOtp(String email, String otp) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/VerifyOtp"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email, "otp": otp}),
+      );
+
+      final body = jsonDecode(response.body);
+      return {
+        "success": body['success'] ?? false,
+        "message": body['message'] ?? "Something went wrong",
+        "userId": body['userId'],
+        "userType": body['userType'],
+      };
+    } catch (e) {
+      print("Verify OTP Error: $e");
+      return {"success": false, "message": "Server connection failed"};
+    }
+  }
+
+  // Reset Password
+  static Future<Map<String, dynamic>> resetPassword(
+      String email, String newPassword, String confirmPassword) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$url/resetPassword"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": email,
+          "newPassword": newPassword,
+          "confirmPassword": confirmPassword
+        }),
+      );
+
+      final body = jsonDecode(response.body);
+      return {
+        "success": body['success'] ?? false,
+        "message": body['message'] ?? "Something went wrong",
+        "userId": body['userId'],
+        "userType": body['userType'],
+      };
+    } catch (e) {
+      print("Reset Password Error: $e");
+      return {"success": false, "message": "Server connection failed"};
+    }
+  }
+
 }

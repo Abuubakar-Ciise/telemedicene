@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/doctor_profile_screen.dart';
@@ -48,7 +49,7 @@ class _DoctorCardState extends State<DoctorCard> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        "${widget.doctor.experienceyears} Years of Experience",
+                        "${widget.doctor.experienceyears} ${'years_of_experience'.tr()}",
                         style: const TextStyle(color: Colors.grey),
                       ),
                       ElevatedButton(
@@ -69,7 +70,7 @@ class _DoctorCardState extends State<DoctorCard> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text("View Profile",
+                        child: Text("view_profile".tr(),
                             style: TextStyle(color: Colors.white)),
                       ),
                     ],
@@ -88,11 +89,11 @@ class _DoctorCardState extends State<DoctorCard> {
                 children: [
                   const Divider(thickness: 1, color: Colors.greenAccent),
                   const SizedBox(height: 10),
-                  Text("Hospital: ${widget.doctor.hospitalname}"),
+                  Text("${'hospital'.tr()}: ${widget.doctor.hospitalname}"),
                   const SizedBox(height: 5),
-                  Text("Speciality: ${widget.doctor.speciality}"),
+                  Text("${'speciality'.tr()}: ${widget.doctor.speciality}"),
                   const SizedBox(height: 5),
-                  Text("Language: ${widget.doctor.countries}"),
+                  Text("${'language'.tr()}: ${widget.doctor.countries}"),
                   const SizedBox(height: 5),
                   Text("Standard Charges: \$${widget.doctor.consultationfee}"),
                   // Text("Standard Charges: \$${0.01}"),
@@ -122,7 +123,7 @@ class _DoctorCardState extends State<DoctorCard> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text("Book Appointment",
+                  child: Text("book_appointment".tr(),
                       style: TextStyle(color: Colors.white)),
                 ),
               ],

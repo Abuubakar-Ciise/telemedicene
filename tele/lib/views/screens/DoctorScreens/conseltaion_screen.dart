@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/StorageService.dart';
 import 'package:tele/views/screens/components/docotor_appointment_card.dart';
@@ -36,7 +37,7 @@ class _DoctorAppointmentScreenState extends State<ConseltaionScreen> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          'Consultation',
+          'Consultation'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -63,7 +64,7 @@ class _DoctorAppointmentScreenState extends State<ConseltaionScreen> {
             return LoadingMessage();
           }
           if(doctorAppointmentController.allConfirmedAppointments.isEmpty){
-            return Center(child: Text("No Appointments Found"));
+            return Center(child: Text("No Appointments Found".tr()));
           }
           return ListView.builder(
             itemCount: doctorAppointmentController.allConfirmedAppointments.length,

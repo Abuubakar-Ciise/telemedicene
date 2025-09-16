@@ -1,7 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/auth_controller.dart';
+import 'package:tele/views/screens/auth/forget_password.dart';
 import 'package:tele/views/screens/auth/register_screen.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
@@ -36,8 +38,8 @@ class LoginScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Text(
-                    "Already have an account?",
+                  Text(
+                    "already_have_account".tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -90,12 +92,12 @@ class LoginScreen extends StatelessWidget {
                       key: _formKey,
                       child: Column(
                         children: [
-                          buildTextField(Icons.person, 'Username or Email',
+                          buildTextField(Icons.person, 'email_or_phone'.tr(),
                               _emailController),
                           const SizedBox(height: 15),
                           // buildPasswordField('Password', _passwordController),
                           PasswordField(
-                              hint: "Password",
+                              hint: "password".tr(),
                               controller: _passwordController),
                           const SizedBox(height: 20),
                           Obx(
@@ -122,8 +124,8 @@ class LoginScreen extends StatelessWidget {
                                         
                                       }
                                     },
-                                    child: const Text(
-                                      "Sign In",
+                                    child: Text(
+                                      "sign_in".tr(),
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -131,15 +133,17 @@ class LoginScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           TextButton(
-                            onPressed: () {},
-                            child: const Text(
-                              "Forgot Password?",
+                            onPressed: () {
+                              Get.to(() => ForgetPasswordScreen());
+                            },
+                            child: Text(
+                              "forgot_password".tr(),
                               style: TextStyle(
                                   color: Color.fromARGB(255, 9, 130, 13)),
                             ),
                           ),
                           const SizedBox(height: 5),
-                          const Text("Don't have an account yet?"),
+                          Text("dont_have_account".tr()),
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacement(
@@ -148,8 +152,8 @@ class LoginScreen extends StatelessWidget {
                                     builder: (context) => RegisterScreen()),
                               );
                             },
-                            child: const Text(
-                              "Sign Up",
+                            child: Text(
+                              "sign_up".tr(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 9, 130, 13)),
@@ -168,8 +172,8 @@ class LoginScreen extends StatelessWidget {
                             ),
                             onPressed: () {},
                             icon: const Icon(Icons.help, color: Colors.white),
-                            label: const Text(
-                              "HELP",
+                            label: Text(
+                              "help".tr(),
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),

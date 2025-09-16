@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_home_screen.dart';
 import 'package:tele/views/screens/DoctorScreens/doctor_transection_history_screen.dart';
 import 'package:tele/views/screens/patient/contact_us_screen.dart';
@@ -50,10 +51,10 @@ class _DoctorMainScreenState extends State<DoctorMainScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(Icons.home, "Home", 0),
-            _buildNavItem(Icons.notifications, "Notification", 1),
-            _buildNavItem(Icons.loop, "Transaction", 2),
-            _buildNavItem(Icons.call, "Contact", 3),
+            _buildNavItem(Icons.home, "home".tr(), 0),
+            _buildNavItem(Icons.notifications, "notifications".tr(), 1),
+            _buildNavItem(Icons.loop, "transaction".tr(), 2),
+            _buildNavItem(Icons.call, "contact".tr(), 3),
           ],
         ),
       ),

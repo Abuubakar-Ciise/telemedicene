@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/services/new_firebase_send_message.dart';
 import 'package:tele/services/post_api_services.dart';
 import 'package:tele/views/screens/components/config.dart';
@@ -64,7 +65,9 @@ class ReAppointmentController extends GetxController {
         // }
         // Else: Do nothing.
       }
-
+      final doctorAppointmentController =
+          Get.find<DoctorAppointmentController>();
+      await doctorAppointmentController.confimfechtAppointments(doctorId);
       Get.back();
     } catch (e) {
       toastification.show(

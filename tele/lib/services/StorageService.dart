@@ -55,4 +55,20 @@ class StorageService {
   await prefs.setString(key, value);
 }
 
+  // Language storage methods
+  static Future<void> saveLanguage(String languageCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_language', languageCode);
+  }
+
+  static Future<String> getLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('selected_language') ?? 'en';
+  }
+  static Future<void> removeLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('selected_language');
+    print('Saved language removed');
+  }
+
 }

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EmptyNotificationScreen extends StatelessWidget {
   const EmptyNotificationScreen({super.key});
@@ -16,8 +17,8 @@ class EmptyNotificationScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          "Notification",
+        title: Text(
+          "notifications".tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -31,8 +32,8 @@ class EmptyNotificationScreen extends StatelessWidget {
           children: [
             Image.asset('assets/empty_notification.jpg', height: 200),
             const SizedBox(height: 20),
-            const Text(
-              "Oops! No Notifications Yet",
+            Text(
+              "oops_no_notifications_yet".tr(),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -40,8 +41,8 @@ class EmptyNotificationScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
-              "You'll be notified about activity on tasks you're a collaborator on.",
+            Text(
+              "notification_activity_message".tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,

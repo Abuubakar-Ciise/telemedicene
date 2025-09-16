@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AvailableTimeWidget extends StatelessWidget {
   final List<String> availableTimes;
@@ -19,8 +20,8 @@ class AvailableTimeWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Available Time",
+          Text(
+            "available_time".tr(),
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
           ),
           const SizedBox(height: 10),

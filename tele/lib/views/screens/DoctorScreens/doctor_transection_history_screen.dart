@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/controllers/doctor_appointment_controller.dart';
 import 'package:tele/controllers/doctor_transection_controller.dart';
@@ -60,9 +61,9 @@ class _DoctorTransectionHistoryScreenState extends State<DoctorTransectionHistor
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 9, 130, 13),
         centerTitle: true,
-        title: const Text(
-          'Transaction History',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          'Transaction History'.tr(),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       backgroundColor: Colors.white,
@@ -91,10 +92,10 @@ class _DoctorTransectionHistoryScreenState extends State<DoctorTransectionHistor
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _infoRow('Sender:', transaction.patientName, transaction.senderPhone),
-                              _infoRow('Receiver:', transaction.doctorName, transaction.reciverPhone),
-                              _infoRow('Amount:', '', '\$${transaction.amount.toString()}'),
-                              _infoRow('Date:', '', formatDate(transaction.createDate)),
+                              _infoRow('Sender:'.tr(), transaction.patientName, transaction.senderPhone),
+                              _infoRow('Receiver:'.tr(), transaction.doctorName, transaction.reciverPhone),
+                              _infoRow('Amount:'.tr(), '', '\$${transaction.amount.toString()}'),
+                              _infoRow('Date:'.tr(), '', formatDate(transaction.createDate)),
                             ],
                           ),
                         ),

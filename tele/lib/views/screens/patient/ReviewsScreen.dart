@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/reviews_controller.dart';
 
 class ReviewsScreen extends StatefulWidget {
@@ -38,7 +39,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Rate the Doctor', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('Rate the Doctor'.tr(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Row(
                 children: List.generate(5, (index) {
@@ -58,13 +59,13 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 }),
               ),
               const SizedBox(height: 24),
-              const Text('Leave a Comment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+              Text('Leave a Comment'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
               const SizedBox(height: 10),
               TextField(
                 controller: commentController,
                 maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'Write your feedback here...',
+                  hintText: 'Write your feedback here...'.tr(),
                   filled: true,
                   fillColor: Colors.grey.shade100,
                   border: OutlineInputBorder(
@@ -91,7 +92,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                           final comment = commentController.text.trim();
 
                           if (rating == 0.0 || comment.isEmpty) {
-                            Get.snackbar('Incomplete', 'Please give a rating and write a comment');
+                            Get.snackbar('Incomplete'.tr(), 'Please give a rating and write a comment'.tr());
                             return;
                           }
 
@@ -107,7 +108,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             Navigator.of(context).pop(); // Close the screen
                           }
                         },
-                        child: const Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        child: Text('Submit'.tr(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       ),
                     )),
             ],

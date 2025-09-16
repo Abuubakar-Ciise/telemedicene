@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/HospitalController.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
@@ -68,14 +69,14 @@ class _HospitalListScreenState extends State<HospitalListScreen>
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: "Search...",
+                decoration: InputDecoration(
+                  hintText: 'search_hint'.tr(),
                   border: InputBorder.none,
                 ),
                 style: const TextStyle(color: Colors.black, fontSize: 18),
               )
-            : const Text("Search Hospitals",
-                style: TextStyle(color: Colors.black)),
+            : Text('search_hospitals'.tr(),
+                style: const TextStyle(color: Colors.black)),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search,
@@ -98,9 +99,9 @@ class _HospitalListScreenState extends State<HospitalListScreen>
           indicatorColor: Colors.blueAccent,
           labelColor: Colors.blueAccent,
           unselectedLabelColor: Colors.black54,
-          tabs: const [
-            Tab(text: "Hospitals"),
-            Tab(text: "Specialist"),
+          tabs: [
+            Tab(text: 'hospitals'.tr()),
+            Tab(text: 'specialist'.tr()),
           ],
         ),
       ),
@@ -364,14 +365,14 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: "Search doctor...",
-                  border: InputBorder.none,
-                ),
-                style: const TextStyle(color: Colors.black, fontSize: 18),
-              )
-            : const Text("Search Doctor",
-                style: TextStyle(color: Colors.black)),
+                                  decoration: InputDecoration(
+                    hintText: 'search_hint'.tr(),
+                    border: InputBorder.none,
+                  ),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
+                )
+              : Text('search_hospitals'.tr(),
+                  style: const TextStyle(color: Colors.black)),
         actions: [
           IconButton(
             icon: Icon(

@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:printing/printing.dart';
 import 'package:tele/controllers/adds_controller.dart';
 import 'package:tele/controllers/appoinments_controller.dart';
@@ -97,30 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final List<Map<String, dynamic>> services = [
+  List<Map<String, dynamic>> get services => [
     {
       "icon": Icons.video_call,
-      "text": "Consultation",
-      // "text": "Video Consultation",
+      "text": "consultation".tr(),
       'route': VideoConsultationScreen()
     },
     {
       "icon": Icons.apartment,
-      // "text": "Book on Appointment",
-      "text": "Hospital",
+      "text": "hospital".tr(),
       'route': HospitalListScreen()
     },
     {
       "icon": Icons.person_pin,
-      "text": "self manage",
+      "text": "self_manage".tr(),
       'route': Selfmanagement()
     },
     {
       "icon": Icons.health_and_safety,
-      "text": "My Treatment",
+      "text": "my_treatment".tr(),
       'route': ChatsListScreenAppointment(),
     },
-    // {"icon": Icons.science_outlined, "text": "Labarotary", 'route': LabsRecordScreen(),},
+    // {"icon": Icons.science_outlined, "text": "laboratory".tr(), 'route': LabsRecordScreen(),},
   ];
 
   @override
@@ -142,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Welcome Back,",
+                        "welcome_back".tr(),
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
@@ -348,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding:
                     EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 0),
                 child: Text(
-                  'Appointments',
+                  'appointments'.tr(),
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -360,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return LoadingMessage();
                   }
                   if (appoinmentsController.appointments.isEmpty) {
-                    return Center(child: Text("No Appointments Found"));
+                    return Center(child: Text("no_appointments_found".tr()));
                   }
                   return SingleChildScrollView(
                     child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class ContactUsScreen extends StatelessWidget {
 
                 /// Title
                 Text(
-                  "Contact Us",
+                  "contact_us".tr(),
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -67,7 +68,7 @@ class ContactUsScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    "Don't hesitate to contact us. If you have any questions, complaints, or need assistance, we are here for you!",
+                    "contact_us_subtitle".tr(),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(fontSize: 14, color: Colors.black54),
                   ),
@@ -75,22 +76,22 @@ class ContactUsScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 /// Contact Items
-                contactItem(Icons.chat, "WhatsApp", "Saturday-Thursday • 9-17", () {
+                contactItem(Icons.chat, "whatsapp".tr(), "whatsapp_hours".tr(), () {
                   _launchURL("https://wa.me/+252610736551?text=Hello!%20I%20need%20assistance.", false);
                 }),
                 const SizedBox(height: 15),
 
-                contactItem(Icons.phone, "Phone Number", "+252 610736551", () {
+                contactItem(Icons.phone, "phone_number".tr(), "+252 610736551", () {
                   _launchURL("tel:+252610736551", false);
                 }),
                 const SizedBox(height: 15),
 
-                contactItem(Icons.email, "Email", "info@tayocare.com", () {
+                contactItem(Icons.email, "email".tr(), "info@tayocare.com", () {
                   _launchURL("mailto:abuubakarciise4@gmail.com?subject=Support%20Request&body=Hello,%20I%20need%20assistance.", false);
                 }),
                 const SizedBox(height: 15),
 
-                contactItem(Icons.facebook, "Facebook", "Follow us for updates", () {
+                contactItem(Icons.facebook, "facebook".tr(), "follow_us_updates".tr(), () {
                   _launchURL("https://www.facebook.com/abuubakar.ciise.14?mibextid=ZbWKwL", false);
                 }),
                 const SizedBox(height: 15),

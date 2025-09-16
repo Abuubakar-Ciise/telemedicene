@@ -67,7 +67,9 @@ class ApiPostServices {
             "_id": appointmentId,
             "status": status
           }));
+
       if (response.statusCode == 200) {
+        print("🚀🚀🚀🚀🚀${response.body}");
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
         print("❌ ${responseBody}");
         return {
@@ -75,6 +77,7 @@ class ApiPostServices {
           "message": responseBody['message']
         };
       } else {
+        print("🚀🚀🚀🚀🚀${response.body}");
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
         print("Response is not JSON: ${response.body}");
         print("❌ ${responseBody}");

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/change_passowrd_controller.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -78,22 +79,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ),
                   ),
-                  const Text(
-                    "Change Password",
+                  Text(
+                    "change_password".tr(),
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _currentPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: "Current Password",
+                    decoration: InputDecoration(
+                      labelText: "current_password".tr(),
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock_outline),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Current password is required';
+                        return 'current_password_required'.tr();
                       }
                       return null;
                     },
@@ -102,16 +103,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   TextFormField(
                     controller: _newPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: "New Password",
+                    decoration: InputDecoration(
+                      labelText: "new_password".tr(),
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock_outline),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'New password is required';
+                        return 'new_password_required'.tr();
                       } else if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return 'password_must_be_6_characters'.tr();
                       }
                       return null;
                     },
@@ -120,16 +121,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: "Confirm Password",
+                    decoration: InputDecoration(
+                      labelText: "confirm_new_password".tr(),
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock_outline),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please confirm your new password';
+                        return 'please_confirm_new_password'.tr();
                       } else if (value != _newPasswordController.text) {
-                        return 'Passwords do not match';
+                        return 'passwords_do_not_match'.tr();
                       }
                       return null;
                     },
@@ -145,7 +146,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('Change Password'),
+                    child: Text('change_password'.tr()),
                   ),
                 ],
               ),

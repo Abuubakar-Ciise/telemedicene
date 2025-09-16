@@ -1,7 +1,8 @@
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:tele/DoctorPrescriptionDetailScreen.dart';
 import 'package:tele/PrescriptionDetailScreen.dart';
@@ -251,9 +252,9 @@ class _PatientAppointmentChatScreenState
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Online',
-                        style: TextStyle(
+                      Text(
+                        'Online'.tr(),
+                        style: const TextStyle(
                           fontSize: 13,
                           color: Colors.grey,
                         ),
@@ -267,13 +268,13 @@ class _PatientAppointmentChatScreenState
           Row(
             children: [
               Tooltip(
-                message: "Only the doctor can call you.",
+                message: "Only the doctor can call you.".tr(),
                 child: GestureDetector(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Only the doctor can call you."),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text("Only the doctor can call you.".tr()),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -286,13 +287,13 @@ class _PatientAppointmentChatScreenState
               ),
               const SizedBox(width: 16),
               Tooltip(
-                message: "Only the doctor can video call you.",
+                message: "Only the doctor can video call you.".tr(),
                 child: GestureDetector(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Only the doctor can video call you."),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text("Only the doctor can video call you.".tr()),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -319,11 +320,11 @@ class _PatientAppointmentChatScreenState
               child: LoadingMessage(),
             );
           }
-          if (labsRequested.doctorLabsRequest.isEmpty) {
-            return const Center(
-              child: Text("No Lab Requested Found"),
-            );
-          }
+                      if (labsRequested.doctorLabsRequest.isEmpty) {
+              return Center(
+                child: Text("No Lab Requested Found".tr()),
+              );
+            }
           return ListView.builder(
               controller: _scrollController,
               padding: EdgeInsets.all(15),
@@ -334,8 +335,8 @@ class _PatientAppointmentChatScreenState
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final labRequestCount = item.requestTests?.length ?? 0;
                 final summary = labRequestCount > 0
-                    ? "$labRequestCount lab request${labRequestCount > 1 ? 's' : ''} requested"
-                    : "No lab requests listed";
+                    ? "${labRequestCount} ${'lab_request'.tr()}${labRequestCount > 1 ? 's' : ''} ${'requested'.tr()}"
+                    : "No lab requests listed".tr();
 
                 return GestureDetector(
                   onTap: () {
@@ -415,10 +416,10 @@ class _PatientAppointmentChatScreenState
                               color: Colors.blue.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Center(
+                            child:  Center(
                               child: Text(
-                                "Tap to view full lab request",
-                                style: TextStyle(
+                                "Tap_to_view_full_lab_request".tr(),
+                                style: const TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
@@ -470,7 +471,7 @@ class _PatientAppointmentChatScreenState
               return const Center(child: CircularProgressIndicator());
             }
             if (controller.prescriptions.isEmpty) {
-              return const Center(child: Text("No prescriptions found."));
+              return Center(child: Text("No prescriptions found.".tr()));
             }
             return ListView.builder(
               // controller: _scrollController,
@@ -483,8 +484,8 @@ class _PatientAppointmentChatScreenState
                     DateFormat.yMMMMd().add_jm().format(item.createDate);
                 final medicineCount = item.medicines?.length ?? 0;
                 final summary = medicineCount > 0
-                    ? "$medicineCount medicine${medicineCount > 1 ? 's' : ''} prescribed"
-                    : "No medicines listed";
+                    ? "${medicineCount} ${'medicine'.tr()}${medicineCount > 1 ? 's' : ''} ${'prescribed'.tr()}"
+                    : "No medicines listed".tr();
 
                 return GestureDetector(
                   onTap: () {
@@ -557,10 +558,10 @@ class _PatientAppointmentChatScreenState
                               color: Colors.blue.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Center(
+                            child:  Center(
                               child: Text(
-                                "Tap to view full prescription",
-                                style: TextStyle(
+                                "Tap_to_view_full_prescription".tr(),
+                                style: const TextStyle(
                                     color: Colors.blue,
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14),
@@ -627,9 +628,9 @@ class _PatientAppointmentChatScreenState
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text(
-            "Feedback",
-            style: TextStyle(fontSize: 16, color: Colors.white),
+          child: Text(
+            "Feedback".tr(),
+            style: const TextStyle(fontSize: 16, color: Colors.white),
           ),
         ),
       ),
@@ -650,7 +651,7 @@ class _PatientAppointmentChatScreenState
               return const Center(child: CircularProgressIndicator());
             }
             if (labs.labsReport.isEmpty) {
-              return const Center(child: Text("No lab reports found."));
+              return Center(child: Text("No lab reports found.".tr()));
             }
 
             return ListView.builder(
@@ -750,10 +751,10 @@ class _PatientAppointmentChatScreenState
                               color: Colors.red.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Center(
+                            child:  Center(
                               child: Text(
-                                "Tap to view lab report",
-                                style: TextStyle(
+                                "Tap_to_view_lab_report".tr(),
+                                style: const TextStyle(
                                   color: Colors.red,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
@@ -788,8 +789,10 @@ class _PatientAppointmentChatScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text("Add Lab Report",
-                  style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text(
+                "Add Lab Report".tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ),
         ),
@@ -808,16 +811,16 @@ class _PatientAppointmentChatScreenState
           child: Column(
             children: [
               _buildHeader(),
-              const TabBar(
+               TabBar(
                 labelColor: Colors.teal,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: Colors.green,
                 tabs: [
                   Tab(
-                    text: "Lab Request",
+                    text: "Lab_Request".tr(),
                   ),
-                  Tab(text: "Prescription"),
-                  Tab(text: "Labs"),
+                  Tab(text: "Prescription".tr()),
+                  Tab(text: "Labs".tr()),
                 ],
               ),
               Expanded(

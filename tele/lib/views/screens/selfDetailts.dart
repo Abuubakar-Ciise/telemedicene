@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 
@@ -33,8 +34,8 @@ class _SelfdetailtsState extends State<Selfdetailts> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "DIET AND EXERCISE",
+        title: Text(
+          "diet_and_exercise".tr(),
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
@@ -96,8 +97,8 @@ class _SelfdetailtsState extends State<Selfdetailts> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Detailed Information",
+            Text(
+              "detailed_information".tr(),
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,

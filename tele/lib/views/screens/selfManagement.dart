@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/self_managment_controller.dart';
 import 'package:tele/views/screens/components/article_card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
@@ -40,13 +41,13 @@ class _SelfmanagementState extends State<Selfmanagement> {
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: "Search",
+                decoration: InputDecoration(
+                  hintText: "search".tr(),
                   border: InputBorder.none,
                 ),
                 style: const TextStyle(color: Colors.black, fontSize: 18),
               )
-            : const Text("Search "),
+            : Text("search".tr()),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search, size: 30),
@@ -69,7 +70,7 @@ class _SelfmanagementState extends State<Selfmanagement> {
         }
         if (selfManagmentController.filteredSelfManagments.isEmpty) {
           return Center(
-            child: Text("Waxne"),
+            child: Text("no_results_found".tr()),
           );
         }
         return ListView.builder(

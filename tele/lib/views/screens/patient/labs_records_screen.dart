@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tele/controllers/appoinments_controller.dart';
 import 'package:tele/controllers/labs_controller.dart';
@@ -54,7 +55,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
         children: [
           ListTile(
             leading: const Icon(Icons.camera_alt),
-            title: const Text('Take a photo'),
+            title: Text('Take a photo'.tr()),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -68,7 +69,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.photo_library),
-            title: const Text('Choose from gallery'),
+            title: Text('Choose from gallery'.tr()),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -89,8 +90,8 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
     if (_selectedImage == null) {
       toastification.show(
         context: context,
-        title: const Text("Missing Image"),
-        description: const Text("Please select a lab image."),
+        title: Text("Missing Image".tr()),
+        description: Text("Please select a lab image.".tr()),
         type: ToastificationType.warning,
         autoCloseDuration: const Duration(seconds: 3),
       );
@@ -117,7 +118,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text("Upload Lab Record"),
+        title: Text("Upload Lab Record".tr()),
       ),
       body: Obx(() {
         if (_labsController.isUploading.value) {
@@ -129,7 +130,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Lab Report Image",
+              Text("Lab Report Image".tr(),
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               InkWell(
@@ -155,7 +156,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                 child: TextButton.icon(
                   onPressed: _pickImage,
                   icon: const Icon(Icons.image_outlined, color: Colors.white),
-                  label: const Text("Pick / Change Image",
+                  label: Text("Pick / Change Image".tr(),
                       style: TextStyle(color: Colors.white)),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -169,7 +170,7 @@ class _LabsRecordScreenState extends State<LabsRecordScreen> {
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.cloud_upload_outlined,
                       color: Colors.white),
-                  label: const Text("Upload & Save Record",
+                  label: Text("Upload & Save Record".tr(),
                       style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -204,13 +205,13 @@ class DottedBorderPlaceholder extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       alignment: Alignment.center,
-      child: const Column(
+      child:  Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.add_photo_alternate_outlined,
               size: 50, color: Colors.grey),
           SizedBox(height: 10),
-          Text("Tap to add lab image", style: TextStyle(color: Colors.grey)),
+          Text("Tap_to_add_lab_image".tr(), style: TextStyle(color: Colors.grey)),
         ],
       ),
     );

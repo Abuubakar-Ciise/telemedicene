@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/views/screens/patient/TransactionHistoryScreen.dart';
 import 'package:tele/views/screens/patient/chats_list_screen_appointment.dart';
 import 'package:tele/views/screens/patient/contact_us_screen.dart';
@@ -44,10 +45,10 @@ class _MainScreenState extends State<MainScreen> {
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         // showUnselectedLabels: true,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: "Home",
+            label: "home".tr(),
           ),
           // BottomNavigationBarItem(
           //   icon: Icon(Icons.chat),
@@ -55,15 +56,15 @@ class _MainScreenState extends State<MainScreen> {
           // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: "Notification",
+            label: "notifications".tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.loop),
-            label: "Transaction",
+            label: "transaction".tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
-            label: "Contact",
+            label: "contact".tr(),
           ),
         ],
       ),

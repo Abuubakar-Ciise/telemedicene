@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tele/controllers/labs_controller.dart';
 import 'package:toastification/toastification.dart';
@@ -29,7 +30,7 @@ class _UpdateProfilePictureScreenState
         children: [
           ListTile(
             leading: Icon(Icons.camera_alt),
-            title: Text('Take a photo'),
+            title: Text('take_photo'.tr()),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -43,7 +44,7 @@ class _UpdateProfilePictureScreenState
           ),
           ListTile(
             leading: Icon(Icons.photo_library),
-            title: Text('Choose from gallery'),
+            title: Text('choose_from_gallery'.tr()),
             onTap: () async {
               Navigator.pop(context);
               final picked =
@@ -64,8 +65,8 @@ class _UpdateProfilePictureScreenState
     if (_selectedImage == null) {
       toastification.show(
         context: context,
-        title: const Text("Missing Info"),
-        description: const Text("Please complete all fields."),
+        title: Text("missing_info".tr()),
+        description: Text("please_complete_all_fields".tr()),
         type: ToastificationType.warning,
         autoCloseDuration: const Duration(seconds: 3),
       );
@@ -115,7 +116,7 @@ class _UpdateProfilePictureScreenState
                     Icons.image_outlined,
                     color: Colors.white,
                   ),
-                  label: const Text("Pick / Change Image",
+                  label: Text("pick_change_image".tr(),
                       style: TextStyle(color: Colors.white)),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -129,7 +130,7 @@ class _UpdateProfilePictureScreenState
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.cloud_upload_outlined,
                       color: Colors.white),
-                  label: const Text("Upload & Save Record",
+                  label: Text("upload_save_record".tr(),
                       style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
@@ -175,7 +176,7 @@ class DottedBorderPlaceholder extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Text("Tap to add lab image", style: TextStyle(color: Colors.grey)),
+          Text("tap_to_add_image".tr(), style: TextStyle(color: Colors.grey)),
         ],
       ),
     );

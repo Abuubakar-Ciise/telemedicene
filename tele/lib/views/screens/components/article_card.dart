@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
 import 'package:tele/views/screens/selfDetailts.dart';
@@ -103,7 +104,7 @@ class ArticleCard extends StatelessWidget {
                   children: [
                     // Created Date
                     Text(
-                      "Publish Date: ${formatDate(createdDate)}",
+                      "${'publish_date'.tr()}: ${formatDate(createdDate)}",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600], // A subtle color for the date
@@ -130,8 +131,8 @@ class ArticleCard extends StatelessWidget {
                         ),
                         elevation: 2,
                       ),
-                      child: const Text(
-                        'Read more',
+                      child: Text(
+                        'read_more'.tr(),
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

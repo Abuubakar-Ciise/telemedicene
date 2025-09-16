@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:tele/Models/doctors_list_nodel.dart';
 import 'package:tele/controllers/payment_controller.dart';
@@ -49,8 +50,8 @@ class ConfirmationScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Payment Method',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        title: Text('Payment Method'.tr(),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -67,18 +68,18 @@ class ConfirmationScreen extends StatelessWidget {
             children: [
               _buildDoctorCard(),
               const SizedBox(height: 16),
-              _sectionTitle('Scheduled Appointment'),
-              _infoRow('Date', selectedDate),
+              _sectionTitle('Scheduled Appointment'.tr()),
+              _infoRow('Date'.tr(), selectedDate),
               // _infoRow('Time', shifId ?? 'N/A'),
-              _infoRow('Time', selectedTime ?? 'N/A'),
-              _infoRow('Duration', '30 Minutes'),
+              _infoRow('Time'.tr(), selectedTime ?? 'N/A'),
+              _infoRow('Duration'.tr(), '30 Minutes'.tr()),
               const SizedBox(height: 16),
-              _sectionTitle('Patient Information'),
-              _infoRow('Name', patientData['name'] ?? 'N/A'),
-              _infoRow('phone', patientData['phone'] ?? 'N/A'),
-              _infoRow('Gender', patientData['gender'] ?? 'N/A'),
-              _infoRow('Age', patientData['age'] ?? 'N/A'),
-              _infoRow('problem', patientData['problem'] ?? 'N/A'),
+              _sectionTitle('Patient Information'.tr()),
+              _infoRow('Name'.tr(), patientData['name'] ?? 'N/A'),
+              _infoRow('phone'.tr(), patientData['phone'] ?? 'N/A'),
+              _infoRow('Gender'.tr(), patientData['gender'] ?? 'N/A'),
+              _infoRow('Age'.tr(), patientData['age'] ?? 'N/A'),
+              _infoRow('problem'.tr(), patientData['problem'] ?? 'N/A'),
               const SizedBox(height: 16),
               _buildSelectedPackageCard(),
               const SizedBox(height: 24),
@@ -227,8 +228,8 @@ class ConfirmationScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: () async {
-          final String title = 'New Appointment';
-          final String body = "You have a new booking from ${patientData['name']} on $selectedDate at $selectedTime.";
+          final String title = 'New Appointment'.tr();
+          final String body = "You have a new booking from ${patientData['name']} on $selectedDate at $selectedTime.".tr();
           await paymentController.pay(
               phone: patientData['phone']!,
               amount: doctor.consultationfee,
@@ -274,7 +275,7 @@ class ConfirmationScreen extends StatelessWidget {
           }
         },
         child: Text(
-          'Payment \$${doctor.consultationfee}',
+          'Payment \$${doctor.consultationfee}'.tr(),
           style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),

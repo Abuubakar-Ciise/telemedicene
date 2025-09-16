@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LabReportViewerScreen extends StatelessWidget {
   final String reportUrl;
@@ -9,7 +10,7 @@ class LabReportViewerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lab Report"),
+        title: Text("Lab Report".tr()),
       ),
       body: Center(
         child: Image.network(
@@ -20,7 +21,7 @@ class LabReportViewerScreen extends StatelessWidget {
             return const CircularProgressIndicator();
           },
           errorBuilder: (context, error, stackTrace) {
-            return const Text("Failed to load lab report.");
+            return Text("Failed to load lab report.".tr());
           },
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Trans;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:tele/controllers/doctor_list_controller.dart';
 import 'package:tele/views/screens/components/doctor_card.dart';
 import 'package:tele/views/screens/loading_message_screen.dart';
@@ -42,13 +43,13 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: "Search doctor...",
+                decoration: InputDecoration(
+                  hintText: "Search doctor...".tr(),
                   border: InputBorder.none,
                 ),
                 style: const TextStyle(color: Colors.black, fontSize: 18),
               )
-            : const Text("Search Doctor"),
+            : Text("Search Doctor".tr()),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search, size: 30),
@@ -72,7 +73,7 @@ class _VideoConsultationScreenState extends State<VideoConsultationScreen> {
             if (doctorListController.doctorsList.isEmpty) {
               return Center(
                 child: Text(
-                  "No Doctors available. ${doctorListController.doctorsList.length}",
+                  "No Doctors available. ${doctorListController.doctorsList.length}".tr(),
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               );

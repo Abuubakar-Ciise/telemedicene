@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PaymentStatusScreen extends StatelessWidget {
   final bool isSuccess;
@@ -30,7 +31,7 @@ class PaymentStatusScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  isSuccess ? "Success" : "Failed",
+                  isSuccess ? "success".tr() : "failed".tr(),
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -54,7 +55,7 @@ class PaymentStatusScreen extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     child: Text(
-                      isSuccess ? "Done" : "Try Again",
+                      isSuccess ? "done".tr() : "try_again".tr(),
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
