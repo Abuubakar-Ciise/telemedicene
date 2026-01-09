@@ -256,7 +256,9 @@ import 'package:tele/services/background_message_handler.dart';
 import 'package:tele/views/screens/CallPage/firebase_api.dart';
 import 'package:tele/views/screens/components/config.dart';
 import 'package:toastification/toastification.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+// ignore: depend_on_referenced_packages
+import 'package:zego_uikit/zego_uikit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {

@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.tele"
     // compileSdk = flutter.compileSdkVersion
-    compileSdk = 35
+    // compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
